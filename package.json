@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@prisma/client": "^4.13.0",
+    "axios": "^1.4.0",
+    "canvas": "^2.11.2",
+    "confusables": "^1.1.1",
+    "discord.js": "^14.9.0",
+    "luxon": "^3.3.0",
+    "prisma": "^4.13.0"
+  }
+}

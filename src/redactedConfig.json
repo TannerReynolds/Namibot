@@ -1,0 +1,34 @@
+{
+    "token": "redacted",
+    "clientId": "1104630573772841070",
+    "guildId": "1061175459112550490",
+    "guilds": {
+      "438650836512669699": {
+        "name": "The Car Community",
+        "invite": "https://discord.gg/cars",
+        "guildID": "438650836512669699",
+        "mainLogChannelID": "583434851852746776",
+        "secondaryLogChannelID": "",
+        "staffRoleID": "499564155884535808",
+        "muteRoleID": "819300268628770837"
+      },
+      "1061175459112550490": {
+        "name": "Learn Japanese",
+        "invite": "https://discord.gg/learnjapanese",
+        "guildID": "1061175459112550490",
+        "mainLogChannelID": "1083910377680687134",
+        "secondaryLogChannelID": "1193360741198217246",
+        "staffRoleID": "1061181030813413468",
+        "muteRoleID": "1174259360541708299"
+      },
+      "1190156169961029774": {
+        "name": "Test",
+        "invite": "https://discord.gg/JRqbHA5gbv",
+        "guildID": "1190156169961029774",
+        "mainLogChannelID": "1193380148104396963",
+        "secondaryLogChannelID": "1193380167142342667",
+        "staffRoleID": "1193379997881217074",
+        "muteRoleID": "1193380020001964093"
+      }
+    }
+}

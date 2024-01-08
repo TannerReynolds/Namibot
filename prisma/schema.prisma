@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Guild {
+    id        String       @id
+    logs      LogType?
+    mutes     Mute[]
+    bans      Ban[]
+    warns     Warning[]
+    mutedRole String?
+    colors    NitroColor[]
+
+    @@unique(id)
+    @@index(id)
+}
+
+model Channel {
+    id      String @id
+    snipe   Snipe? @relation(fields: [snipeId], references: [id])
+    snipeId Int?
+
+    @@unique(id)
+    @@index(id)
+}
+
+model Snipe {
+    id            Int       @id @default(autoincrement())
+    Channel       Channel[]
+    memberPfp     String
+    memberName    String
+    memberMessage String
+}
+
+model NitroColor {
+    roleID  String  @id
+    emoji   String
+    name    String
+    Guild   Guild?  @relation(fields: [guildId], references: [id])
+    guildId String?
+
+    @@unique([roleID, guildId])
+}
+
+model Member {
+    id         String      @id
+    highlights Highlight[]
+
+    @@unique(id)
+    @@index(id)
+}
+
+model Mute {
+    id        Int      @id @default(autoincrement())
+    startDate DateTime @default(now())
+    endDate   DateTime
+    reason    String   @default("No reason provided")
+    moderator String
+    userID    String
+    duration  String
+    Guild     Guild?   @relation(fields: [guildId], references: [id])
+    guildId   String?
+}
+
+model Ban {
+    startDate DateTime @default(now())
+    endDate   DateTime
+    reason    String   @default("No reason provided")
+    moderator String
+    userID    String
+    Guild     Guild    @relation(fields: [guildId], references: [id])
+    guildId   String
+    duration  String
+
+    @@id([userID, guildId])
+}
+
+model Highlight {
+    id       Int     @id @default(autoincrement())
+    phrase   String
+    guildID  String
+    Member   Member? @relation(fields: [memberId], references: [id])
+    memberId String?
+}
+
+model Warning {
+    id        Int      @id @default(autoincrement())
+    date      DateTime @default(now())
+    reason    String   @default("No reason provided")
+    moderator String
+    userID    String
+    type      String
+    Guild     Guild    @relation(fields: [guildId], references: [id])
+    guildId   String
+
+    @@index([userID, guildId])
+}
+
+enum LogType {
+    MessageDelete
+    MessageUpdate
+}
