@@ -11,16 +11,26 @@ datasource db {
 }
 
 model Guild {
-    id        String       @id
-    logs      LogType?
-    mutes     Mute[]
-    bans      Ban[]
-    warns     Warning[]
-    mutedRole String?
-    colors    NitroColor[]
+    id          String       @id
+    logs        LogType?
+    mutes       Mute[]
+    bans        Ban[]
+    turlemodes  TurtleMode[]
+    warns       Warning[]
+    mutedRole   String?
+    colors      NitroColor[]
+    failedJoins FailedJoin[]
 
     @@unique(id)
     @@index(id)
+}
+
+model FailedJoin {
+    id      Int      @id @default(autoincrement())
+    time    DateTime @default(now())
+    userID  String
+    Guild   Guild?   @relation(fields: [guildId], references: [id])
+    guildId String?
 }
 
 model Channel {
@@ -74,6 +84,20 @@ model Ban {
     startDate DateTime @default(now())
     endDate   DateTime
     reason    String   @default("No reason provided")
+    moderator String
+    userID    String
+    Guild     Guild    @relation(fields: [guildId], references: [id])
+    guildId   String
+    duration  String
+
+    @@id([userID, guildId])
+}
+
+model TurtleMode {
+    startDate DateTime @default(now())
+    endDate   DateTime
+    reason    String   @default("No reason provided")
+    interval  Int
     moderator String
     userID    String
     Guild     Guild    @relation(fields: [guildId], references: [id])

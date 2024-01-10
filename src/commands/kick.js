@@ -1,4 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  PermissionFlagsBits,
+} = require("discord.js");
 const { isStaff } = require("../utils/isStaff.js");
 const { extractSnowflake } = require("../utils/validate.js");
 const { PrismaClient } = require("@prisma/client");
@@ -20,7 +24,9 @@ module.exports = {
         .setDescription("The reason for kicking this user")
     ),
   async execute(interaction) {
-    if (!isStaff(interaction, interaction.member))
+    if (
+      !isStaff(interaction, interaction.member, PermissionFlagsBits.KickMembers)
+    )
       return interaction.reply({
         content: "You're not staff, idiot",
         ephemeral: true,
@@ -51,7 +57,9 @@ module.exports = {
       : "no reason provided";
 
     let guildMember = await interaction.guild.members.fetch(target);
-    guildMember.kick(reason);
+    guildMember.kick(reason).catch((e) => {
+      return sendReply("error", `Error when attemping to kick member: ${e}`);
+    });
 
     let aviURL = interaction.user
       .avatarURL({ format: "png", dynamic: false })
@@ -59,9 +67,9 @@ module.exports = {
     let name = interaction.user.username;
 
     let kickEmbed = new EmbedBuilder()
-      .setTitle(`User \`${target}\` Kicked`)
+      .setTitle(`User Kicked`)
       .setColor(colors.success)
-      .setDescription(`Successfully kicked. Reason: ${reason}`)
+      .setDescription(`Kicked <@${target}>. Reason: ${reason}`)
       .setTimestamp()
       .setAuthor({ name: name, iconURL: aviURL });
 

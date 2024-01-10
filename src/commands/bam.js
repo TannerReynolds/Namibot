@@ -14,6 +14,7 @@ const { spawnSync } = require("child_process");
 const axios = require("axios");
 const path = require("path");
 const { isStaff } = require("../utils/isStaff");
+const colors = require("../utils/embedColors");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -40,7 +41,9 @@ module.exports = {
     ),
   async execute(interaction) {
     await interaction.deferReply();
-    if (!isStaff(interaction, interaction.member))
+    if (
+      !isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers)
+    )
       return interaction.editReply({
         content: "You're not staff, idiot",
         ephemeral: true,
@@ -101,11 +104,11 @@ module.exports = {
     let name = interaction.user.username;
 
     let banEmbed = new EmbedBuilder()
-      .setColor(0x432c84)
+      .setColor(colors.main)
       .setTimestamp()
-      .setTitle(`User \`${target.username}\` Bammed`)
+      .setTitle(`User Bammed`)
       .setDescription(
-        `Successfully bammed for ${durationString}. Reason: ${reason}`
+        `Successfully bammed <@${target}> for ${durationString}. Reason: ${reason}`
       )
       .setAuthor({
         name: name,

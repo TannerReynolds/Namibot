@@ -3,59 +3,63 @@ const {
   EmbedBuilder,
   PermissionFlagsBits,
 } = require("discord.js");
-const { isStaff } = require("../utils/isStaff");
+const { isStaff } = require("../utils/isStaff.js");
 const { extractSnowflake } = require("../utils/validate.js");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const colors = require("../utils/embedColors");
 const {
   parseNewDate,
   durationToString,
   isValidDuration,
+  durationToSec,
 } = require("../utils/parseDuration.js");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-const colors = require("../utils/embedColors");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("ban")
-    .setDescription(
-      "Ban a user from the server using either a mention or an id"
+    .setName("turtlemode")
+    .setDescription("Give somebody their own individual slowmode")
+    .addStringOption((option) =>
+      option.setName("user").setDescription("The user to slow down")
     )
     .addStringOption((option) =>
-      option.setName("user").setDescription("The user to ban.")
+      option
+        .setName("interval")
+        .setDescription(
+          "How often this user is allowed to send a message (Minimum 30s)"
+        )
     )
     .addStringOption((option) =>
       option
         .setName("duration")
-        .setDescription("The amount of time to ban this user for")
+        .setDescription(
+          "How long should this slowmode last (leave blank for permanent)"
+        )
     )
     .addStringOption((option) =>
       option
         .setName("reason")
-        .setDescription("The reason for banning this user")
+        .setDescription("Why are you turning them into a turtle")
     ),
   async execute(interaction) {
     if (
-      !isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers)
+      !isStaff(
+        interaction,
+        interaction.member,
+        PermissionFlagsBits.ManageMessages
+      )
     )
       return interaction.reply({
         content: "You're not staff, idiot",
         ephemeral: true,
       });
 
-    await prisma.guild.upsert({
-      where: { id: interaction.guild.id },
-      update: {},
-      create: { id: interaction.guild.id },
-    });
-
     let target;
 
     if (!interaction.options.getString("user")) {
       return sendReply("error", "No user entered");
     }
-
     let userString = interaction.options.getString("user");
-
     if (!extractSnowflake(userString)) {
       return sendReply("error", "This is not a valid user");
     } else {
@@ -64,7 +68,7 @@ module.exports = {
 
     let duration;
     let durationString = "eternity";
-    let banDate = new Date();
+    let turtleDate = new Date();
     if (!interaction.options.getString("duration")) {
       duration = "infinite";
     } else {
@@ -77,47 +81,43 @@ module.exports = {
       }
     }
 
+    let interval;
+    let intervalString = "30 seconds";
+    if (!interaction.options.getString("interval")) {
+      interval = 30;
+    } else {
+      let rawInterval = interaction.options.getString("interval");
+      if (await isValidDuration(rawInterval)) {
+        interval = await durationToSec(rawInterval);
+        intervalString = await durationToString(rawInterval);
+        if (interval < 30) interval = 30;
+      } else {
+        interval = 30;
+      }
+    }
+
     let reason = interaction.options.getString("reason")
       ? interaction.options.getString("reason")
       : "no reason provided";
-
-    interaction.guild.bans
-      .create(target, {
-        deleteMessageSeconds: 60 * 60 * 24 * 7,
-        reason: `${reason} | Duration: ${durationString} | Mod: ${interaction.user.username} (${interaction.user.id})`,
-      })
-      .catch((e) => {
-        console.log(`Error on banning user: ${target}\n\n${e}`);
-        return sendReply("error", `Error banning member: ${e}`);
-      });
 
     let aviURL = interaction.user
       .avatarURL({ format: "png", dynamic: false })
       .replace("webp", "png");
     let name = interaction.user.username;
 
-    let banEmbed = new EmbedBuilder()
-      .setTitle(`User Banned`)
+    let turtleEmbed = new EmbedBuilder()
+      .setTitle(`Turned user into a slow little turt`)
       .setColor(colors.success)
       .setDescription(
-        `Successfully banned <@${target}> for ${durationString}. Reason: ${reason}`
+        `Successfully initiated slowmode on <@${target}> at an interval of ${intervalString}, for ${durationString}! Reason: ${reason}`
       )
       .setTimestamp()
       .setAuthor({ name: name, iconURL: aviURL });
 
-    interaction.reply({ embeds: [banEmbed] });
-
-    function sendReply(type, message) {
-      let replyEmbed = new EmbedBuilder()
-        .setColor(colors[type])
-        .setDescription(message)
-        .setTimestamp();
-
-      interaction.reply({ embeds: [replyEmbed] });
-    }
+    interaction.reply({ embeds: [turtleEmbed] });
 
     if (duration !== "infinite") {
-      await prisma.turtle.upsert({
+      await prisma.turtleMode.upsert({
         where: {
           userID_guildId: {
             userID: target,
@@ -128,16 +128,18 @@ module.exports = {
           moderator: `${interaction.user.username} (${interaction.user.id})`,
           endDate: duration,
           reason: reason,
-          startDate: banDate,
+          startDate: turtleDate,
+          interval: interval,
           duration: durationString,
         },
         create: {
-          startDate: banDate,
+          startDate: turtleDate,
           userID: target,
           guildId: interaction.guild.id,
           moderator: `${interaction.user.username} (${interaction.user.id})`,
           endDate: duration,
           reason: reason,
+          interval: interval,
           duration: durationString,
         },
       });
@@ -145,11 +147,11 @@ module.exports = {
     await prisma.warning.create({
       data: {
         userID: target,
-        date: banDate,
+        date: turtleDate,
         guildId: interaction.guild.id,
         reason: reason,
         moderator: `${interaction.user.username} (${interaction.user.id})`,
-        type: "BAN",
+        type: "SLOWMODE",
       },
     });
   },

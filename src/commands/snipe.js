@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 const { isStaff } = require("../utils/isStaff.js");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -9,7 +9,13 @@ module.exports = {
     .setDescription("snipe the last deleted message"),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
-    if (!isStaff(interaction, interaction.member))
+    if (
+      !isStaff(
+        interaction,
+        interaction.member,
+        PermissionFlagsBits.ManageMessages
+      )
+    )
       return interaction.editReply({
         content: "You're not staff, idiot",
         ephemeral: true,
