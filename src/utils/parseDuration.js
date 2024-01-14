@@ -1,4 +1,5 @@
 const { DateTime, Duration } = require('luxon');
+const { toENTime } = require('./toEN');
 
 const regexes = {
 	years: /(\d+y)/,
@@ -11,6 +12,7 @@ const regexes = {
 };
 
 async function parseNewDate(duration) {
+	if (isJP(duration)) duration = await toENTime(duration);
 	const parsedValues = {};
 
 	for (const key in regexes) {
@@ -27,6 +29,7 @@ async function parseNewDate(duration) {
 	return nwd;
 }
 async function durationToString(duration) {
+	if (isJP(duration)) duration = await toENTime(duration);
 	const durationNames = {
 		years: ['year', 'years'],
 		months: ['month', 'months'],
@@ -52,6 +55,7 @@ async function durationToString(duration) {
 }
 
 async function isValidDuration(duration) {
+	if (isJP(duration)) duration = await toENTime(duration);
 	for (const key in regexes) {
 		const match = duration.match(regexes[key]);
 		if (match) {
@@ -63,6 +67,7 @@ async function isValidDuration(duration) {
 }
 
 async function durationToSec(durationStr) {
+	if (isJP(durationStr)) durationStr = await toENTime(durationStr);
 	const parsedValues = {};
 
 	for (const key in regexes) {
@@ -75,6 +80,8 @@ async function durationToSec(durationStr) {
 	let parsedDuration = Duration.fromObject(parsedValues);
 	return parsedDuration.as('seconds');
 }
+
+const isJP = str => /[秒分時間日週月年]/.test(str);
 
 module.exports = {
 	parseNewDate,

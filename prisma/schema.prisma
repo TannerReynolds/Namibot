@@ -69,15 +69,16 @@ model Member {
 }
 
 model Mute {
-    id        Int      @id @default(autoincrement())
     startDate DateTime @default(now())
     endDate   DateTime
     reason    String   @default("No reason provided")
     moderator String
     userID    String
     duration  String
-    Guild     Guild?   @relation(fields: [guildId], references: [id])
-    guildId   String?
+    Guild     Guild    @relation(fields: [guildId], references: [id])
+    guildId   String
+
+    @@id([userID, guildId])
 }
 
 model Ban {
