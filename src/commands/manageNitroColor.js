@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { sendReply } = require('../utils/sendMsg.js');
 const { checkPermissions } = require('../utils/permissionsCheck.js');
 const { isSnowflake, isEmoji } = require('../utils/validate.js');
 const { PrismaClient } = require('@prisma/client');
@@ -66,6 +65,11 @@ module.exports = {
 				console.log(err);
 				sendReply(interaction, 'error', 'Could not delete role');
 			}
+		}
+		function sendReply(interaction, type, message) {
+			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
+
+			interaction.editReply({ embeds: [replyEmbed] });
 		}
 	},
 };

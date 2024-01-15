@@ -13,7 +13,6 @@ module.exports = {
 		.setDescription("View a user's warnings")
 		.addStringOption(option => option.setName('user').setDescription('The user to view warns for').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return interaction.editReply({
 				content: "You're not staff, idiot",
@@ -73,7 +72,7 @@ module.exports = {
 		function sendReply(type, message) {
 			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
 
-			interaction.editReply({ embeds: [replyEmbed] });
+			interaction.reply({ embeds: [replyEmbed] });
 		}
 	},
 };

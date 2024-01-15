@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType } = require('discord.js');
-const { sendReply, baseEmbed } = require('../utils/sendMsg.js');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -69,6 +68,12 @@ module.exports = {
 				}, 5000);
 			});
 		});
+
+		function sendReply(interaction, type, message) {
+			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
+
+			interaction.reply({ embeds: [replyEmbed] });
+		}
 	},
 };
 
