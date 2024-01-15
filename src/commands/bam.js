@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
-const { parseNewDate, durationToString, isValidDuration } = require('../utils/parseDuration.js');
+const { defineTarget } = require('../utils/defineTarget');
+const { defineDurationString } = require('../utils/defineDuration');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
 const axios = require('axios');
@@ -10,10 +11,11 @@ const colors = require('../utils/embedColors');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('bam')
+		.setDMPermission(false)
 		.setDescription('Bam a user from the server using either a mention or an id')
 		.addUserOption(option => option.setName('user').setDescription('The user to bam.').setRequired(true))
 		.addStringOption(option => option.setName('reason').setDescription('The reason for bamming this user').setRequired(true))
-		.addStringOption(option => option.setName('duration').setDescription('The amount of time to bam this user for')),
+		.addStringOption(option => option.setName('duration').setDescription('The amount of time to bam this user for ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers))
@@ -21,21 +23,10 @@ module.exports = {
 				content: "You're not staff, idiot",
 				ephemeral: true,
 			});
-		let target = interaction.options.getUser('user');
 
-		let duration;
-		let durationString = 'eternity';
-		if (!interaction.options.getString('duration')) {
-			duration = 'infinite';
-		} else {
-			let rawDuration = interaction.options.getString('duration');
-			if (await isValidDuration(rawDuration)) {
-				duration = await parseNewDate(rawDuration);
-				durationString = await durationToString(rawDuration);
-			} else {
-				duration = 'infinite';
-			}
-		}
+		let target = await defineTarget(interaction, 'edit');
+
+		let durationString = await defineDurationString(interaction);
 
 		let tpfpName = `pfp${target.id}.png`;
 		let tpfp = target

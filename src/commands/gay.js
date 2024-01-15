@@ -1,12 +1,20 @@
-const { SlashCommandBuilder, AttachmentBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, AttachmentBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs');
 const { createCanvas, Image } = require('canvas');
 const axios = require('axios');
+const { guilds } = require('../config.json');
+const { isStaff } = require('../utils/isStaff');
 
 module.exports = {
-	data: new SlashCommandBuilder().setName('gay').setDescription('Make your pfp gay'),
+	data: new SlashCommandBuilder().setDMPermission(false).setName('gay').setDescription('Make your pfp gay'),
 	async execute(interaction) {
 		await interaction.deferReply();
+		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+			return interaction.editReply({
+				content: `You have to go to the <#${commandChannel}> channel to use this command`,
+				ephemeral: true,
+			});
 		let pfpURL = interaction.user.displayAvatarURL({ format: 'png', size: 1024, dynamic: false }).replace('webp', 'png');
 		let pfpBuffer = await downloadImage(pfpURL);
 		async function downloadImage(url) {

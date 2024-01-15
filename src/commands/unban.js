@@ -1,21 +1,21 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff, hasHigherPerms } = require('../utils/isStaff');
+const { isStaff } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const { PrismaClient } = require('@prisma/client');
-const { guilds } = require('../config.json');
 const { getModChannels } = require('../utils/getModChannels');
 const prisma = new PrismaClient();
 const colors = require('../utils/embedColors');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('unmute')
+		.setName('unban')
 		.setDMPermission(false)
-		.setDescription('Unmute a user')
-		.addStringOption(option => option.setName('user').setDescription('The user to unmute.').setRequired(true)),
+		.setDescription('Unban a user from the server')
+		.addStringOption(option => option.setName('user').setDescription('The user to unban.').setRequired(true))
+		.addStringOption(option => option.setName('reason').setDescription('The reason for unbanning this user').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles))
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers))
 			return interaction.editReply({
 				content: "You're not staff, idiot",
 				ephemeral: true,
@@ -23,32 +23,28 @@ module.exports = {
 
 		let target = await defineTarget(interaction, 'edit');
 
-		let targetMember = await interaction.guild.members.fetch(target);
-		if (!targetMember) return sendReply('error', 'This user is not a guild member');
-		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
-		if (!canDoAction) {
-			return sendReply('error', 'You or the bot does not have permissions to complete this action');
-		}
-
 		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
 		let name = interaction.user.username;
-		let guildMember = await interaction.guild.members.fetch(target);
 
-		await guildMember.roles
-			.remove(guilds[interaction.guild.id].muteRoleID)
-			.then(m => {
-				let muteEmbed = new EmbedBuilder()
-					.setTitle(`User Unmuted`)
+		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
+
+		interaction.guild.bans
+			.remove(target, {
+				reason: `${reason} | Mod: ${interaction.user.username} (${interaction.user.id})`,
+			})
+			.then(b => {
+				let unbanEmbed = new EmbedBuilder()
+					.setTitle(`User Unbanned`)
 					.setColor(colors.success)
-					.setDescription(`Successfully unmuted <@${target}>`)
+					.setDescription(`Successfully unbanned <@${target}>. Reason: ${reason}`)
 					.setTimestamp()
 					.setAuthor({ name: name, iconURL: aviURL });
 
-				interaction.editReply({ embeds: [muteEmbed] });
+				interaction.editReply({ embeds: [unbanEmbed] });
 
 				let logEmbed = new EmbedBuilder()
 					.setColor(colors.main)
-					.setTitle('Member Unmuted')
+					.setTitle('Member Unbanned')
 					.addFields({ name: 'User', value: `<@${target}> (${target})` }, { name: 'Reason', value: reason }, { name: 'Moderator', value: `${name} (${interaction.user.id})` })
 					.setAuthor({ name: name, iconURL: aviURL })
 					.setTimestamp();
@@ -59,7 +55,8 @@ module.exports = {
 				});
 			})
 			.catch(e => {
-				return sendReply('error', `Could not unmute user:\n${e}`);
+				console.log(`Error on unbanning user: ${target}\n\n${e}`);
+				return sendReply('error', `Error unbanning member: ${e}`);
 			});
 
 		function sendReply(type, message) {
@@ -68,7 +65,7 @@ module.exports = {
 			interaction.editReply({ embeds: [replyEmbed] });
 		}
 
-		await prisma.mute.delete({
+		await prisma.ban.delete({
 			where: {
 				userID_guildId: {
 					userID: target,

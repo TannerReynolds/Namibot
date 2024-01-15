@@ -4,7 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 module.exports = {
-	data: new SlashCommandBuilder().setName('snipe').setDescription('snipe the last deleted message'),
+	data: new SlashCommandBuilder().setDMPermission(false).setName('snipe').setDescription('snipe the last deleted message (will not send attachments)'),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
@@ -14,7 +14,6 @@ module.exports = {
 			});
 
 		getSnipeInfo(interaction.channelId).then(snipeInfo => {
-			console.log(snipeInfo);
 			if (snipeInfo) {
 				let channeltoPost = interaction.client.channels.cache.get(interaction.channelId);
 				if (channeltoPost) {
@@ -37,14 +36,14 @@ module.exports = {
 									});
 								});
 						} catch (error) {
-							console.error('Error in createSendDeleteWebhook:', error);
+							interaction.editReply(`Error in createSendDeleteWebhook:\n${error}`);
 						}
 					}
 				} else {
-					console.log('Channel not found');
+					interaction.editReply('Channel not found');
 				}
 			} else {
-				console.log('No snipe info found for this channel.');
+				interaction.editReply('No snipe info found for this channel.');
 			}
 		});
 
@@ -65,7 +64,7 @@ module.exports = {
 					return null;
 				}
 			} catch (error) {
-				console.error('Error fetching snipe info:', error);
+				interaction.editReply(`Error fetching snipe info:\n${error}`);
 				return null;
 			}
 		}

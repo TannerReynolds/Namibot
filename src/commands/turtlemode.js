@@ -1,58 +1,41 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff } = require('../utils/isStaff.js');
-const { extractSnowflake } = require('../utils/validate.js');
+const { isStaff, hasHigherPerms } = require('../utils/isStaff.js');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const colors = require('../utils/embedColors');
-const { parseNewDate, durationToString, isValidDuration, durationToSec } = require('../utils/parseDuration.js');
+const { defineTarget } = require('../utils/defineTarget');
+const { defineDuration, defineDurationString } = require('../utils/defineDuration');
+const { getModChannels } = require('../utils/getModChannels');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('turtlemode')
+		.setDMPermission(false)
 		.setDescription('Give somebody their own individual slowmode')
-		.addStringOption(option => option.setName('user').setDescription('The user to slow down'))
-		.addStringOption(option => option.setName('interval').setDescription('How often this user is allowed to send a message (Minimum 30s)'))
-		.addStringOption(option => option.setName('duration').setDescription('How long should this slowmode last (leave blank for permanent)'))
-		.addStringOption(option => option.setName('reason').setDescription('Why are you turning them into a turtle')),
+		.addStringOption(option => option.setName('user').setDescription('The user to slow down').setRequired(true))
+		.addStringOption(option => option.setName('reason').setDescription('Why are you turning them into a turtle').setRequired(true))
+		.addStringOption(option => option.setName('interval').setDescription('How often this user is allowed to send a message (Minimum 30s)').setRequired(true))
+		.addStringOption(option => option.setName('duration').setDescription('How long should this slowmode last ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
+		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return interaction.reply({
+			return interaction.editReply({
 				content: "You're not staff, idiot",
 				ephemeral: true,
 			});
 
-		await prisma.guild.upsert({
-			where: { id: interaction.guild.id },
-			update: {},
-			create: { id: interaction.guild.id },
-		});
+		let target = await defineTarget(interaction, 'edit');
 
-		let target;
-
-		if (!interaction.options.getString('user')) {
-			return sendReply('error', 'No user entered');
-		}
-		let userString = interaction.options.getString('user');
-		if (!extractSnowflake(userString)) {
-			return sendReply('error', 'This is not a valid user');
-		} else {
-			target = extractSnowflake(userString)[0];
+		let targetMember = await interaction.guild.members.fetch(target);
+		if (!targetMember) return sendReply('error', 'This user is not a guild member');
+		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
+		if (!canDoAction) {
+			return sendReply('error', 'You or the bot does not have permissions to complete this action');
 		}
 
-		let duration;
-		let durationString = 'eternity';
+		let duration = await defineDuration(interaction);
+		let durationString = await defineDurationString(interaction);
 		let turtleDate = new Date();
-		if (!interaction.options.getString('duration')) {
-			duration = 'infinite';
-		} else {
-			let rawDuration = interaction.options.getString('duration');
-			if (await isValidDuration(rawDuration)) {
-				duration = await parseNewDate(rawDuration);
-				durationString = await durationToString(rawDuration);
-			} else {
-				duration = 'infinite';
-			}
-		}
 
 		let interval;
 		let intervalString = '30 seconds';
@@ -71,6 +54,10 @@ module.exports = {
 
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
 
+		if (targetMember) {
+			await targetMember.send(`You have been turtleModed in ${interaction.guild.name} for \`${reason}\`. The length of your turtleMode is ${durationString}.`);
+		}
+
 		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
 		let name = interaction.user.username;
 
@@ -81,7 +68,24 @@ module.exports = {
 			.setTimestamp()
 			.setAuthor({ name: name, iconURL: aviURL });
 
-		interaction.reply({ embeds: [turtleEmbed] });
+		interaction.editReply({ embeds: [turtleEmbed] });
+
+		let logEmbed = new EmbedBuilder()
+			.setColor(colors.main)
+			.setTitle('Member Turtlemode Activated')
+			.addFields(
+				{ name: 'User', value: `<@${target}> (${target})` },
+				{ name: 'Reason', value: reason },
+				{ name: 'Turtlemode Duration', value: durationString },
+				{ name: 'Moderator', value: `${name} (${interaction.user.id})` }
+			)
+			.setAuthor({ name: name, iconURL: aviURL })
+			.setTimestamp();
+
+		getModChannels(interaction.client, interaction.guild.id).main.send({
+			embeds: [logEmbed],
+			content: `<@${target}>`,
+		});
 
 		if (duration !== 'infinite') {
 			await prisma.turtleMode.upsert({

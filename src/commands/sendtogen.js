@@ -3,6 +3,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('send')
+		.setDMPermission(false)
 		.setDescription('send msg to gen')
 		.setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
 		.addStringOption(option => option.setName('msg').setDescription('msg to send')),

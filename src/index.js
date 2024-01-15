@@ -8,6 +8,7 @@ const path = require('node:path');
 // Internal requires
 const mCreate = './events/messageCreate/';
 const mDelete = './events/messageDelete/';
+const mEdit = './events/messageEdit/';
 const gMemberAdd = './events/guildMemberAdd/';
 const minute = './events/everyMinute/';
 const hour = './events/everyHour/';
@@ -15,6 +16,7 @@ const utils = './utils/';
 const colors = require(`${utils}embedColors`);
 const { token } = require('./config.json');
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);
+const { checkAndUnmuteUsers } = require(`${minute}checkMutes`);
 const { gifDetector } = require(`${mCreate}gifDetector`);
 const { checkForInlineURLs } = require(`${mCreate}hiddenLinkDetection`);
 const { getModChannels } = require(`${utils}getModChannels`);
@@ -25,9 +27,18 @@ const { wipeFailedJoins } = require(`${hour}wipeFailedJoins`);
 const { turtleCheck } = require(`${mCreate}turtleCheck`);
 const { deleteTurtles } = require(`${minute}deleteTurtles`);
 const { antiAds } = require(`${mCreate}antiAds`);
+const { deleteLog } = require(`${mDelete}deleteLog`);
+const { editLog } = require(`${mEdit}editLog`);
 
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.AutoModerationConfiguration,
+	],
 });
 
 client.once(Events.ClientReady, c => {
@@ -38,6 +49,7 @@ client.once(Events.ClientReady, c => {
 
 	function everyMinute() {
 		checkAndUnbanUsers(client, getModChannels);
+		checkAndUnmuteUsers(client, getModChannels);
 		deleteTurtles();
 	}
 	function everyHour() {
@@ -108,6 +120,7 @@ client.on(Events.GuildMemberAdd, async member => {
 client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	antiAds(message);
 	messageEvents(message, oldMessage);
+	editLog(message, oldMessage);
 });
 
 client.on(Events.MessageCreate, async message => {
@@ -118,9 +131,11 @@ client.on(Events.MessageCreate, async message => {
 
 client.on(Events.MessageDelete, async message => {
 	updateSnipe(message);
+	deleteLog(message);
 });
 
 async function messageEvents(message, oldMessage) {
+	if (!message.guild) return;
 	let content = message.content;
 	let guildMember = await message.guild.members.fetch(message.author.id);
 	//Ignoring staff
@@ -132,6 +147,7 @@ async function messageEvents(message, oldMessage) {
 }
 
 async function messageCreate(message) {
+	if (!message.guild) return;
 	let guildMember = await message.guild.members.fetch(message.author.id);
 	turtleCheck(message, guildMember);
 }

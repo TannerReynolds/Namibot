@@ -1,56 +1,64 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff } = require('../utils/isStaff.js');
-const { extractSnowflake } = require('../utils/validate.js');
+const { isStaff, hasHigherPerms } = require('../utils/isStaff.js');
+const { defineTarget } = require('../utils/defineTarget');
 const { PrismaClient } = require('@prisma/client');
+const { getModChannels } = require('../utils/getModChannels');
 const prisma = new PrismaClient();
 const colors = require('../utils/embedColors.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('warn')
+		.setDMPermission(false)
 		.setDescription('Warn a member')
-		.addStringOption(option => option.setName('user').setDescription('The user to warn'))
-		.addStringOption(option => option.setName('reason').setDescription('The reason for warning this user')),
+		.addStringOption(option => option.setName('user').setDescription('The user to warn').setRequired(true))
+		.addStringOption(option => option.setName('reason').setDescription('The reason for warning this user').setRequired(true)),
 	async execute(interaction) {
+		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return interaction.reply({
+			return interaction.editReply({
 				content: "You're not staff, idiot",
 				ephemeral: true,
 			});
 
-		await prisma.guild.upsert({
-			where: { id: interaction.guild.id },
-			update: {},
-			create: { id: interaction.guild.id },
-		});
+		let target = await defineTarget(interaction, 'edit');
 
-		let target;
-
-		if (!interaction.options.getString('user')) {
-			return sendReply('error', 'No user entered');
-		}
-
-		let userString = interaction.options.getString('user');
-
-		if (!extractSnowflake(userString)) {
-			return sendReply('error', 'This is not a valid user');
-		} else {
-			target = extractSnowflake(userString)[0];
+		let targetMember = await interaction.guild.members.fetch(target);
+		if (!targetMember) return sendReply('error', 'This user is not a guild member');
+		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
+		if (!canDoAction) {
+			return sendReply('error', 'You or the bot does not have permissions to complete this action');
 		}
 
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
+
+		if (targetMember) {
+			await targetMember.send(`You have been warned in ${interaction.guild.name} for \`${reason}\`.`);
+		}
 
 		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
 		let name = interaction.user.username;
 
 		let warnEmbed = new EmbedBuilder().setTitle(`User Warned`).setColor(colors.main).setDescription(`Warned <@${target}>. Reason: ${reason}`).setTimestamp().setAuthor({ name: name, iconURL: aviURL });
 
-		interaction.reply({ embeds: [warnEmbed] });
+		interaction.editReply({ embeds: [warnEmbed] });
+
+		let logEmbed = new EmbedBuilder()
+			.setColor(colors.main)
+			.setTitle('Member Warned')
+			.addFields({ name: 'User', value: `<@${target}> (${target})` }, { name: 'Reason', value: reason }, { name: 'Moderator', value: `${name} (${interaction.user.id})` })
+			.setAuthor({ name: name, iconURL: aviURL })
+			.setTimestamp();
+
+		getModChannels(interaction.client, interaction.guild.id).main.send({
+			embeds: [logEmbed],
+			content: `<@${target}>`,
+		});
 
 		function sendReply(type, message) {
 			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
 
-			interaction.reply({ embeds: [replyEmbed] });
+			interaction.editReply({ embeds: [replyEmbed] });
 		}
 
 		await prisma.warning.create({

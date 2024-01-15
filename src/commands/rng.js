@@ -1,17 +1,19 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff } = require('../utils/isStaff');
-const { extractSnowflake } = require('../utils/validate.js');
+const { isStaff, hasHigherPerms } = require('../utils/isStaff');
+const { defineTarget } = require('../utils/defineTarget');
 const { parseNewDate, durationToString, isValidDuration } = require('../utils/parseDuration.js');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const colors = require('../utils/embedColors');
+const { getModChannels } = require('../utils/getModChannels');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('rng')
+		.setDMPermission(false)
 		.setDescription('Let fate decide')
-		.addStringOption(option => option.setName('user').setDescription('The user'))
-		.addStringOption(option => option.setName('reason').setDescription('The reason for subjecting this user to fate')),
+		.addStringOption(option => option.setName('user').setDescription('The user').setRequired(true))
+		.addStringOption(option => option.setName('reason').setDescription('The reason for subjecting this user to fate').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers))
@@ -20,24 +22,12 @@ module.exports = {
 				ephemeral: true,
 			});
 
-		await prisma.guild.upsert({
-			where: { id: interaction.guild.id },
-			update: {},
-			create: { id: interaction.guild.id },
-		});
+		let target = await defineTarget(interaction, 'edit');
 
-		let target;
-
-		if (!interaction.options.getString('user')) {
-			return sendReply('error', 'No user entered');
-		}
-
-		let userString = interaction.options.getString('user');
-
-		if (!extractSnowflake(userString)) {
-			return sendReply('error', 'This is not a valid user');
-		} else {
-			target = extractSnowflake(userString)[0];
+		let targetMember = await interaction.guild.members.fetch(target);
+		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
+		if (!canDoAction) {
+			return sendReply('error', 'You or the bot does not have permissions to complete this action');
 		}
 
 		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');

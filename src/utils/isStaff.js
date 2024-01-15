@@ -11,4 +11,27 @@ function isStaff(message, guildMember, permissionOverride) {
 	}
 }
 
-module.exports = { isStaff };
+async function hasHigherPerms(author, target) {
+	if (!author) {
+		return false;
+	}
+	if (!target) {
+		return true;
+	}
+	if (!target.moderatable) {
+		return false;
+	}
+	if (!target.manageable) {
+		return false;
+	}
+	const authorHighestRolePosition = author.roles.highest.position;
+	const targetHighestRolePosition = target.roles.highest.position;
+
+	if (targetHighestRolePosition >= authorHighestRolePosition) {
+		return false;
+	}
+
+	return true;
+}
+
+module.exports = { isStaff, hasHigherPerms };

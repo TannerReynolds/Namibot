@@ -2,13 +2,16 @@
     "token": "redacted",
     "clientId": "1104630573772841070",
     "guildId": "1061175459112550490",
+    "appealServer": "https://discord.gg/wJhppSMHpG",
     "guilds": {
       "438650836512669699": {
         "name": "The Car Community",
         "invite": "https://discord.gg/cars",
         "guildID": "438650836512669699",
         "mainLogChannelID": "583434851852746776",
-        "secondaryLogChannelID": "",
+        "secondaryLogChannelID": "655047046557859851",
+        "botCommandsChannelID": "438652906116481025",
+        "appealChannelID": "438657479606272003",
         "staffRoleID": "499564155884535808",
         "muteRoleID": "819300268628770837"
       },
@@ -18,6 +21,8 @@
         "guildID": "1061175459112550490",
         "mainLogChannelID": "1083910377680687134",
         "secondaryLogChannelID": "1193360741198217246",
+        "botCommandsChannelID": "1075661557247246357",
+        "appealChannelID": "1061182094266609724",
         "staffRoleID": "1061181030813413468",
         "muteRoleID": "1174259360541708299"
       },
@@ -27,6 +32,8 @@
         "guildID": "1190156169961029774",
         "mainLogChannelID": "1193380148104396963",
         "secondaryLogChannelID": "1193380167142342667",
+        "botCommandsChannelID": "1190156171114446930",
+        "appealChannelID": "1190156171114446930",
         "staffRoleID": "1193379997881217074",
         "muteRoleID": "1193380020001964093"
       }

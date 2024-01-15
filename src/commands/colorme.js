@@ -4,7 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 module.exports = {
-	data: new SlashCommandBuilder().setName('colorme').setDescription('Select a color for yourself!'),
+	data: new SlashCommandBuilder().setDMPermission(false).setName('colorme').setDescription('Select a color for yourself!'),
 	async execute(interaction) {
 		let authorRoles = interaction.member.roles.cache;
 		let boosterRole = interaction.guild.roles.premiumSubscriberRole.id || null;

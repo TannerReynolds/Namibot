@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('managenitrocolor')
+		.setDMPermission(false)
 		.setDescription('Manage the nitro colors for the guild')
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles)
 		.addStringOption(option =>
