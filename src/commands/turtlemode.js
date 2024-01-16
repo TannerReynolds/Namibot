@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 const colors = require('../utils/embedColors');
 const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');
+const { parseNewDate, durationToString, isValidDuration, durationToSec } = require('../utils/parseDuration');
 const { getModChannels } = require('../utils/getModChannels');
 
 module.exports = {
@@ -18,13 +19,11 @@ module.exports = {
 		.addStringOption(option => option.setName('duration').setDescription('How long should this slowmode last ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return interaction.editReply({
-				content: "You're not staff, idiot",
-				ephemeral: true,
-			});
-
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
 		let target = await defineTarget(interaction, 'edit');
+		if (target === undefined) {
+			return sendReply('error', 'This user does not exist');
+		}
 
 		let targetMember = await interaction.guild.members.fetch(target);
 		if (!targetMember) return sendReply('error', 'This user is not a guild member');

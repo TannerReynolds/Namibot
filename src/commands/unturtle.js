@@ -14,15 +14,14 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to remove the slowdown from').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return interaction.editReply({
-				content: "You're not staff, idiot",
-				ephemeral: true,
-			});
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
+		let target = await defineTarget(interaction, 'edit');
+		if (target === undefined) {
+			return sendReply('error', 'This user does not exist');
+		}
 
 		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
 		let name = interaction.user.username;
-		let target = await defineTarget(interaction, 'edit');
 
 		let targetMember = await interaction.guild.members.fetch(target);
 		if (!targetMember) return sendReply('error', 'This user is not a guild member');
@@ -38,7 +37,7 @@ module.exports = {
 		let logEmbed = new EmbedBuilder()
 			.setColor(colors.main)
 			.setTitle('Member Turtlemode Disabled')
-			.addFields({ name: 'User', value: `<@${target}> (${target})` }, { name: 'Reason', value: reason }, { name: 'Moderator', value: `${name} (${interaction.user.id})` })
+			.addFields({ name: 'User', value: `<@${target}> (${target})` }, { name: 'Moderator', value: `${name} (${interaction.user.id})` })
 			.setAuthor({ name: name, iconURL: aviURL })
 			.setTimestamp();
 

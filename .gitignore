@@ -4,3 +4,4 @@ package-lock.json
 src/config.json
 prisma/migrations/
 Thumbs.db
+blockedDomains.json

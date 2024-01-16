@@ -18,13 +18,11 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for muting this user').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles))
-			return interaction.editReply({
-				content: "You're not staff, idiot",
-				ephemeral: true,
-			});
-
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
 		let target = await defineTarget(interaction, 'edit');
+		if (target === undefined) {
+			return sendReply('error', 'This user does not exist');
+		}
 
 		let targetMember = await interaction.guild.members.fetch(target);
 		if (!targetMember) return sendReply('error', 'This user is not a guild member');

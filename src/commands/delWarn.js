@@ -12,11 +12,7 @@ module.exports = {
 		.addStringOption(option => option.setName('warning-id').setDescription('The ID of the warning to delete').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return interaction.editReply({
-				content: "You're not staff, idiot",
-				ephemeral: true,
-			});
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
 
 		if (!interaction.options.getString('warning-id')) {
 			return sendReply('error', 'No warning ID provided!');

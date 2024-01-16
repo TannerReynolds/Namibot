@@ -10,19 +10,22 @@ async function editLog(message, oldMessage) {
 	let aviURL = message.author.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
 	let name = message.author.username;
 	let newEmbed = new EmbedBuilder()
-		.setTitle(`Message Edited (New Message)`)
+		.setTitle(`Message Edited`)
 		.setColor(colors.main)
-		.addFields({ name: 'Old Message', value: oldContent }, { name: 'New Message', value: newContent })
+		.setDescription(`Channel: <#${message.channel.id}>`)
+		.addFields({ name: 'Old Message', value: oldContent ? oldContent : 'N/A' }, { name: 'New Message', value: newContent ? newContent : 'N/A' })
 		.setTimestamp()
 		.setAuthor({ name: name, iconURL: aviURL });
-	if (oldMessage.attachments) {
+	if (oldMessage.attachments.size > 0) {
 		getModChannels(message.client, message.guild.id).secondary.send({
 			files: [...oldMessage.attachments.values()],
 		});
 	}
-	getModChannels(message.client, message.guild.id).secondary.send({
-		files: [...message.attachments.values()],
-	});
+	if (message.attachments.size > 0) {
+		getModChannels(message.client, message.guild.id).secondary.send({
+			files: [...message.attachments.values()],
+		});
+	}
 	getModChannels(message.client, message.guild.id).secondary.send({
 		embeds: [newEmbed],
 		content: `UserID: ${message.author.id}`,

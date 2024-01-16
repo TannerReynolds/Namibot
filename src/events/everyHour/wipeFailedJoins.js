@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 async function wipeFailedJoins() {
 	let oneHourAgo = new Date();
-	oneHourAgo.setHours(oneHourAgo.getHours() - 2);
+	oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 
 	try {
 		await prisma.failedJoin.deleteMany({

@@ -8,7 +8,13 @@ async function deleteLog(message) {
 	let content = message.cleanContent;
 	let aviURL = message.author.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
 	let name = message.author.username;
-	let deleteEmbed = new EmbedBuilder().setTitle(`Message Deleted`).setColor(colors.main).setDescription(`Content: ${content}`).setTimestamp().setAuthor({ name: name, iconURL: aviURL });
+	let deleteEmbed = new EmbedBuilder()
+		.setTitle(`Message Deleted`)
+		.setColor(colors.main)
+		.setDescription(`Channel: <#${message.channel.id}>`)
+		.addFields({ name: 'Deleted Message', value: content ? content : 'N/A' })
+		.setTimestamp()
+		.setAuthor({ name: name, iconURL: aviURL });
 	if (message.attachments) {
 		getModChannels(message.client, message.guild.id).secondary.send({
 			embeds: [deleteEmbed],

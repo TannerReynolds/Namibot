@@ -15,12 +15,15 @@ async function defineTarget(interaction, type) {
 	if (!isSnowflake(userString)) {
 		return sendReply('error', 'This is not a valid user', type);
 	} else {
+		if (!extractSnowflake(userString)[0]) {
+			return sendReply('error', 'This is not a valid user', type);
+		}
 		return extractSnowflake(userString)[0];
 	}
 
 	function sendReply(color, message, type) {
 		let replyEmbed = new EmbedBuilder().setColor(colors[color]).setDescription(message).setTimestamp();
-		if (type || !type) {
+		if (!type) {
 			interaction.reply({ embeds: [replyEmbed] });
 		} else if (type.toLowerCase() === 'edit') {
 			interaction.editReply({ embeds: [replyEmbed] });

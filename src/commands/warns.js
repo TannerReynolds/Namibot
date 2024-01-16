@@ -13,13 +13,12 @@ module.exports = {
 		.setDescription("View a user's warnings")
 		.addStringOption(option => option.setName('user').setDescription('The user to view warns for').setRequired(true)),
 	async execute(interaction) {
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return interaction.editReply({
-				content: "You're not staff, idiot",
-				ephemeral: true,
-			});
-
+		await interaction.deferReply();
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
 		let target = await defineTarget(interaction, 'edit');
+		if (target === undefined) {
+			return sendReply('error', 'This user does not exist');
+		}
 
 		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
 		let name = interaction.user.username;
@@ -32,14 +31,18 @@ module.exports = {
 				},
 			});
 
-			if (!warnings) {
-				sendReply('main', 'This user has no warnings.');
+			if (!warnings || warnings === undefined) {
+				return sendReply('main', 'This user has no warnings.');
 			}
 
 			const formattedWarnings = warnings.map(warning => {
 				const formattedDate = warning.date.toISOString().split('T')[0].replace(/-/g, '/');
 				return [`ID: \`${warning.id}\` | Date: ${formattedDate}`, `Type: ${warning.type} | Staff: ${warning.moderator} | Reason: ${warning.reason}`];
 			});
+
+			if (formattedWarnings.length === 0) {
+				return sendReply('main', 'This user has no warnings.');
+			}
 
 			const warningsPerPage = 10;
 			const pages = [];
@@ -72,7 +75,7 @@ module.exports = {
 		function sendReply(type, message) {
 			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
 
-			interaction.reply({ embeds: [replyEmbed] });
+			interaction.editReply({ embeds: [replyEmbed] });
 		}
 	},
 };

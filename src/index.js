@@ -41,9 +41,24 @@ const client = new Client({
 	],
 });
 
-client.once(Events.ClientReady, c => {
+client.once(Events.ClientReady, async c => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
 	client.user.setActivity('you', { type: 'WATCHING' });
+
+	for (const guild of client.guilds.cache.values()) {
+		try {
+			await guild.members.fetch();
+			console.log(`Cached members for guild: ${guild.name}`);
+		} catch (err) {
+			console.error(`Error caching members for guild: ${guild.name}`, err);
+		}
+	}
+
+	checkAndUnbanUsers(client, getModChannels);
+	checkAndUnmuteUsers(client, getModChannels);
+	deleteTurtles();
+	wipeFailedJoins();
+
 	setInterval(everyMinute, 60000);
 	setInterval(everyHour, 3600000);
 
@@ -125,7 +140,6 @@ client.on(Events.MessageUpdate, async (oldMessage, message) => {
 
 client.on(Events.MessageCreate, async message => {
 	antiAds(message);
-	messageCreate(message);
 	messageEvents(message);
 });
 
@@ -136,20 +150,16 @@ client.on(Events.MessageDelete, async message => {
 
 async function messageEvents(message, oldMessage) {
 	if (!message.guild) return;
+	if (message.author.bot) return;
 	let content = message.content;
 	let guildMember = await message.guild.members.fetch(message.author.id);
+	turtleCheck(message, guildMember);
 	//Ignoring staff
 	if (!isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)) {
 		gifDetector(message);
 	}
 	//Not ignoring staff
 	await checkForInlineURLs(client, content, message, getModChannels);
-}
-
-async function messageCreate(message) {
-	if (!message.guild) return;
-	let guildMember = await message.guild.members.fetch(message.author.id);
-	turtleCheck(message, guildMember);
 }
 
 client.login(token);

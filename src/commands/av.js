@@ -22,6 +22,9 @@ module.exports = {
 			});
 
 		let target = await defineTarget(interaction, 'edit');
+		if (target === undefined) {
+			return sendReply('error', 'This user does not exist');
+		}
 		console.log(target);
 
 		let targetUser = await interaction.client.users.cache.get(target);
