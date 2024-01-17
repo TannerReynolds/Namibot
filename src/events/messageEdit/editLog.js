@@ -1,13 +1,16 @@
 const { getModChannels } = require('../../utils/getModChannels');
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/embedColors');
+const log = require('../../utils/log');
 
 async function editLog(message, oldMessage) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	let newContent = message.cleanContent;
 	let oldContent = oldMessage.cleanContent;
-	let aviURL = message.author.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+	let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+		? message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+		: message.author.defaultAvatarURL;
 	let name = message.author.username;
 	let newEmbed = new EmbedBuilder()
 		.setTitle(`Message Edited`)

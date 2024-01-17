@@ -6,6 +6,7 @@ const { guilds } = require('../config.json');
 const { getModChannels } = require('../utils/getModChannels');
 const prisma = new PrismaClient();
 const colors = require('../utils/embedColors');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,7 +16,7 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to unmute.').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply('error', 'This user does not exist');
@@ -28,7 +29,9 @@ module.exports = {
 			return sendReply('error', 'You or the bot does not have permissions to complete this action');
 		}
 
-		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			: interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 		let guildMember = await interaction.guild.members.fetch(target);
 

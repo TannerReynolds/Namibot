@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const colors = require('../utils/embedColors');
 const { guilds } = require('../config.json');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -21,30 +22,45 @@ module.exports = {
 		let guildChoice = await interaction.options.getString('server');
 		let reason = await interaction.options.getString('reason');
 		let guild = interaction.client.guilds.cache.get(guildChoice);
+		log.debug(`Getting guild name: ${guild.name}`);
 		let blacklist = ['201718554620329984'];
 		let blacklisted = blacklist.find(e => e === interaction.user.id);
 		if (blacklisted) {
+			log.debug(`User blacklisted user ID: ${interaction.user.id}`);
 			return interaction.editReply('You have been blacklisted from appealing.');
 		}
 
+		log.debug(`Looking for guild ban...`);
 		let ban = await guild.bans.fetch(interaction.user.id);
 
-		if (!ban) return interaction.editReply(`You are not banned from ${guild.name}`);
+		if (!ban) {
+			log.debug(`Did not find ban in ${guild.name} for ${interaction.user.username}`);
+			return interaction.editReply(`You are not banned from ${guild.name}`);
+		}
 
+		log.debug(`Getting debug channel...`);
 		let appealChannel = await guild.channels.cache.get(guilds[guildChoice].appealChannelID);
 
-		let dbBan = await prisma.ban.delete({
-			where: {
-				userID_guildId: {
-					userID: interaction.user.id,
-					guildId: guildChoice,
+		let dbBan = await prisma.ban
+			.delete({
+				where: {
+					userID_guildId: {
+						userID: interaction.user.id,
+						guildId: guildChoice,
+					},
 				},
-			},
-		});
+			})
+			.catch(e => {
+				log.error(`Error fetching ban: ${e}`);
+			});
 
-		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+		log.debug(`Getting avatar URL...`);
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			: interaction.user.defaultAvatarURL;
 
 		if (!dbBan) {
+			log.debug('No ban found...');
 			let logEmbed = new EmbedBuilder()
 				.setColor(colors.main)
 				.setTitle('New Ban Appeal')
@@ -53,12 +69,17 @@ module.exports = {
 				.setAuthor({ name: interaction.user.username, iconURL: aviURL })
 				.setTimestamp();
 
-			await appealChannel.send({
-				embeds: [logEmbed],
-				content: `<@${interaction.user.id}>`,
-			});
+			await appealChannel
+				.send({
+					embeds: [logEmbed],
+					content: `<@${interaction.user.id}>`,
+				})
+				.catch(e => {
+					log.error(`Error sending message to appeal channel: ${e}`);
+				});
 			await interaction.editReply('Appeal sent!');
 		} else {
+			log.debug('Ban found');
 			if (dbBan.endDate === new Date(2100, 0, 1)) dbBan.duration = 'Eternity';
 
 			let logEmbed = new EmbedBuilder()
@@ -74,10 +95,14 @@ module.exports = {
 				.setAuthor({ name: interaction.user.username, iconURL: aviURL })
 				.setTimestamp();
 
-			await appealChannel.send({
-				embeds: [logEmbed],
-				content: `<@${interaction.user.id}>`,
-			});
+			await appealChannel
+				.send({
+					embeds: [logEmbed],
+					content: `<@${interaction.user.id}>`,
+				})
+				.catch(e => {
+					log.error(`Error sending message to appeal channel: ${e}`);
+				});
 			await interaction.editReply('Appeal sent!');
 		}
 	},

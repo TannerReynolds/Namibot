@@ -7,6 +7,7 @@ const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');
 const { parseNewDate, durationToString, isValidDuration, durationToSec } = require('../utils/parseDuration');
 const { getModChannels } = require('../utils/getModChannels');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,7 +20,7 @@ module.exports = {
 		.addStringOption(option => option.setName('duration').setDescription('How long should this slowmode last ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply('error', 'This user does not exist');
@@ -54,10 +55,14 @@ module.exports = {
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
 
 		if (targetMember) {
-			await targetMember.send(`You have been turtleModed in ${interaction.guild.name} for \`${reason}\`. The length of your turtleMode is ${durationString}.`);
+			await targetMember.send(`You have been turtleModed in ${interaction.guild.name} for \`${reason}\`. The length of your turtleMode is ${durationString}.`).catch(e => {
+				log.debug("Couldn't send member TURTLE message");
+			});
 		}
 
-		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			: interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		let turtleEmbed = new EmbedBuilder()
@@ -85,6 +90,12 @@ module.exports = {
 			embeds: [logEmbed],
 			content: `<@${target}>`,
 		});
+
+		function sendReply(type, message) {
+			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
+
+			interaction.editReply({ embeds: [replyEmbed] });
+		}
 
 		if (duration !== 'infinite') {
 			await prisma.turtleMode.upsert({

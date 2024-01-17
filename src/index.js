@@ -29,6 +29,10 @@ const { deleteTurtles } = require(`${minute}deleteTurtles`);
 const { antiAds } = require(`${mCreate}antiAds`);
 const { deleteLog } = require(`${mDelete}deleteLog`);
 const { editLog } = require(`${mEdit}editLog`);
+const { initLog } = require(`${utils}initLog`);
+const log = require(`${utils}log`);
+
+initLog();
 
 const client = new Client({
 	intents: [
@@ -42,24 +46,26 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, async c => {
-	console.log(`Ready! Logged in as ${c.user.tag}`);
-	client.user.setActivity('you', { type: 'WATCHING' });
+	log.success(`Successfully connected to Discord! Logged in as ${c.user.tag}`);
+	client.user.setActivity({ name: 'over everyone', type: 3 });
 
 	for (const guild of client.guilds.cache.values()) {
 		try {
 			await guild.members.fetch();
-			console.log(`Cached members for guild: ${guild.name}`);
+			log.success(`Cached members for guild: ${guild.name}`);
 		} catch (err) {
-			console.error(`Error caching members for guild: ${guild.name}`, err);
+			log.error(`Error caching members for guild: ${guild.name}\n${err}`);
 		}
 	}
+
+	log.success(`Watching over ${client.guilds.cache.size} guilds and ${c.users.cache.size} users`);
 
 	checkAndUnbanUsers(client, getModChannels);
 	checkAndUnmuteUsers(client, getModChannels);
 	deleteTurtles();
 	wipeFailedJoins();
 
-	setInterval(everyMinute, 60000);
+	setInterval(everyMinute, 30000);
 	setInterval(everyHour, 3600000);
 
 	function everyMinute() {
@@ -83,15 +89,17 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
 	const command = require(filePath);
+	log.verbose(`Loaded Command: ${command.data.name}`);
 
 	if ('data' in command && 'execute' in command) {
 		client.commands.set(command.data.name, command);
 	} else {
-		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		log.warning(`The command at ${filePath} is missing a required "data" or "execute" property.`);
 	}
 }
 
 const ratelimited = new Set();
+const pingStaffRatelimited = new Set();
 
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
@@ -100,21 +108,30 @@ client.on(Events.InteractionCreate, async interaction => {
 		let cooldownEmbed = new EmbedBuilder().setTitle(`Please wait a few seconds before running another command!`).setColor(colors.main).setTimestamp();
 		return interaction.reply({ embeds: [cooldownEmbed] });
 	}
+	if (interaction.guild.id && pingStaffRatelimited.has(interaction.guild.id)) {
+		let cooldownEmbed = new EmbedBuilder().setTitle(`This command can only be ran once every 15 minutes in each guild`).setColor(colors.main).setTimestamp();
+		return interaction.reply({ embeds: [cooldownEmbed] });
+	}
 
 	ratelimited.add(interaction.user.id);
 	setTimeout(() => ratelimited.delete(interaction.user.id), 5000);
 
+	if (interaction.commandName === 'pingstaff' && interaction.guild.id) {
+		pingStaffRatelimited.add(interaction.guild.id);
+		setTimeout(() => pingStaffRatelimited.delete(interaction.guild.id), 900000);
+	}
+
 	const command = interaction.client.commands.get(interaction.commandName);
 
 	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
+		log.error(`No command matching ${interaction.commandName} was found.`);
 		return;
 	}
 
 	try {
 		await command.execute(interaction);
 	} catch (error) {
-		console.error(error);
+		log.error(error);
 		await interaction.reply({
 			content: 'There was an error while executing this command!',
 			ephemeral: true,
@@ -164,5 +181,10 @@ async function messageEvents(message, oldMessage) {
 
 client.login(token);
 
-process.on('unhandledRejection', async err => console.log(err.stack));
-process.on('uncaughtException', async err => console.log(err.stack));
+process.on('unhandledRejection', async err => {
+	log.error('Unhandled Rejection at:', err.stack || err);
+});
+
+process.on('uncaughtException', async err => {
+	log.error('Uncaught Exception thrown:', err.stack || err);
+});

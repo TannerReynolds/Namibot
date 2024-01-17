@@ -1,3 +1,4 @@
+const log = require('../../utils/log');
 async function gifDetector(message) {
 	if (message.attachments) {
 		let hasGif = message.attachments.find(a => a.contentType.toLowerCase() === 'image/gif');

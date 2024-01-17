@@ -1,12 +1,13 @@
 const { getModChannels } = require('../../utils/getModChannels');
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/embedColors');
+const log = require('../../utils/log');
 
 async function deleteLog(message) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	let content = message.cleanContent;
-	let aviURL = message.author.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+	let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 });
 	let name = message.author.username;
 	let deleteEmbed = new EmbedBuilder()
 		.setTitle(`Message Deleted`)

@@ -4,6 +4,7 @@ const axios = require('axios');
 const { defineTarget } = require('../utils/defineTarget');
 const { guilds } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -14,32 +15,45 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 
+		log.debug('Getting command channel');
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
+		log.debug(`Command channel: ${commandChannel}`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
 			return interaction.editReply({
 				content: `You have to go to the <#${commandChannel}> channel to use this command`,
 				ephemeral: true,
 			});
 
+		log.debug(`Getting Target...`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
+			log.debug(`Target undefined`);
 			return sendReply('error', 'This user does not exist');
 		}
-		console.log(target);
+		log.debug(`Target: ${target}`);
 
+		log.debug(`Getting Target User`);
 		let targetUser = await interaction.client.users.cache.get(target);
 
-		if (!targetUser) return interaction.editReply("Bot cannot access this user's data");
+		if (!targetUser) {
+			log.debug(`Could not get target user`);
+			return interaction.editReply("Bot cannot access this user's data");
+		}
 
-		let pfpURL = targetUser.avatarURL({ format: 'png', size: 1024, dynamic: false }).replace('webp', 'png');
+		log.debug(`Target user username: ${targetUser.username}`);
+		log.debug(`Getting pfpURL...`);
+
+		let pfpURL = targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : targetUser.defaultAvatarURL;
+		log.debug(`Downloading pfp URL: ${pfpURL}`);
 		let pfpBuffer = await downloadImage(pfpURL);
 		async function downloadImage(url) {
 			try {
 				const response = await axios.get(url, { responseType: 'arraybuffer' });
 				const buffer = Buffer.from(response.data, 'binary');
+				log.debug(`Got buffer`);
 				return buffer;
 			} catch (error) {
-				console.error('Error downloading image:', error);
+				log.error(`Error downloading image: ${error}`);
 			}
 		}
 

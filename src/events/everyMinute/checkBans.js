@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const colors = require('../../utils/embedColors');
 const { EmbedBuilder } = require('discord.js');
+const log = require('../../utils/log');
 
 async function checkAndUnbanUsers(client, getModChannels) {
 	try {
@@ -20,7 +21,7 @@ async function checkAndUnbanUsers(client, getModChannels) {
 		for (let ban of expiredBans) {
 			let guild = client.guilds.cache.get(ban.guildId);
 
-			let aviURL = client.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+			let aviURL = client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 });
 
 			isBanned = await guild.bans.fetch(ban.userID);
 
@@ -65,7 +66,7 @@ async function checkAndUnbanUsers(client, getModChannels) {
 			});
 		}
 	} catch (error) {
-		console.error('Failed to check and unban users:', error);
+		log.error('Failed to check and unban users:', error);
 	}
 }
 

@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const log = require('../../utils/log');
 
 async function turtleCheck(message, guildMember) {
 	let turtled = await prisma.turtleMode.findUnique({

@@ -5,6 +5,7 @@ const { PrismaClient } = require('@prisma/client');
 const { getModChannels } = require('../utils/getModChannels');
 const prisma = new PrismaClient();
 const colors = require('../utils/embedColors.js');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,10 +16,10 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for warning this user').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			sendReply('error', 'This user does not exist');
+			return sendReply('error', 'This user does not exist');
 		}
 
 		let targetMember = await interaction.guild.members.fetch(target);
@@ -31,10 +32,14 @@ module.exports = {
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
 
 		if (targetMember) {
-			await targetMember.send(`You have been warned in ${interaction.guild.name} for \`${reason}\`.`);
+			await targetMember.send(`You have been warned in ${interaction.guild.name} for \`${reason}\`.`).catch(e => {
+				log.debug("Couldn't send user WARN message");
+			});
 		}
 
-		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			: interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		let warnEmbed = new EmbedBuilder().setTitle(`User Warned`).setColor(colors.main).setDescription(`Warned <@${target}>. Reason: ${reason}`).setTimestamp().setAuthor({ name: name, iconURL: aviURL });

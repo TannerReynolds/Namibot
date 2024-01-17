@@ -6,6 +6,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const colors = require('../utils/embedColors');
 const { getModChannels } = require('../utils/getModChannels');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,7 +17,7 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for subjecting this user to fate').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply('error', 'This user does not exist');
@@ -28,7 +29,9 @@ module.exports = {
 			return sendReply('error', 'You or the bot does not have permissions to complete this action');
 		}
 
-		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			: interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		const reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';

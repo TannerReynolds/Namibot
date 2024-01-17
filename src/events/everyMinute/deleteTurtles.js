@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const log = require('../../utils/log');
 
 async function deleteTurtles() {
 	try {
@@ -26,7 +27,7 @@ async function deleteTurtles() {
 			});
 		}
 	} catch (error) {
-		console.error('Failed to unturtle users:', error);
+		log.error('Failed to unturtle users:', error);
 	}
 }
 

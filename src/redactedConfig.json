@@ -1,7 +1,8 @@
 {
-    "token": "redacted",
+    "token": "TOKEN HERE",
     "clientId": "1104630573772841070",
-    "guildId": "1061175459112550490",
+    "guildId": "1190156169961029774",
+    "botOwnerID": "478044823882825748",
     "appealServer": "https://discord.gg/wJhppSMHpG",
     "guilds": {
       "438650836512669699": {
@@ -27,7 +28,7 @@
         "muteRoleID": "1174259360541708299"
       },
       "1190156169961029774": {
-        "name": "Test",
+        "name": "Fern's Appeals",
         "invite": "https://discord.gg/JRqbHA5gbv",
         "guildID": "1190156169961029774",
         "mainLogChannelID": "1193380148104396963",

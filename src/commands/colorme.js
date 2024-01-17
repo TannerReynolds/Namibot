@@ -1,6 +1,8 @@
-const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType, EmbedBuilder } = require('discord.js');
+const colors = require('../utils/embedColors');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder().setDMPermission(false).setName('colorme').setDescription('Select a color for yourself!'),
@@ -61,7 +63,7 @@ module.exports = {
 
 			await delRole();
 			await interaction.member.roles.add(selection);
-			let roleGiveEmbed = baseEmbed.setTitle('New color given!');
+			let roleGiveEmbed = new EmbedBuilder().setColor(colors.main).setTitle('New color given!');
 			await i.editReply({ embeds: [roleGiveEmbed] }).then(m => {
 				setTimeout(function () {
 					m.delete();

@@ -1,4 +1,5 @@
 const { remove } = require('confusables');
+const log = require('../../utils/log');
 
 async function wordFilter(content, message, modChannels) {
 	let preProcessedContent = content;
@@ -60,7 +61,6 @@ async function wordFilter(content, message, modChannels) {
 	bannedsearch: for (let word of words) {
 		counter++;
 		if (counter > 30000) {
-			console.log('hitting counter limit, stopping');
 			break;
 		}
 
@@ -114,7 +114,7 @@ async function wordFilter(content, message, modChannels) {
 
 		for (let bannedWord of bannedWords) {
 			if (word.toLowerCase().includes(bannedWord.toLowerCase())) {
-				console.log(`Banned word detected: ${bannedWord} in ${word}`);
+				log.debug(`Banned word detected: ${bannedWord} in ${word}`);
 				message.reply('Banned word detected, please read and follow our rules regarding allowed language.').then(r => {
 					modChannels[message.guild.id].send(`<@${message.author.id}>(${message.author.id}) sent banned word: \`${word}\``);
 					message.delete();

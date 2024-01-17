@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const log = require('../../utils/log');
 
 async function wipeFailedJoins() {
 	let oneHourAgo = new Date();
@@ -14,7 +15,7 @@ async function wipeFailedJoins() {
 			},
 		});
 	} catch (error) {
-		console.error('Error deleting old failed joins:', error);
+		log.error('Error deleting old failed joins:', error);
 	}
 }
 

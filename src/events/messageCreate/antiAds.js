@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 const { guilds } = require('../../config.json');
 const colors = require('../../utils/embedColors');
 const { getModChannels } = require('../../utils/getModChannels');
+const log = require('../../utils/log');
 
 const advertised = new Set();
 

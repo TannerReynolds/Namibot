@@ -3,6 +3,7 @@ const { isStaff, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const colors = require('../utils/embedColors');
 const { guilds } = require('../config.json');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,7 +14,7 @@ module.exports = {
 		.addRoleOption(option => option.setName('role').setDescription('The role to remove').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return interaction.sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply('error', 'This user does not exist');
@@ -46,7 +47,9 @@ module.exports = {
 		if (selectedRole.permissions.has(PermissionFlagsBits.MentionEveryone)) return sendReply('error', 'You cannot remove roles with the Mention Everyone permission');
 		if (selectedRole.permissions.has(PermissionFlagsBits.ManageNicknames)) return sendReply('error', 'You cannot remove roles with the Manage Nicknames permission');
 
-		let aviURL = interaction.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+			: interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		targetMember.roles

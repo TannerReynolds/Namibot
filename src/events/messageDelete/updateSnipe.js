@@ -1,9 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const log = require('../../utils/log');
 
 async function updateSnipe(message) {
 	let guildMember = await message.guild.members.fetch(message.author.id);
-	let aviURL = await guildMember.user.avatarURL({ format: 'png', dynamic: false }).replace('webp', 'png');
+	let aviURL = await guildMember.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 });
 
 	try {
 		// Check if the channel exists

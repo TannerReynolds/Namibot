@@ -2,6 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff.js');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder().setDMPermission(false).setName('snipe').setDescription('snipe the last deleted message (will not send attachments)'),

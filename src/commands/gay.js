@@ -4,6 +4,7 @@ const { createCanvas, Image } = require('canvas');
 const axios = require('axios');
 const { guilds } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder().setDMPermission(false).setName('gay').setDescription('Make your pfp gay'),

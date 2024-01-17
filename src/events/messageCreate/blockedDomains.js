@@ -1,4 +1,5 @@
 const { domains } = require('../../utils/blockedDomains.json');
+const log = require('../../utils/log');
 
 async function blockedDomains(message) {
 	if (!message.guild) return;

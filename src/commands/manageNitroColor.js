@@ -3,6 +3,7 @@ const { checkPermissions } = require('../utils/permissionsCheck.js');
 const { isSnowflake, isEmoji } = require('../utils/validate.js');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -62,7 +63,7 @@ module.exports = {
 				});
 				sendReply(interaction, 'success', 'Deleted role from list!');
 			} catch (err) {
-				console.log(err);
+				log.debug(err);
 				sendReply(interaction, 'error', 'Could not delete role');
 			}
 		}
