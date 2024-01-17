@@ -1,6 +1,8 @@
 # Moderation
 ### Custom moderation bot for the Learn Japanese and Car Community Discord servers
 
+![init](https://cdn.tokyo.jp/rE61W)
+
 ## Self Hosting
 Self hosting is not supported. You are free to host an instance of this bot for your own server if you understand how it works and how to configure it. You will not receieve any help from the developer.
 
