@@ -35,7 +35,7 @@ function debugMode() {
 }
 const beginningArrow = `${fg.red}  |> ${endColor}`;
 
-function uncaughtError(log) {
+function error(log) {
 	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${log}${endColor}`);
 }
 function success(log) {
@@ -84,7 +84,7 @@ function debug(log) {
 	}
 }
 module.exports = {
-	uncaughtError,
+	error,
 	success,
 	warning,
 	verbose,

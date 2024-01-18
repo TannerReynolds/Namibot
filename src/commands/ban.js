@@ -26,7 +26,7 @@ module.exports = {
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			log.debug(`Target is undefined`);
-			return sendReply('error', 'This user does not exist');
+			return;
 		}
 
 		log.debug(`Getting target Member...`);

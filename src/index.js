@@ -182,9 +182,35 @@ async function messageEvents(message, oldMessage) {
 client.login(token);
 
 process.on('unhandledRejection', async err => {
-	log.error('Unhandled Rejection at:', err.stack || err);
+	const fg = {
+		red: '\x1b[31m',
+	};
+	const bg = {
+		red: '\x1b[41m',
+	};
+	const endColor = '\x1b[0m';
+	const beginningArrow = `${fg.red}  |> ${endColor}`;
+	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${err.stack}${endColor}`);
 });
 
 process.on('uncaughtException', async err => {
-	log.error('Uncaught Exception thrown:', err.stack || err);
+	const fg = {
+		red: '\x1b[31m',
+	};
+	const bg = {
+		red: '\x1b[41m',
+	};
+	const endColor = '\x1b[0m';
+	const beginningArrow = `${fg.red}  |> ${endColor}`;
+	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${err.stack}${endColor}`);
 });
+
+function timestamp() {
+	const time = new Date();
+	return time.toLocaleString('en-US', {
+		hour: 'numeric',
+		minute: 'numeric',
+		second: 'numeric',
+		hour12: true,
+	});
+}
