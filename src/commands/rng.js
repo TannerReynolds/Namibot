@@ -23,7 +23,18 @@ module.exports = {
 			return sendReply('error', 'This user does not exist');
 		}
 
-		let targetMember = await interaction.guild.members.fetch(target);
+		let targetMember;
+
+		try {
+			targetMember = await interaction.guild.members.fetch(target);
+		} catch (error) {
+			if (error.message.toLowerCase().includes('unknown member')) {
+				targetMember = false;
+			} else {
+				targetMember = false;
+				log.debug(`failed to fetch member`);
+			}
+		}
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
 			return sendReply('error', 'You or the bot does not have permissions to complete this action');

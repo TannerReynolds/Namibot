@@ -30,7 +30,19 @@ module.exports = {
 		}
 
 		log.debug(`Getting target Member...`);
-		let targetMember = await interaction.guild.members.fetch(target);
+		let targetMember;
+
+		try {
+			targetMember = await interaction.guild.members.fetch(target);
+		} catch (error) {
+			if (error.message.toLowerCase().includes('unknown member')) {
+				targetMember = false;
+			} else {
+				targetMember = false;
+				log.debug(`failed to fetch member`);
+			}
+		}
+
 		if (targetMember) {
 			log.debug(`Found target member: ${targetMember.user.username}`);
 			let canDoAction = await hasHigherPerms(interaction.member, targetMember);

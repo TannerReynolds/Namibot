@@ -25,7 +25,18 @@ module.exports = {
 			return sendReply('error', 'This user does not exist');
 		}
 
-		let targetMember = await interaction.guild.members.fetch(target);
+		let targetMember;
+
+		try {
+			targetMember = await interaction.guild.members.fetch(target);
+		} catch (error) {
+			if (error.message.toLowerCase().includes('unknown member')) {
+				targetMember = false;
+			} else {
+				targetMember = false;
+				log.debug(`failed to fetch member`);
+			}
+		}
 		if (!targetMember) return sendReply('error', 'This user is not a guild member');
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {

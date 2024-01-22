@@ -36,9 +36,17 @@ async function defineTarget(interaction, type) {
 
 		if (input.includes('#')) {
 			const [username, discriminator] = input.split('#');
-			member = interaction.guild.members.cache.find(member => member.user.username.toLowerCase() === username && member.user.discriminator === discriminator);
+			try {
+				member = interaction.guild.members.cache.find(member => member.user.username.toLowerCase() === username && member.user.discriminator === discriminator);
+			} catch (error) {
+				member = false;
+			}
 		} else {
-			member = interaction.guild.members.cache.find(member => member.user.username.toLowerCase() === input);
+			try {
+				member = interaction.guild.members.cache.find(member => member.user.username.toLowerCase() === input);
+			} catch (error) {
+				member = false;
+			}
 		}
 
 		return member ? member.user.id : null;

@@ -60,7 +60,7 @@ function verbose(log) {
  */
 
 function debug(log) {
-	const fs = require('fs');
+	//const fs = require('fs');
 	// Only log the error if the application is in debug mode
 	if (debugMode()) {
 		// Create a new error so that we can extract the file name and line number
@@ -75,12 +75,13 @@ function debug(log) {
 		console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.yellow} | Location: ${lineInfo}${endColor}`);
 		console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.black}${bg.yellow} | ${log}${endColor}${endColor}`);
 
+		/*
 		try {
 			// Write the debug log to the file
 			fs.appendFileSync('debug.log', `Location: ${lineInfo}\n[${timestamp()}] | ${log}\n\n`);
 		} catch (error) {
 			console.error(`An error occurred while writing to the log file: ${error}`);
-		}
+		}*/
 	}
 }
 module.exports = {
