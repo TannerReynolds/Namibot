@@ -25,12 +25,14 @@ const { updateSnipe } = require(`${mDelete}updateSnipe`);
 const { checkAccountAge } = require(`${gMemberAdd}checkAccountAge`);
 const { wipeFailedJoins } = require(`${hour}wipeFailedJoins`);
 const { turtleCheck } = require(`${mCreate}turtleCheck`);
+const { fileTypeChecker } = require(`${mCreate}fileTypeChecker`);
 const { deleteTurtles } = require(`${minute}deleteTurtles`);
 const { antiAds } = require(`${mCreate}antiAds`);
 const { deleteLog } = require(`${mDelete}deleteLog`);
 const { editLog } = require(`${mEdit}editLog`);
 const { initLog } = require(`${utils}initLog`);
 const log = require(`${utils}log`);
+const axios = require('axios');
 
 initLog();
 
@@ -42,12 +44,20 @@ const client = new Client({
 		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.DirectMessages,
 		GatewayIntentBits.AutoModerationConfiguration,
+		GatewayIntentBits.AutoModerationExecution,
+		GatewayIntentBits.GuildModeration,
 	],
 });
 
 client.once(Events.ClientReady, async c => {
 	log.success(`Successfully connected to Discord! Logged in as ${c.user.tag}`);
 	client.user.setActivity({ name: 'over everyone', type: 3 });
+
+	let startTime = Date.now();
+	let response = await axios.get('https://discord.com/api/v9/gateway');
+	let latency = Date.now() - startTime;
+	log.verbose(`Discord API Response Time: ${latency}ms`);
+	log.verbose(`Discord Websocket Ping: ${client.ws.ping}ms`);
 
 	for (const guild of client.guilds.cache.values()) {
 		try {
@@ -102,7 +112,7 @@ const ratelimited = new Set();
 const pingStaffRatelimited = new Set();
 
 client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
+	//if (!interaction.isChatInputCommand()) return;
 
 	if (ratelimited.has(interaction.user.id)) {
 		let cooldownEmbed = new EmbedBuilder().setTitle(`Please wait a few seconds before running another command!`).setColor(colors.main).setTimestamp();
@@ -161,7 +171,7 @@ client.on(Events.MessageCreate, async message => {
 });
 
 client.on(Events.MessageDelete, async message => {
-	updateSnipe(message);
+	//updateSnipe(message);
 	deleteLog(message);
 });
 
@@ -170,6 +180,7 @@ async function messageEvents(message, oldMessage) {
 	if (message.author.bot) return;
 	let content = message.content;
 	let guildMember = await message.guild.members.fetch(message.author.id);
+	fileTypeChecker(message);
 	turtleCheck(message, guildMember);
 	//Ignoring staff
 	if (!isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)) {

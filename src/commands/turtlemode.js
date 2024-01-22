@@ -86,6 +86,12 @@ module.exports = {
 			.setAuthor({ name: name, iconURL: aviURL })
 			.setTimestamp();
 
+		if (targetMember) {
+			logEmbed.setThumbnail(
+				targetMember.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? targetMember.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : targetMember.defaultAvatarURL
+			);
+		}
+
 		getModChannels(interaction.client, interaction.guild.id).main.send({
 			embeds: [logEmbed],
 			content: `<@${target}>`,

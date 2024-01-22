@@ -63,6 +63,7 @@ async function checkAccountAge(member) {
 					let logEmbed = new EmbedBuilder()
 						.setColor(colors.main)
 						.setTitle('Member Banned')
+						.setThumbnail(member.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? member.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : member.defaultAvatarURL)
 						.addFields({ name: 'User', value: member.user.id }, { name: 'Reason', value: `Suspected bot account` }, { name: 'Ban Duration', value: 'Eternity' }, { name: 'Moderator', value: 'System' })
 						.setTimestamp();
 

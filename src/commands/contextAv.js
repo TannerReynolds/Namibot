@@ -1,17 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
+const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
 const colors = require('../utils/embedColors.js');
 const axios = require('axios');
-const { defineTarget } = require('../utils/defineTarget');
 const { guilds } = require('../config.json');
-const { isStaff } = require('../utils/isStaff');
-const log = require('../utils/log');
+const { isStaff } = require('../utils/isStaff.js');
+const log = require('../utils/log.js');
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('av')
-		.setDMPermission(false)
-		.setDescription("Get a member's Avatar")
-		.addStringOption(option => option.setName('user').setDescription('The user to get the AV from').setRequired(true)),
+	data: new ContextMenuCommandBuilder().setName('Get Avatar').setDMPermission(false).setType(ApplicationCommandType.User),
 	async execute(interaction) {
 		await interaction.deferReply();
 
@@ -25,15 +20,12 @@ module.exports = {
 			});
 
 		log.debug(`Getting Target...`);
-		let target = await defineTarget(interaction, 'edit');
-		if (target === undefined) {
+		let targetUser = interaction.targetUser;
+		if (targetUser === undefined) {
 			log.debug(`Target undefined`);
 			return sendReply('error', 'This user does not exist');
 		}
-		log.debug(`Target: ${target}`);
-
-		log.debug(`Getting Target User`);
-		let targetUser = await interaction.client.users.cache.get(target);
+		log.debug(`Target: ${targetUser}`);
 
 		if (!targetUser) {
 			log.debug(`Could not get target user`);
@@ -46,7 +38,6 @@ module.exports = {
 		let pfpURL = targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : targetUser.defaultAvatarURL;
 
 		let avEmbed = new EmbedBuilder().setColor(colors.main).setImage(pfpURL);
-
 		interaction.editReply({
 			embeds: [avEmbed],
 			fetchReply: false,

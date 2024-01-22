@@ -1,5 +1,6 @@
 const { DateTime, Duration } = require('luxon');
 const { toENTime } = require('./toEN');
+const log = require('./log');
 
 const regexes = {
 	years: /(\d+y)/i,
@@ -12,9 +13,12 @@ const regexes = {
 };
 
 async function parseNewDate(duration) {
+	log.debug('Checking to see if date is Japanese');
 	if (isJP(duration)) duration = await toENTime(duration);
+	log.debug('Converting "m" to "mi" in parseNewDate');
 	duration = await mToMi(duration);
 	const parsedValues = {};
+	log.debug(`Parsed values: ${parsedValues}`);
 
 	for (const key in regexes) {
 		const match = duration.match(regexes[key]);
@@ -26,7 +30,16 @@ async function parseNewDate(duration) {
 	let parsedDuration = Duration.fromObject(parsedValues);
 	let now = DateTime.local();
 	let nwd = now.plus(parsedDuration).toJSDate();
+	log.debug('checking nwd');
 
+	if (!nwd) return new Date(2100, 0, 1);
+	log.debug('nwd exists');
+	if (now.setFullYear(now.getFullYear() + 10) < nwd) {
+		log.debug(`nwd longer than 10 years: ${nwd}`);
+		return new Date(2100, 0, 1);
+	}
+
+	log.debug(`Returning nwd: ${nwd}`);
 	return nwd;
 }
 async function durationToString(duration) {
