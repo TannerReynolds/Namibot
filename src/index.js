@@ -21,13 +21,14 @@ const { gifDetector } = require(`${mCreate}gifDetector`);
 const { checkForInlineURLs } = require(`${mCreate}hiddenLinkDetection`);
 const { getModChannels } = require(`${utils}getModChannels`);
 const { isStaff } = require(`${utils}isStaff`);
-const { updateSnipe } = require(`${mDelete}updateSnipe`);
+//const { updateSnipe } = require(`${mDelete}updateSnipe`);
 const { checkAccountAge } = require(`${gMemberAdd}checkAccountAge`);
 const { wipeFailedJoins } = require(`${hour}wipeFailedJoins`);
 const { turtleCheck } = require(`${mCreate}turtleCheck`);
 const { fileTypeChecker } = require(`${mCreate}fileTypeChecker`);
 const { deleteTurtles } = require(`${minute}deleteTurtles`);
 const { antiAds } = require(`${mCreate}antiAds`);
+const { checkHighlights } = require(`${mCreate}checkHighlights`);
 const { deleteLog } = require(`${mDelete}deleteLog`);
 const { editLog } = require(`${mEdit}editLog`);
 const { initLog } = require(`${utils}initLog`);
@@ -168,6 +169,7 @@ client.on(Events.MessageUpdate, async (oldMessage, message) => {
 client.on(Events.MessageCreate, async message => {
 	antiAds(message);
 	messageEvents(message);
+	checkHighlights(message);
 });
 
 client.on(Events.MessageDelete, async message => {
@@ -192,27 +194,19 @@ async function messageEvents(message, oldMessage) {
 
 client.login(token);
 
+
+const fg = {
+	red: '\x1b[31m',
+};
+const bg = {
+	red: '\x1b[41m',
+};
+const endColor = '\x1b[0m';
+const beginningArrow = `${fg.red}  |> ${endColor}`;
 process.on('unhandledRejection', async err => {
-	const fg = {
-		red: '\x1b[31m',
-	};
-	const bg = {
-		red: '\x1b[41m',
-	};
-	const endColor = '\x1b[0m';
-	const beginningArrow = `${fg.red}  |> ${endColor}`;
 	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${err.stack}${endColor}`);
 });
-
 process.on('uncaughtException', async err => {
-	const fg = {
-		red: '\x1b[31m',
-	};
-	const bg = {
-		red: '\x1b[41m',
-	};
-	const endColor = '\x1b[0m';
-	const beginningArrow = `${fg.red}  |> ${endColor}`;
 	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${err.stack}${endColor}`);
 });
 

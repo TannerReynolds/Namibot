@@ -29,12 +29,13 @@ async function parseNewDate(duration) {
 
 	let parsedDuration = Duration.fromObject(parsedValues);
 	let now = DateTime.local();
+	let nowJS = new Date();
 	let nwd = now.plus(parsedDuration).toJSDate();
 	log.debug('checking nwd');
 
 	if (!nwd) return new Date(2100, 0, 1);
 	log.debug('nwd exists');
-	if (now.setFullYear(now.getFullYear() + 10) < nwd) {
+	if (nowJS.setFullYear(nowJS.getFullYear() + 10) < nwd) {
 		log.debug(`nwd longer than 10 years: ${nwd}`);
 		return new Date(2100, 0, 1);
 	}

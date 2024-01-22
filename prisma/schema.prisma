@@ -20,6 +20,7 @@ model Guild {
     mutedRole   String?
     colors      NitroColor[]
     failedJoins FailedJoin[]
+    highlights  Highlight[]
 
     @@unique(id)
     @@index(id)
@@ -62,7 +63,6 @@ model NitroColor {
 
 model Member {
     id         String      @id
-    highlights Highlight[]
 
     @@unique(id)
     @@index(id)
@@ -111,9 +111,11 @@ model TurtleMode {
 model Highlight {
     id       Int     @id @default(autoincrement())
     phrase   String
-    guildID  String
-    Member   Member? @relation(fields: [memberId], references: [id])
-    memberId String?
+    userID   String
+    Guild     Guild    @relation(fields: [guildId], references: [id])
+    guildId   String
+
+    @@index([guildId])
 }
 
 model Warning {
