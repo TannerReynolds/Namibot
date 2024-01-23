@@ -1,7 +1,6 @@
 const { isStaff } = require('../../utils/isStaff');
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../../utils/prismaClient');
 const { guilds } = require('../../config.json');
 const colors = require('../../utils/embedColors');
 const { getModChannels } = require('../../utils/getModChannels');
@@ -11,6 +10,7 @@ const advertised = new Set();
 
 function antiAds(message) {
 	if (!message.channel.guild) return;
+	if (message.author.bot) return;
 	log.debug(`Checking message content for advertisements: ${message.content}`);
 	if (!message.content.toLowerCase().includes('discord')) {
 		return log.debug("Didn't include word Discord");

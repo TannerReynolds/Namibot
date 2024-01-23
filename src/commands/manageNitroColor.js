@@ -1,8 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { checkPermissions } = require('../utils/permissionsCheck.js');
 const { isSnowflake, isEmoji } = require('../utils/validate.js');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../utils/prismaClient');
 const log = require('../utils/log');
 
 module.exports = {

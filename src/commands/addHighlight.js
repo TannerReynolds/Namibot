@@ -2,8 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff } = require('../utils/isStaff');
 const colors = require('../utils/embedColors');
 const log = require('../utils/log');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../utils/prismaClient');
 
 module.exports = {
 	data: new SlashCommandBuilder()

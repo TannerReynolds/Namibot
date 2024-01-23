@@ -1,6 +1,8 @@
 const log = require('../../utils/log');
 
 async function gifDetector(message) {
+	if (!message.channel.guild) return;
+	if (message.author.bot) return;
 	log.debug('Starting gif detection');
 	let hasGif = false;
 	let allowedChannels = ['438653183464701963', '438652906116481025'];

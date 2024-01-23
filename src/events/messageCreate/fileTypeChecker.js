@@ -1,6 +1,8 @@
 const log = require('../../utils/log');
 
 async function fileTypeChecker(message) {
+	if (!message.channel.guild) return;
+	if (message.author.bot) return;
 	log.debug('Starting file type detection');
 	let hasFile = false;
 

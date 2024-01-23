@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff, hasHigherPerms } = require('../utils/isStaff.js');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../utils/prismaClient');
 const colors = require('../utils/embedColors');
 const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');

@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../../utils/prismaClient');
 const colors = require('../../utils/embedColors');
 const { EmbedBuilder } = require('discord.js');
 const { guilds } = require('../../config.json');
@@ -9,31 +8,48 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 	try {
 		let now = new Date();
 
-		let expiredMutes = await prisma.mute.findMany({
-			where: {
-				endDate: {
-					lt: now,
+		let expiredMutes = await prisma.mute
+			.findMany({
+				where: {
+					endDate: {
+						lt: now,
+					},
 				},
-			},
-		});
+			})
+			.catch(e => {
+				log.debug(`Couldn't get expired mutes`);
+			});
 
 		if (!expiredMutes) return;
 
 		for (let mute of expiredMutes) {
-			let guild = client.guilds.cache.get(mute.guildId);
-
-			let aviURL = client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 });
-
-			await prisma.mute.delete({
-				where: {
-					userID_guildId: {
-						userID: mute.userID,
-						guildId: mute.guildId,
-					},
-				},
+			let guild = client.guilds.cache.get(mute.guildId).catch(e => {
+				return log.error(`Couldn't get guild: ${e}`);
 			});
 
-			let guildMember = await guild.members.fetch(mute.userID);
+			let aviURL = client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+				? client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+				: client.user.defaultAvatarURL;
+
+			await prisma.mute
+				.delete({
+					where: {
+						userID_guildId: {
+							userID: mute.userID,
+							guildId: mute.guildId,
+						},
+					},
+				})
+				.catch(e => {
+					log.error(`Couldn't delete mute record`);
+				});
+
+			let guildMember = false;
+			try {
+				guildMember = await guild.members.fetch(mute.userID);
+			} catch (e) {
+				return log.debug(`couldn't get guildMember object for muted member`);
+			}
 
 			guildMember.roles.remove(guilds[mute.guildId].muteRoleID).then(user => {
 				let logEmbed = new EmbedBuilder()
@@ -48,14 +64,18 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 					.setAuthor({ name: client.user.username, iconURL: aviURL })
 					.setTimestamp();
 
-				getModChannels(client, mute.guildId).main.send({
-					embeds: [logEmbed],
-					content: `<@${mute.userID}>`,
-				});
+				getModChannels(client, mute.guildId)
+					.main.send({
+						embeds: [logEmbed],
+						content: `<@${mute.userID}>`,
+					})
+					.catch(e => {
+						return log.error(e);
+					});
 			});
 		}
 	} catch (error) {
-		log.error('Failed to check and unmute users:', error);
+		return log.error('Failed to check and unmute users:', error);
 	}
 }
 

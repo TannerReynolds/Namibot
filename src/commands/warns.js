@@ -1,8 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff.js');
 const { defineTarget } = require('../utils/defineTarget');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../utils/prismaClient');
 const colors = require('../utils/embedColors.js');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const log = require('../utils/log');

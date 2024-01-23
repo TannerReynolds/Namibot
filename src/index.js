@@ -17,6 +17,7 @@ const colors = require(`${utils}embedColors`);
 const { token } = require('./config.json');
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);
 const { checkAndUnmuteUsers } = require(`${minute}checkMutes`);
+const { refreshHighlightsCache } = require(`${minute}refreshHighlightsCache`);
 const { gifDetector } = require(`${mCreate}gifDetector`);
 const { checkForInlineURLs } = require(`${mCreate}hiddenLinkDetection`);
 const { getModChannels } = require(`${utils}getModChannels`);
@@ -53,6 +54,7 @@ const client = new Client({
 client.once(Events.ClientReady, async c => {
 	log.success(`Successfully connected to Discord! Logged in as ${c.user.tag}`);
 	client.user.setActivity({ name: 'over everyone', type: 3 });
+	await refreshHighlightsCache(client);
 
 	let startTime = Date.now();
 	let response = await axios.get('https://discord.com/api/v9/gateway');
@@ -71,21 +73,22 @@ client.once(Events.ClientReady, async c => {
 
 	log.success(`Watching over ${client.guilds.cache.size} guilds and ${c.users.cache.size} users`);
 
-	checkAndUnbanUsers(client, getModChannels);
-	checkAndUnmuteUsers(client, getModChannels);
-	deleteTurtles();
-	wipeFailedJoins();
+	await checkAndUnbanUsers(client, getModChannels);
+	await checkAndUnmuteUsers(client, getModChannels);
+	await deleteTurtles();
+	await wipeFailedJoins();
 
 	setInterval(everyMinute, 30000);
 	setInterval(everyHour, 3600000);
 
-	function everyMinute() {
-		checkAndUnbanUsers(client, getModChannels);
-		checkAndUnmuteUsers(client, getModChannels);
-		deleteTurtles();
+	async function everyMinute() {
+		await checkAndUnbanUsers(client, getModChannels);
+		await checkAndUnmuteUsers(client, getModChannels);
+		await deleteTurtles();
+		await refreshHighlightsCache(client);
 	}
-	function everyHour() {
-		wipeFailedJoins();
+	async function everyHour() {
+		await wipeFailedJoins();
 	}
 });
 
@@ -162,39 +165,45 @@ client.on(Events.InteractionCreate, async interaction => {
 // Join/Leave Events
 
 client.on(Events.GuildMemberAdd, async member => {
-	checkAccountAge(member);
+	await checkAccountAge(member);
 });
 
 //////////////////////////////////////
 // Message events
 
 client.on(Events.MessageUpdate, async (oldMessage, message) => {
-	antiAds(message);
-	messageEvents(message, oldMessage);
-	editLog(message, oldMessage);
+	if (!message.guild) return;
+	if (message.author.bot) return;
+	await antiAds(message);
+	await messageEvents(message, oldMessage);
+	await editLog(message, oldMessage);
 });
 
 client.on(Events.MessageCreate, async message => {
-	antiAds(message);
-	messageEvents(message);
-	checkHighlights(message);
+	if (!message.guild) return;
+	if (message.author.bot) return;
+	await antiAds(message);
+	await messageEvents(message);
+	await checkHighlights(message);
 });
 
 client.on(Events.MessageDelete, async message => {
+	if (!message.guild) return;
+	if (message.author.bot) return;
 	//updateSnipe(message);
-	deleteLog(message);
+	await deleteLog(message);
 });
 
 async function messageEvents(message, oldMessage) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	let content = message.content;
+	let content = message.content ? message.content : 'N/A';
 	let guildMember = await message.guild.members.fetch(message.author.id);
-	fileTypeChecker(message);
-	turtleCheck(message, guildMember);
+	await fileTypeChecker(message);
+	await turtleCheck(message, guildMember);
 	//Ignoring staff
 	if (!isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)) {
-		gifDetector(message);
+		await gifDetector(message);
 	}
 	//Not ignoring staff
 	await checkForInlineURLs(client, content, message, getModChannels);

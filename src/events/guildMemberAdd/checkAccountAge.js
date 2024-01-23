@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../../utils/prismaClient');
 const { EmbedBuilder } = require('discord.js');
 const c = require('../../config.json');
 const colors = require('../../utils/embedColors');
@@ -51,11 +50,13 @@ async function checkAccountAge(member) {
 			},
 		});
 		if (count > 3) {
-			await member.send(
-				`You have been banned from ${member.guild.name} for \`Suspected bot account\`. The length of your ban is Eternity. If you want to appeal this ban, run the /appeal command and fill out the information! To run the /appeal command here in our DMs, you need to join the bot's server:\n${c.appealServer}`
-			).catch(e => {
-				log.debug(`Error sending user message: ${e}`)
-			})
+			await member
+				.send(
+					`You have been banned from ${member.guild.name} for \`Suspected bot account\`. The length of your ban is Eternity. If you want to appeal this ban, run the /appeal command and fill out the information! To run the /appeal command here in our DMs, you need to join the bot's server:\n${c.appealServer}`
+				)
+				.catch(e => {
+					log.debug(`Error sending user message: ${e}`);
+				});
 			member.guild.bans
 				.create(member.user.id, {
 					deleteMessageSeconds: 60 * 60 * 24 * 7,
