@@ -62,7 +62,7 @@ model NitroColor {
 }
 
 model Member {
-    id         String      @id
+    id String @id
 
     @@unique(id)
     @@index(id)
@@ -109,11 +109,11 @@ model TurtleMode {
 }
 
 model Highlight {
-    id       Int     @id @default(autoincrement())
-    phrase   String
-    userID   String
-    Guild     Guild    @relation(fields: [guildId], references: [id])
-    guildId   String
+    id      Int    @id @default(autoincrement())
+    phrase  String
+    userID  String
+    Guild   Guild  @relation(fields: [guildId], references: [id])
+    guildId String
 
     @@index([guildId])
 }

@@ -2,6 +2,8 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff } = require('../utils/isStaff');
 const colors = require('../utils/embedColors');
 const log = require('../utils/log');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -22,20 +24,22 @@ module.exports = {
 
 		let msgEmbed = new EmbedBuilder().setTitle(`New Highlight Added`).setColor(colors.main).setDescription(`Created highlight for ${phrase}`).setTimestamp().setAuthor({ name: name, iconURL: aviURL });
 
-		await prisma.highlight.create({
-			data: {
-    			phrase: phrase,
-    			guildId: interaction.guild.id,
-				userID: interaction.user.id
-			},
-		}).then(r => {
-			interaction.editReply({ embeds: [msgEmbed] })
+		await prisma.highlight
+			.create({
+				data: {
+					phrase: phrase,
+					guildId: interaction.guild.id,
+					userID: interaction.user.id,
+				},
+			})
+			.then(r => {
+				interaction.editReply({ embeds: [msgEmbed] }).catch(e => {
+					interaction.editReply(`Message failed to send:\n${e}`);
+				});
+			})
 			.catch(e => {
-				interaction.editReply(`Message failed to send:\n${e}`);
+				log.error(`Could not create highlight: ${e}`);
 			});
-		}).catch(e => {
-			log.error(`Could not create highlight: ${e}`)
-		})
 
 		function sendReply(type, message) {
 			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();

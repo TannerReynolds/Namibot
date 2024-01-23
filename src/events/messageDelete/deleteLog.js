@@ -7,7 +7,9 @@ async function deleteLog(message) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	let content = message.cleanContent;
-	let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 });
+	let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+		? message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
+		: message.author.defaultAvatarURL;
 	let name = message.author.username;
 	let deleteEmbed = new EmbedBuilder()
 		.setTitle(`Message Deleted`)
@@ -16,7 +18,7 @@ async function deleteLog(message) {
 		.addFields({ name: 'Deleted Message', value: content ? content : 'N/A' })
 		.setTimestamp()
 		.setAuthor({ name: name, iconURL: aviURL });
-	if (message.attachments) {
+	if (message.attachments.size > 0) {
 		getModChannels(message.client, message.guild.id).secondary.send({
 			embeds: [deleteEmbed],
 			files: [...message.attachments.values()],

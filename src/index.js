@@ -119,17 +119,25 @@ client.on(Events.InteractionCreate, async interaction => {
 		let cooldownEmbed = new EmbedBuilder().setTitle(`Please wait a few seconds before running another command!`).setColor(colors.main).setTimestamp();
 		return interaction.reply({ embeds: [cooldownEmbed] });
 	}
-	if (interaction.guild.id && pingStaffRatelimited.has(interaction.guild.id)) {
-		let cooldownEmbed = new EmbedBuilder().setTitle(`This command can only be ran once every 15 minutes in each guild`).setColor(colors.main).setTimestamp();
-		return interaction.reply({ embeds: [cooldownEmbed] });
+	try {
+		if (interaction.guild.id && pingStaffRatelimited.has(interaction.guild.id)) {
+			let cooldownEmbed = new EmbedBuilder().setTitle(`This command can only be ran once every 15 minutes in each guild`).setColor(colors.main).setTimestamp();
+			return interaction.reply({ embeds: [cooldownEmbed] });
+		}
+	} catch (e) {
+		log.debug('interaction not sent in guild');
 	}
 
 	ratelimited.add(interaction.user.id);
 	setTimeout(() => ratelimited.delete(interaction.user.id), 5000);
 
-	if (interaction.commandName === 'pingstaff' && interaction.guild.id) {
-		pingStaffRatelimited.add(interaction.guild.id);
-		setTimeout(() => pingStaffRatelimited.delete(interaction.guild.id), 900000);
+	try {
+		if (interaction.commandName === 'pingstaff' && interaction.guild.id) {
+			pingStaffRatelimited.add(interaction.guild.id);
+			setTimeout(() => pingStaffRatelimited.delete(interaction.guild.id), 900000);
+		}
+	} catch (e) {
+		log.debug('interaction not sent in guild');
 	}
 
 	const command = interaction.client.commands.get(interaction.commandName);
@@ -193,7 +201,6 @@ async function messageEvents(message, oldMessage) {
 }
 
 client.login(token);
-
 
 const fg = {
 	red: '\x1b[31m',

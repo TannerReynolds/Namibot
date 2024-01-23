@@ -42,7 +42,7 @@ module.exports = {
 		let appealChannel = await guild.channels.cache.get(guilds[guildChoice].appealChannelID);
 
 		let dbBan = await prisma.ban
-			.delete({
+			.findUnique({
 				where: {
 					userID_guildId: {
 						userID: interaction.user.id,

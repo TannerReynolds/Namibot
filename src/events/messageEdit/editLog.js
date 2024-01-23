@@ -6,8 +6,14 @@ const log = require('../../utils/log');
 async function editLog(message, oldMessage) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	let newContent = message.cleanContent;
-	let oldContent = oldMessage.cleanContent;
+	let newContent = 'N/A';
+	let oldContent = 'N/A';
+	try {
+		newContent = message.cleanContent;
+		oldContent = oldMessage.cleanContent;
+	} catch (e) {
+		log.debug('No message content');
+	}
 	let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 		? message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 		: message.author.defaultAvatarURL;

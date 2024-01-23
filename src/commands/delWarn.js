@@ -20,6 +20,8 @@ module.exports = {
 		}
 		let warningID = interaction.options.getString('warning-id');
 
+		if (isNaN(warningID)) return sendReply('error', 'Please enter the warning ID, the input entered is not a number');
+
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 			: interaction.user.defaultAvatarURL;

@@ -3,19 +3,25 @@ const prisma = new PrismaClient();
 const log = require('../../utils/log');
 
 async function turtleCheck(message, guildMember) {
-	let turtled = await prisma.turtleMode.findUnique({
-		where: {
-			userID_guildId: {
-				userID: message.author.id,
-				guildId: message.guild.id,
+	log.debug(`Checking to see if user is a turtle`);
+	let turtled = await prisma.turtleMode
+		.findUnique({
+			where: {
+				userID_guildId: {
+					userID: message.author.id,
+					guildId: message.guild.id,
+				},
 			},
-		},
-	});
+		})
+		.catch(e => {
+			log.error(`Error getting guild turtles: ${e}`);
+		});
 
 	if (!turtled) {
-		return;
+		return log.debug(`No turtles`);
 	} else {
-		guildMember.timeout(turtled.interval * 1000, 'Automated TurtleMode Timeout');
+		log.debug(`Found a turtle`);
+		return guildMember.timeout(turtled.interval * 1000, 'Automated TurtleMode Timeout');
 	}
 }
 

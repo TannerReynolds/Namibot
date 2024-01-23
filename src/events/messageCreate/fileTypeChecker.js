@@ -73,6 +73,8 @@ async function fileTypeChecker(message) {
 				r.delete();
 			}, 4000);
 		});
+	} else {
+		return log.debug('No malicious filetype detected');
 	}
 
 	async function detectURL(string) {

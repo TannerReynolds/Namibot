@@ -47,9 +47,11 @@ async function gifDetector(message) {
 			message.delete();
 			setTimeout(() => {
 				log.debug(`deleting response`);
-				r.delete();
+				return r.delete();
 			}, 4000);
 		});
+	} else {
+		return log.debug(`No gif detected`);
 	}
 
 	async function detectURL(string) {
