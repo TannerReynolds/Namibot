@@ -20,7 +20,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		log.debug(`Getting staff status...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
 		log.debug('User is staff');
 		log.debug('Getting Target...');
 		let target = await defineTarget(interaction, 'edit');

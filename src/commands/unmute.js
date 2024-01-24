@@ -16,7 +16,7 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to unmute.').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply('error', 'This user does not exist');
@@ -61,7 +61,7 @@ module.exports = {
 				let logEmbed = new EmbedBuilder()
 					.setColor(colors.main)
 					.setTitle('Member Unmuted')
-					.addFields({ name: 'User', value: `<@${target}> (${target})` }, { name: 'Reason', value: reason }, { name: 'Moderator', value: `${name} (${interaction.user.id})` })
+					.addFields({ name: 'User', value: `<@${target}> (${target})` }, { name: 'Moderator', value: `${name} (${interaction.user.id})` })
 					.setAuthor({ name: name, iconURL: aviURL })
 					.setTimestamp();
 

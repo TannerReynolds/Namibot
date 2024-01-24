@@ -9,7 +9,7 @@ module.exports = {
 	data: new SlashCommandBuilder().setName('highlights').setDMPermission(false).setDescription('View your highlights'),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })

@@ -15,7 +15,7 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to remove the slowdown from').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply('error', 'This user does not exist');

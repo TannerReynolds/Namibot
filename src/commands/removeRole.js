@@ -14,7 +14,7 @@ module.exports = {
 		.addRoleOption(option => option.setName('role').setDescription('The role to remove').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', "You're not a moderator, idiot");
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply('error', 'This user does not exist');
