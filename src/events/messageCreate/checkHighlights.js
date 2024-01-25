@@ -15,7 +15,8 @@ async function checkHighlights(message) {
 	const dmPromises = [];
 
 	for (const h of highlights) {
-		if (message.content.toLowerCase().includes(h.phrase) && message.author.id !== h.userID) {
+		let regPhrase = new RegExp(`\\b${h.phrase}\\b`)
+		if (regPhrase.test(message.content.toLowerCase()) && message.author.id !== h.userID) {
 			const isCooldown = await state.getHLCoolDown();
 			if (!isCooldown.has(h.userID)) {
 				await state.addHLCoolDown(h.userID);
@@ -27,7 +28,7 @@ async function checkHighlights(message) {
 					.setColor(colors.main)
 					.setTitle('Highlighter Alert')
 					.setDescription(`Found message containing phrase: \`${h.phrase}\`!`)
-					.addFields({ name: 'Message', value: message.content })
+					.addFields({ name: 'Message', value: message.content }, { name: 'Channel', value: `<#${message.channel.id}>`})
 					.setTimestamp();
 
 				dmPromises.push(
