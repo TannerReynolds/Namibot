@@ -7,38 +7,38 @@ async function fileTypeChecker(message) {
 	let hasFile = false;
 
 	let bannedFileTypes = [
-		'exe',
-		'js',
-		'bat',
-		'cmd',
-		'vbs',
-		'ps1',
-		'msi',
-		'dll',
-		'jar',
-		'reg',
-		'lnk',
-		'scr',
-		'pdf',
-		'doc',
-		'docx',
-		'xls',
-		'xlsx',
-		'ppt',
-		'pptx',
-		'zip',
-		'7z',
-		'rar',
-		'tar',
-		'gz',
-		'bz2',
-		'xz',
-		'lz',
-		'lzma',
-		'lz4',
-		'z',
-		'zipx',
-		'iso',
+		'.exe',
+		'.js',
+		'.bat',
+		'.cmd',
+		'.vbs',
+		'.ps1',
+		'.msi',
+		'.dll',
+		'.jar',
+		'.reg',
+		'.lnk',
+		'.scr',
+		'.pdf',
+		'.doc',
+		'.docx',
+		'.xls',
+		'.xlsx',
+		'.ppt',
+		'.pptx',
+		'.zip',
+		'.7z',
+		'.rar',
+		'.tar',
+		'.gz',
+		'.bz2',
+		'.xz',
+		'.lz',
+		'.lzma',
+		'.lz4',
+		'.z',
+		'.zipx',
+		'.iso',
 	];
 
 	log.debug(`Checking message content for malicious files... "${message.content}"`);
@@ -49,7 +49,7 @@ async function fileTypeChecker(message) {
 
 		urls.some(u => {
 			let paramRemoval = u.split('?')[0].split('#')[0];
-			let extension = paramRemoval.split('.').pop().toLowerCase();
+			let extension = `.${paramRemoval.split('.').pop().toLowerCase()}`;
 
 			if (bannedFileTypes.some(type => extension.endsWith(type))) {
 				log.debug(`url has malicious file type`);

@@ -3,7 +3,7 @@ from PIL import Image
 
 pfp_filename = sys.argv[1]
 
-smack = Image.open("smack.gif")
+smack = Image.open("../img/smack.gif")
 
 pfp = Image.open(pfp_filename)
 
@@ -44,6 +44,6 @@ for i in range(num_frames):
 
     modified_frames.append(modified_frame)
 
-modified_frames[0].save("bammed.gif", save_all=True, append_images=modified_frames[1:], optimize=False, duration=smack.info["duration"], loop=0)
+modified_frames[0].save("../img/bammed.gif", save_all=True, append_images=modified_frames[1:], optimize=False, duration=smack.info["duration"], loop=0)
 
-print("bammed.gif")
+print("../img/bammed.gif")

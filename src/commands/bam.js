@@ -110,5 +110,5 @@ async function downloadImage(url) {
 }
 
 async function saveBuffer(buf, name) {
-	fs.writeFileSync(`${name}`, buf);
+	fs.writeFileSync(`../img/${name}`, buf);
 }

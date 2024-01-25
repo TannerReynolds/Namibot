@@ -4,6 +4,7 @@ const { guilds, colors } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
 const log = require('../utils/log');
 const { createCanvas, loadImage } = require('canvas');
+const fsPromises = require('fs').promises;
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -84,13 +85,20 @@ async function downloadImage(url) {
 		log.error('Error downloading image:', error);
 		return error
 	}
-}
+} 
 
 async function createVerifiedImage(backgroundBuffer) {
     const backgroundImage = await loadImage(backgroundBuffer);
     const canvas = createCanvas(backgroundImage.width, backgroundImage.height);
     const ctx = canvas.getContext('2d');
-	const overlayBuffer = false;
+	let overlayBuffer = false;
+
+	try {
+		overlayBuffer = await fsPromises.readFile('../img/verification.png');
+	}
+	catch(e) {
+		log.error(`Problem opening verification image: ${e}`)
+	}
 
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 

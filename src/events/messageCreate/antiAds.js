@@ -41,7 +41,7 @@ function antiAds(message) {
 		});
 
 	message.member.timeout(60000 * 10, 'Invite Link Sent').catch(e => {
-		log.error(`Couldn't time out member`);
+		log.error(`Couldn't time out member: ${e}`);
 	});
 
 	let logEmbed = new EmbedBuilder()

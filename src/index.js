@@ -175,6 +175,11 @@ client.on(Events.GuildMemberAdd, async member => {
 //////////////////////////////////////
 // Message events
 
+client.on(Events.MessageDeleteBulk, async (messages, channel) => {
+	if(!channel.guild.id) return;
+	// if (guilds[channel.guild.id].logs.messageDeleteBulk) await bulkDeleteLog(messages, channel);
+})
+
 client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	if (!message.guild) return;
 	if (message.author.bot) return;

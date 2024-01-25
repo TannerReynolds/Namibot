@@ -43,8 +43,9 @@ async function parseNewDate(duration) {
 	log.debug(`Returning nwd: ${nwd}`);
 	return nwd;
 }
-async function durationToString(duration) {
-	if (isJP(duration)) duration = await toENTime(duration);
+async function durationToString(rawDuration) {
+	let duration = rawDuration
+	if (isJP(rawDuration)) duration = await toENTime(rawDuration);
 	duration = await mToMi(duration);
 	const durationNames = {
 		years: ['year', 'years'],
@@ -65,6 +66,10 @@ async function durationToString(duration) {
 			const word = value === 1 ? durationNames[key][0] : durationNames[key][1];
 			parsedValues.push(`${value} ${word}`);
 		}
+	}
+
+	if (isJP(rawDuration)) {
+		return `${rawDuration} (${parsedValues.join(', ').replace(/,([^,]*)$/, ', and$1')})`
 	}
 
 	return parsedValues.join(', ').replace(/,([^,]*)$/, ', and$1');
