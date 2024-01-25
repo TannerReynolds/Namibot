@@ -1,11 +1,10 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../utils/prismaClient');
 const { guilds } = require('../config.json');
 const { getModChannels } = require('../utils/getModChannels');
-const prisma = new PrismaClient();
-const colors = require('../utils/embedColors');
+const { colors } = require('../config.json');
 const log = require('../utils/log');
 
 module.exports = {
@@ -40,59 +39,74 @@ module.exports = {
 			return sendReply('error', 'You or the bot does not have permissions to complete this action');
 		}
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
-		let guildMember = await interaction.guild.members.fetch(target);
-
-		await guildMember.roles
-			.remove(guilds[interaction.guild.id].muteRoleID)
-			.then(m => {
-				let muteEmbed = new EmbedBuilder()
-					.setTitle(`User Unmuted`)
-					.setColor(colors.success)
-					.setDescription(`Successfully unmuted <@${target}>`)
-					.setTimestamp()
-					.setAuthor({ name: name, iconURL: aviURL });
-
-				interaction.editReply({ embeds: [muteEmbed] });
-
-				let logEmbed = new EmbedBuilder()
-					.setColor(colors.main)
-					.setTitle('Member Unmuted')
-					.addFields({ name: 'User', value: `<@${target}> (${target})` }, { name: 'Moderator', value: `${name} (${interaction.user.id})` })
-					.setAuthor({ name: name, iconURL: aviURL })
-					.setTimestamp();
-
-				if (targetMember) {
-					logEmbed.setThumbnail(
-						targetMember.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? targetMember.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : targetMember.defaultAvatarURL
-					);
-				}
-
-				getModChannels(interaction.client, interaction.guild.id).main.send({
-					embeds: [logEmbed],
-					content: `<@${target}>`,
+		let guildMember = false;
+		try {
+			guildMember = await interaction.guild.members.fetch(target);
+		} catch (e) {
+			try {
+				await prisma.mute.delete({
+					where: {
+						userID_guildId: {
+							userID: target,
+							guildId: interaction.guild.id,
+						},
+					},
 				});
-			})
-			.catch(e => {
-				return sendReply('error', `Could not unmute user:\n${e}`);
+			} catch (dbE) {
+				return log.error(`Could not remove mute from guild after member leave`);
+			}
+			log.debug(`User is not a member of this guild`);
+			return sendReply('error', 'User is not a member of this guild');
+		}
+
+		try {
+			await guildMember.roles.remove(guilds[interaction.guild.id].muteRoleID);
+			let muteEmbed = new EmbedBuilder()
+				.setTitle(`User Unmuted`)
+				.setColor(colors.success)
+				.setDescription(`Successfully unmuted <@${target}>`)
+				.setTimestamp()
+				.setAuthor({ name: name, iconURL: aviURL });
+
+			await interaction.editReply({ embeds: [muteEmbed] });
+
+			let logEmbed = new EmbedBuilder()
+				.setColor(colors.main)
+				.setTitle('Member Unmuted')
+				.addFields({ name: 'User', value: `<@${target}> (${target})` }, { name: 'Moderator', value: `${name} (${interaction.user.id})` })
+				.setAuthor({ name: name, iconURL: aviURL })
+				.setTimestamp();
+
+			if (targetMember) {
+				logEmbed.setThumbnail(
+					targetMember.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? targetMember.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : targetMember.defaultAvatarURL
+				);
+			}
+
+			await prisma.mute.delete({
+				where: {
+					userID_guildId: {
+						userID: target,
+						guildId: interaction.guild.id,
+					},
+				},
 			});
+
+			getModChannels(interaction.client, interaction.guild.id).main.send({
+				embeds: [logEmbed],
+				content: `<@${target}>`,
+			});
+		} catch (e) {
+			log.error(`Error unmuting user: ${e}`);
+			return sendReply('error', `Error unmuting user: ${e}`);
+		}
 
 		function sendReply(type, message) {
 			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
 
 			interaction.editReply({ embeds: [replyEmbed] });
 		}
-
-		await prisma.mute.delete({
-			where: {
-				userID_guildId: {
-					userID: target,
-					guildId: interaction.guild.id,
-				},
-			},
-		});
 	},
 };

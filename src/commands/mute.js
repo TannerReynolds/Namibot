@@ -2,11 +2,9 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');
-const { PrismaClient } = require('@prisma/client');
-const { guilds } = require('../config.json');
+const prisma = require('../utils/prismaClient');
+const { guilds, colors } = require('../config.json');
 const { getModChannels } = require('../utils/getModChannels');
-const prisma = new PrismaClient();
-const colors = require('../utils/embedColors');
 const log = require('../utils/log');
 
 module.exports = {
@@ -47,11 +45,9 @@ module.exports = {
 		let durationString = await defineDurationString(interaction);
 		let muteDate = new Date();
 
-		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
+		let reason = interaction.options.getString('reason') || 'no reason provided';
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		if (targetMember) {
@@ -136,7 +132,7 @@ module.exports = {
 				guildId: interaction.guild.id,
 				reason: reason,
 				moderator: `${interaction.user.username} (${interaction.user.id})`,
-				type: 'BAN',
+				type: 'MUTE',
 			},
 		});
 	},

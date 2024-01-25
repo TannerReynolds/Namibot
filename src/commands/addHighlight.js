@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff');
-const colors = require('../utils/embedColors');
+const { colors } = require('../config.json');
 const log = require('../utils/log');
 const prisma = require('../utils/prismaClient');
 
@@ -16,9 +16,7 @@ module.exports = {
 
 		let phrase = interaction.options.getString('phrase').toLowerCase();
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		let msgEmbed = new EmbedBuilder().setTitle(`New Highlight Added`).setColor(colors.main).setDescription(`Created highlight for ${phrase}`).setTimestamp().setAuthor({ name: name, iconURL: aviURL });

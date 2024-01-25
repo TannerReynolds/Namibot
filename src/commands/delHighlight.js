@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
-const colors = require('../utils/embedColors.js');
+const { colors } = require('../config.json');
 const log = require('../utils/log.js');
 
 module.exports = {
@@ -31,9 +31,7 @@ module.exports = {
 			return sendReply('error', "You can't delete somebody else's highlight!");
 		}
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		await prisma.highlight

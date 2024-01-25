@@ -1,9 +1,14 @@
 {
-    "token": "TOKEN HERE",
+    "token": ".",
     "clientId": "1104630573772841070",
     "guildId": "1190156169961029774",
     "botOwnerID": "478044823882825748",
     "appealServer": "https://discord.gg/wJhppSMHpG",
+    "colors": { 
+      "success": "#66de98", 
+      "error": "#FF6961", 
+      "main": "#6C4678" 
+    },
     "guilds": {
       "438650836512669699": {
         "name": "The Car Community",
@@ -14,7 +19,50 @@
         "botCommandsChannelID": "438652906116481025",
         "appealChannelID": "438657479606272003",
         "staffRoleID": "499564155884535808",
-        "muteRoleID": "819300268628770837"
+        "muteRoleID": "819300268628770837",
+        "logs": {
+          "messageDelete": true,
+          "messageUpdate": true
+        },
+        "features": {
+          "checkAccountAge": true,
+          "antiAds": true,
+          "bannedWordFilter": true,
+          "fileTypeChecker": true,
+          "gifDetector": true,
+          "hiddenLinkDetection": true
+        },
+        "commands": {
+          "addhighlight": true,
+          "appeal": true,
+          "av": true,
+          "bam": true,
+          "ban": true,
+          "bannedwords": true,
+          "colorme": true,
+          "Get Avatar": true,
+          "debugmode": true,
+          "delhighlight": true,
+          "delwarn": true,
+          "eval": true,
+          "gay": true,
+          "giverole": true,
+          "highlights": true,
+          "id": true,
+          "kick": true,
+          "managenitrocolor": true,
+          "mute": true,
+          "ping": true,
+          "removerole": true,
+          "rng": true,
+          "senddm": true,
+          "turtlemode": true,
+          "unban": true,
+          "unmute": true,
+          "unturtle": true,
+          "warn": true,
+          "warns": true
+        }
       },
       "1061175459112550490": {
         "name": "Learn Japanese",
@@ -25,7 +73,50 @@
         "botCommandsChannelID": "1075661557247246357",
         "appealChannelID": "1061182094266609724",
         "staffRoleID": "1061181030813413468",
-        "muteRoleID": "1174259360541708299"
+        "muteRoleID": "1174259360541708299",
+        "logs": {
+          "messageDelete": true,
+          "messageUpdate": true
+        },
+        "features": {
+          "checkAccountAge": true,
+          "antiAds": true,
+          "bannedWordFilter": true,
+          "fileTypeChecker": true,
+          "gifDetector": true,
+          "hiddenLinkDetection": true
+        },
+        "commands": {
+          "addhighlight": true,
+          "appeal": true,
+          "av": true,
+          "bam": true,
+          "ban": true,
+          "bannedwords": true,
+          "colorme": true,
+          "Get Avatar": true,
+          "debugmode": true,
+          "delhighlight": true,
+          "delwarn": true,
+          "eval": true,
+          "gay": true,
+          "giverole": true,
+          "highlights": true,
+          "id": true,
+          "kick": true,
+          "managenitrocolor": true,
+          "mute": true,
+          "ping": true,
+          "removerole": true,
+          "rng": true,
+          "senddm": true,
+          "turtlemode": true,
+          "unban": true,
+          "unmute": true,
+          "unturtle": true,
+          "warn": true,
+          "warns": true
+        }
       },
       "1190156169961029774": {
         "name": "Fern's Appeals",
@@ -36,7 +127,50 @@
         "botCommandsChannelID": "1190156171114446930",
         "appealChannelID": "1190156171114446930",
         "staffRoleID": "1193379997881217074",
-        "muteRoleID": "1193380020001964093"
+        "muteRoleID": "1193380020001964093",
+        "logs": {
+          "messageDelete": true,
+          "messageUpdate": true
+        },
+        "features": {
+          "checkAccountAge": true,
+          "antiAds": true,
+          "bannedWordFilter": true,
+          "fileTypeChecker": true,
+          "gifDetector": true,
+          "hiddenLinkDetection": true
+        },
+        "commands": {
+          "addhighlight": true,
+          "appeal": true,
+          "av": true,
+          "bam": false,
+          "ban": true,
+          "bannedwords": true,
+          "colorme": true,
+          "Get Avatar": true,
+          "debugmode": true,
+          "delhighlight": true,
+          "delwarn": true,
+          "eval": true,
+          "gay": true,
+          "giverole": true,
+          "highlights": true,
+          "id": true,
+          "kick": true,
+          "managenitrocolor": true,
+          "mute": true,
+          "ping": true,
+          "removerole": true,
+          "rng": true,
+          "senddm": true,
+          "turtlemode": true,
+          "unban": true,
+          "unmute": true,
+          "unturtle": true,
+          "warn": true,
+          "warns": true
+        }
       }
     }
 }

@@ -1,8 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
-const colors = require('../utils/embedColors.js');
 const axios = require('axios');
 const { defineTarget } = require('../utils/defineTarget');
-const { guilds } = require('../config.json');
+const { guilds, colors } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
 const log = require('../utils/log');
 

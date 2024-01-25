@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff } = require('../utils/isStaff.js');
 const { defineTarget } = require('../utils/defineTarget');
 const prisma = require('../utils/prismaClient');
-const colors = require('../utils/embedColors.js');
+const { colors } = require('../config.json');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const log = require('../utils/log');
 
@@ -20,9 +20,7 @@ module.exports = {
 			return sendReply('error', 'This user does not exist');
 		}
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		try {

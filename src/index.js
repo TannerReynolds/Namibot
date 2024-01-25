@@ -13,8 +13,7 @@ const gMemberAdd = './events/guildMemberAdd/';
 const minute = './events/everyMinute/';
 const hour = './events/everyHour/';
 const utils = './utils/';
-const colors = require(`${utils}embedColors`);
-const { token } = require('./config.json');
+const { token, colors, guilds } = require('./config.json');
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);
 const { checkAndUnmuteUsers } = require(`${minute}checkMutes`);
 const { refreshHighlightsCache } = require(`${minute}refreshHighlightsCache`);
@@ -145,6 +144,11 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	const command = interaction.client.commands.get(interaction.commandName);
 
+	if (!guilds[interaction.guild.id].commands[interaction.commandName]) {
+		log.debug(`Command ${interaction.commandName} is disabled in this server`);
+		return interaction.reply({ content: 'This command is disabled in this server', ephemeral: true });
+	}
+
 	if (!command) {
 		log.error(`No command matching ${interaction.commandName} was found.`);
 		return;
@@ -165,7 +169,7 @@ client.on(Events.InteractionCreate, async interaction => {
 // Join/Leave Events
 
 client.on(Events.GuildMemberAdd, async member => {
-	await checkAccountAge(member);
+	if (guilds[member.guild.id].features.accountAgeCheck) await checkAccountAge(member);
 });
 
 //////////////////////////////////////
@@ -174,15 +178,15 @@ client.on(Events.GuildMemberAdd, async member => {
 client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	await antiAds(message);
+	if (guilds[message.guild.id].features.antiAds) await antiAds(message);
 	await messageEvents(message, oldMessage);
-	await editLog(message, oldMessage);
+	if (guilds[message.guild.id].logs.messageUpdate) await editLog(message, oldMessage);
 });
 
 client.on(Events.MessageCreate, async message => {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	await antiAds(message);
+	if (guilds[message.guild.id].features.antiAds) await antiAds(message);
 	await messageEvents(message);
 	await checkHighlights(message);
 });
@@ -191,22 +195,27 @@ client.on(Events.MessageDelete, async message => {
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	//updateSnipe(message);
-	await deleteLog(message);
+	if (guilds[message.guild.id].logs.messageDelete) await deleteLog(message);
 });
 
 async function messageEvents(message, oldMessage) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	let content = message.content ? message.content : 'N/A';
-	let guildMember = await message.guild.members.fetch(message.author.id);
-	await fileTypeChecker(message);
+	let content = message.content || 'N/A';
+	let guildMember = false;
+	try {
+		guildMember = await message.guild.members.fetch(message.author.id);
+	} catch (e) {
+		log.debug(`User is not a member of this guild: ${e}`);
+	}
+	if (guilds[message.guild.id].features.fileTypeChecker) await fileTypeChecker(message);
 	await turtleCheck(message, guildMember);
 	//Ignoring staff
 	if (!isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)) {
-		await gifDetector(message);
+		if (guilds[message.guild.id].features.gifDetector) await gifDetector(message);
 	}
 	//Not ignoring staff
-	await checkForInlineURLs(client, content, message, getModChannels);
+	if (guilds[message.guild.id].features.hiddenLinkDetection) await checkForInlineURLs(client, content, message, getModChannels);
 }
 
 client.login(token);

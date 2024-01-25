@@ -1,5 +1,5 @@
 const { extractSnowflake, isSnowflake } = require('./validate');
-const colors = require('./embedColors');
+const { colors } = require('../config.json');
 const { EmbedBuilder } = require('discord.js');
 
 async function defineTarget(interaction, type) {

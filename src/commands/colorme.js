@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType, EmbedBuilder } = require('discord.js');
-const colors = require('../utils/embedColors');
+const { colors } = require('../config.json');
 const prisma = require('../utils/prismaClient');
 const log = require('../utils/log');
 

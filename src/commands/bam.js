@@ -6,7 +6,7 @@ const { spawnSync } = require('child_process');
 const axios = require('axios');
 const path = require('path');
 const { isStaff } = require('../utils/isStaff');
-const colors = require('../utils/embedColors');
+const { colors } = require('../config.json');
 const log = require('../utils/log');
 
 module.exports = {

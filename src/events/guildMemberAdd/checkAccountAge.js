@@ -1,7 +1,7 @@
 const prisma = require('../../utils/prismaClient');
 const { EmbedBuilder } = require('discord.js');
 const c = require('../../config.json');
-const colors = require('../../utils/embedColors');
+const { colors } = require('../../config.json');
 const log = require('../../utils/log');
 
 async function checkAccountAge(member) {

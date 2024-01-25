@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const colors = require('../utils/embedColors.js');
-const { botOwnerID } = require('../config.json');
+const { botOwnerID, colors } = require('../config.json');
 const log = require('../utils/log');
+const prisma = require('../utils/prismaClient');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,9 +16,7 @@ module.exports = {
 			return interaction.editReply('Only the bot owner can run this command');
 		}
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		const code = interaction.options.getString('code');
@@ -33,7 +31,10 @@ module.exports = {
 				.setTimestamp()
 				.setColor(colors.main)
 				.setAuthor({ name: name, iconURL: aviURL })
-				.addFields({ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` }, { name: 'Result', value: `\`\`\`xl\n${evaled}\n\`\`\`` });
+				.addFields(
+					{ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` },
+					{ name: 'Result', value: `\`\`\`xl\n${evaled.length > 1100 ? `${evaled.match(/^.{0,1100}/s)[0]}...` : evaled.match(/^.{0,1100}/s)[0]}\n\`\`\`` }
+				);
 
 			interaction.editReply({ embeds: [responseEmbed] });
 		} catch (err) {
@@ -41,7 +42,10 @@ module.exports = {
 				.setTimestamp()
 				.setColor(colors.error)
 				.setAuthor({ name: name, iconURL: aviURL })
-				.addFields({ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` }, { name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err}\n\`\`\`` });
+				.addFields(
+					{ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` },
+					{ name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err.length > 1100 ? `${err.match(/^.{0,1100}/s)[0]}...` : err.match(/^.{0,1100}/s)[0]}\n\`\`\`` }
+				);
 			interaction.editReply({ embeds: [responseEmbed] });
 		}
 	},

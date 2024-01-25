@@ -1,20 +1,20 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const prisma = require('../utils/prismaClient');
-const colors = require('../utils/embedColors');
-const { guilds } = require('../config.json');
+const { guilds, colors } = require('../config.json');
 const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('appeal')
 		.setDescription('Send a request to have your ban appealed')
-		.addStringOption(option =>
-			option
-				.setName('server')
-				.setDescription('The server you were banned from')
-				.setRequired(true)
-				.addChoices({ name: 'The Car Community', value: '438650836512669699' }, { name: 'Learn Japanese', value: '1061175459112550490' })
-		)
+		.addStringOption(option => {
+			option.setName('server').setDescription('The server you were banned from').setRequired(true);
+			for (const guildId in guilds) {
+				const guild = guilds[guildId];
+				option.addChoices({ name: guild.name, value: guildId });
+			}
+			return option;
+		})
 		.addStringOption(option => option.setName('reason').setDescription('The reason why you should be unbanned').setMaxLength(1_900).setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
@@ -30,7 +30,12 @@ module.exports = {
 		}
 
 		log.debug(`Looking for guild ban...`);
-		let ban = await guild.bans.fetch(interaction.user.id);
+		let ban = false;
+		try {
+			ban = await guild.bans.fetch(interaction.user.id);
+		} catch (e) {
+			log.debug(`User is not banned from guild: ${e}`);
+		}
 
 		if (!ban) {
 			log.debug(`Did not find ban in ${guild.name} for ${interaction.user.username}`);
@@ -54,9 +59,7 @@ module.exports = {
 			});
 
 		log.debug(`Getting avatar URL...`);
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 
 		if (!dbBan) {
 			log.debug('No ban found...');

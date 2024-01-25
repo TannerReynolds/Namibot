@@ -3,7 +3,7 @@ const { isStaff, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const { parseNewDate, durationToString, isValidDuration } = require('../utils/parseDuration.js');
 const prisma = require('../utils/prismaClient');
-const colors = require('../utils/embedColors');
+const { colors } = require('../config.json');
 const { getModChannels } = require('../utils/getModChannels');
 const log = require('../utils/log');
 
@@ -39,9 +39,7 @@ module.exports = {
 			return sendReply('error', 'You or the bot does not have permissions to complete this action');
 		}
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		const reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';

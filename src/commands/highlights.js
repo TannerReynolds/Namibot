@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
-const colors = require('../utils/embedColors.js');
+const { colors } = require('../config.json');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const log = require('../utils/log.js');
 
@@ -11,9 +11,7 @@ module.exports = {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		try {

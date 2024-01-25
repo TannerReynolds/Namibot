@@ -1,8 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
-const colors = require('../utils/embedColors');
-const { guilds } = require('../config.json');
+const { guilds, colors } = require('../config.json');
 const log = require('../utils/log');
 
 module.exports = {
@@ -58,9 +57,7 @@ module.exports = {
 		if (selectedRole.permissions.has(PermissionFlagsBits.MentionEveryone)) return sendReply('error', 'You cannot give roles with the Mention Everyone permission');
 		if (selectedRole.permissions.has(PermissionFlagsBits.ManageNicknames)) return sendReply('error', 'You cannot give roles with the Manage Nicknames permission');
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		targetMember.roles

@@ -1,8 +1,7 @@
 const { isStaff } = require('../../utils/isStaff');
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const prisma = require('../../utils/prismaClient');
-const { guilds } = require('../../config.json');
-const colors = require('../../utils/embedColors');
+const { guilds, colors } = require('../../config.json');
 const { getModChannels } = require('../../utils/getModChannels');
 const log = require('../../utils/log');
 

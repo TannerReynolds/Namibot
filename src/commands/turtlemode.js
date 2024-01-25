@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff, hasHigherPerms } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
-const colors = require('../utils/embedColors');
+const { colors } = require('../config.json');
 const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');
 const { parseNewDate, durationToString, isValidDuration, durationToSec } = require('../utils/parseDuration');
@@ -70,9 +70,7 @@ module.exports = {
 			});
 		}
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		let turtleEmbed = new EmbedBuilder()

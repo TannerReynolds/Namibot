@@ -1,12 +1,12 @@
 const { getModChannels } = require('../../utils/getModChannels');
 const { EmbedBuilder } = require('discord.js');
-const colors = require('../../utils/embedColors');
+const { colors } = require('../../config.json');
 const log = require('../../utils/log');
 
 async function deleteLog(message) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	let content = message.cleanContent;
+	let content = message.cleanContent || message.content;
 	let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 		? message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 		: message.author.defaultAvatarURL;
@@ -15,7 +15,7 @@ async function deleteLog(message) {
 		.setTitle(`Message Deleted`)
 		.setColor(colors.main)
 		.setDescription(`Channel: <#${message.channel.id}>`)
-		.addFields({ name: 'Deleted Message', value: content ? content : 'N/A' })
+		.addFields({ name: 'Deleted Message', value: content || 'N/A' })
 		.setTimestamp()
 		.setAuthor({ name: name, iconURL: aviURL });
 	if (message.attachments.size > 0) {

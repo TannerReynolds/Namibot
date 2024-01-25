@@ -1,6 +1,6 @@
 const { getModChannels } = require('../../utils/getModChannels');
 const { EmbedBuilder } = require('discord.js');
-const colors = require('../../utils/embedColors');
+const { colors } = require('../../config.json');
 const log = require('../../utils/log');
 
 async function editLog(message, oldMessage) {
@@ -9,8 +9,8 @@ async function editLog(message, oldMessage) {
 	let newContent = 'N/A';
 	let oldContent = 'N/A';
 	try {
-		newContent = message.cleanContent;
-		oldContent = oldMessage.cleanContent;
+		newContent = message.cleanContent || message.content;
+		oldContent = oldMessage.cleanContent || message.content;
 	} catch (e) {
 		log.debug('No message content');
 	}
@@ -22,7 +22,7 @@ async function editLog(message, oldMessage) {
 		.setTitle(`Message Edited`)
 		.setColor(colors.main)
 		.setDescription(`Channel: <#${message.channel.id}>`)
-		.addFields({ name: 'Old Message', value: oldContent ? oldContent : 'N/A' }, { name: 'New Message', value: newContent ? newContent : 'N/A' })
+		.addFields({ name: 'Old Message', value: oldContent || 'N/A' }, { name: 'New Message', value: newContent || 'N/A' })
 		.setTimestamp()
 		.setAuthor({ name: name, iconURL: aviURL });
 	if (oldMessage.attachments.size > 0) {

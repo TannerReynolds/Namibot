@@ -1,10 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../utils/prismaClient');
 const { getModChannels } = require('../utils/getModChannels');
-const prisma = new PrismaClient();
-const colors = require('../utils/embedColors');
+const { colors } = require('../config.json');
 const log = require('../utils/log');
 
 module.exports = {
@@ -22,9 +21,7 @@ module.exports = {
 			return sendReply('error', 'This user does not exist');
 		}
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			? interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
-			: interaction.user.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';

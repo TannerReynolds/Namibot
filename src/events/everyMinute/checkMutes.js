@@ -1,7 +1,6 @@
 const prisma = require('../../utils/prismaClient');
-const colors = require('../../utils/embedColors');
 const { EmbedBuilder } = require('discord.js');
-const { guilds } = require('../../config.json');
+const { guilds, colors } = require('../../config.json');
 const log = require('../../utils/log');
 
 async function checkAndUnmuteUsers(client, getModChannels) {
@@ -23,10 +22,7 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 		if (!expiredMutes) return;
 
 		for (let mute of expiredMutes) {
-			let guild = client.guilds.cache.get(mute.guildId).catch(e => {
-				return log.error(`Couldn't get guild: ${e}`);
-			});
-
+			let guild = client.guilds.cache.get(mute.guildId);
 			let aviURL = client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 				? client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 				: client.user.defaultAvatarURL;
@@ -75,7 +71,7 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 			});
 		}
 	} catch (error) {
-		return log.error('Failed to check and unmute users:', error);
+		return log.error(`Failed to check and unmute users: ${error}`);
 	}
 }
 
