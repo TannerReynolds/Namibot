@@ -3,17 +3,22 @@
 const { Client, Events, Collection, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const helmet = require('helmet');
 
 //////////////////////////////////////
 // Internal requires
 const mCreate = './events/messageCreate/';
 const mDelete = './events/messageDelete/';
+const mBulkDelete = './events/messageDeleteBulk/';
 const mEdit = './events/messageEdit/';
 const gMemberAdd = './events/guildMemberAdd/';
 const minute = './events/everyMinute/';
 const hour = './events/everyHour/';
 const utils = './utils/';
-const { token, colors, guilds } = require('./config.json');
+const { token, colors, guilds, server } = require('./config.json');
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);
 const { checkAndUnmuteUsers } = require(`${minute}checkMutes`);
 const { refreshHighlightsCache } = require(`${minute}refreshHighlightsCache`);
@@ -33,6 +38,7 @@ const { deleteLog } = require(`${mDelete}deleteLog`);
 const { editLog } = require(`${mEdit}editLog`);
 const { initLog } = require(`${utils}initLog`);
 const log = require(`${utils}log`);
+const { bulkDeleteLog } = require(`${mBulkDelete}bulkDeleteLog`);
 const axios = require('axios');
 
 initLog();
@@ -144,9 +150,11 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	const command = interaction.client.commands.get(interaction.commandName);
 
-	if (!guilds[interaction.guild.id].commands[interaction.commandName]) {
-		log.debug(`Command ${interaction.commandName} is disabled in this server`);
-		return interaction.reply({ content: 'This command is disabled in this server', ephemeral: true });
+	if (interaction.guild) {
+		if (!guilds[interaction.guild.id].commands[interaction.commandName]) {
+			log.debug(`Command ${interaction.commandName} is disabled in this server`);
+			return interaction.reply({ content: 'This command is disabled in this server', ephemeral: true });
+		}
 	}
 
 	if (!command) {
@@ -158,10 +166,17 @@ client.on(Events.InteractionCreate, async interaction => {
 		await command.execute(interaction);
 	} catch (error) {
 		log.error(error);
-		await interaction.reply({
-			content: 'There was an error while executing this command!',
-			ephemeral: true,
-		});
+		await interaction
+			.reply({
+				content: `There was an error while executing this command: ${error}`,
+				ephemeral: true,
+			})
+			.catch(e => {
+				interaction.editReply({
+					content: `There was an error while executing this command: ${e}`,
+					ephemeral: true,
+				});
+			});
 	}
 });
 
@@ -175,10 +190,13 @@ client.on(Events.GuildMemberAdd, async member => {
 //////////////////////////////////////
 // Message events
 
-client.on(Events.MessageDeleteBulk, async (messages, channel) => {
-	if(!channel.guild.id) return;
-	// if (guilds[channel.guild.id].logs.messageDeleteBulk) await bulkDeleteLog(messages, channel);
-})
+client.on(Events.MessageBulkDelete, async (messages, channel) => {
+	log.verbose('yes');
+	if (guilds[channel.guild.id].logs.messageDeleteBulk && server.enabled) {
+		log.verbose('yes');
+		await bulkDeleteLog(messages, channel, client);
+	}
+});
 
 client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	if (!message.guild) return;
@@ -224,6 +242,39 @@ async function messageEvents(message, oldMessage) {
 }
 
 client.login(token);
+
+if (server.enabled) {
+	app.set('view engine', 'ejs');
+	app.set('views', './server/views');
+	app.use(bodyParser.json());
+	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use(
+		helmet({
+			contentSecurityPolicy: {
+				directives: {
+					defaultSrc: ["'self'"],
+					scriptSrc: ["'self'", 'https://cdn.tailwindcss.com'],
+					imgSrc: ["'self'", 'data:', 'https://cdn.discordapp.com', 'https://images-ext-1.discordapp.net'],
+				},
+			},
+		})
+	);
+
+	app.use(
+		express.static('./server/public', {
+			extensions: ['html', 'htm', 'css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'json', 'txt'],
+		})
+	);
+	app.use(
+		express.static('./server/views', {
+			extensions: ['css'],
+		})
+	);
+
+	app.listen(server.port, '0.0.0.0', () => {
+		log.success(`Local server listening on port ${server.port} at ${server.url}`);
+	});
+}
 
 const fg = {
 	red: '\x1b[31m',

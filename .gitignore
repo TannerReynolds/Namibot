@@ -6,3 +6,4 @@ prisma/migrations/
 Thumbs.db
 blockedDomains.json
 debug.log
+*.html

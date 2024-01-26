@@ -1,0 +1,49 @@
+<html data-theme="night">
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.tailwindcss.com; img-src 'self' data: https://cdn.discordapp.com https://images-ext-1.discordapp.net;">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<title>Bulk Delete Logs</title>
+<style>
+    .messages {
+        margin: 20px;
+    }
+</style>
+</head>
+
+<div class="navbar bg-base-300">
+  <div class="flex-1">
+    <a class="btn btn-ghost text-xl" href="https://github.com/TannerReynolds/Moderation"><%= client.user.username; %>'s Logs</a>
+  </div>
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+        <div class="w-10 rounded-full">
+          <img alt="Tailwind CSS Navbar component" src="<%= client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || client.user.defaultAvatarURL; %>" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="messages">
+<% messages.forEach(message => { %>
+<div class="chat chat-start">
+  <div class="chat-image avatar">
+    <div class="w-10 rounded-full">
+      <img alt="Tailwind CSS chat bubble component" src="<%= message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL; %>" />
+    </div>
+  </div>
+  <div class="chat-header">
+    <%= message.author.username; %>
+    <time class="text-xs opacity-50"><%= message.createdAt; %></time>
+  </div>
+  <div class="chat-bubble"><%= message.content.replace(/>/g, '&gt').replace(/</g, '&lt') || 'N/A'; %></div>
+  <div class="chat-footer opacity-50">
+    #<%= message.channel.name; %>
+  </div>
+</div>
+<% })%>
+</div>
+
+</html>
+
