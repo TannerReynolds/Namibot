@@ -78,6 +78,23 @@ client.once(Events.ClientReady, async c => {
 
 	log.success(`Watching over ${client.guilds.cache.size} guilds and ${c.users.cache.size} users`);
 
+  if (fs.existsSync('./restart.js')) {
+	try {
+		log.success('Restart successful!');
+	let restartEmbed = new EmbedBuilder().setColor(colors.success).setDescription('Successfully restarted bot!').setTimestamp();
+	let { channel } = require('./restart');
+	client.channels.cache.get(channel).send({ embeds: [restartEmbed] }).then(r => {
+		fs.unlinkSync('./restart.js');
+	}).catch(e => {
+		fs.unlinkSync('./restart.js');
+	})
+	}
+	catch(e) {
+		fs.unlinkSync('./restart.js');
+		log.error(`Error performing restart function: ${e}`)
+	}
+  }
+
 	await checkAndUnbanUsers(client, getModChannels);
 	await checkAndUnmuteUsers(client, getModChannels);
 	await deleteTurtles();
