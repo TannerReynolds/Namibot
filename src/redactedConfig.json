@@ -9,6 +9,11 @@
       "error": "#FF6961", 
       "main": "#6C4678" 
     },
+    "server": {
+      "enabled": true,
+      "port": 1746,
+      "url": "https://learn.tokyo.jp/fern"
+    },
     "guilds": {
       "438650836512669699": {
         "name": "The Car Community",
@@ -22,7 +27,8 @@
         "muteRoleID": "819300268628770837",
         "logs": {
           "messageDelete": true,
-          "messageUpdate": true
+          "messageUpdate": true,
+          "messageDeleteBulk": true
         },
         "features": {
           "checkAccountAge": true,
@@ -50,10 +56,10 @@
           "highlights": true,
           "id": true,
           "kick": true,
-          "realverification": true,
           "managenitrocolor": true,
           "mute": true,
           "ping": true,
+          "realverification": true,
           "removerole": true,
           "rng": true,
           "senddm": true,
@@ -105,10 +111,10 @@
           "highlights": true,
           "id": true,
           "kick": true,
-          "realverification": true,
           "managenitrocolor": true,
           "mute": true,
           "ping": true,
+          "realverification": true,
           "removerole": true,
           "rng": true,
           "senddm": true,
@@ -160,10 +166,10 @@
           "highlights": true,
           "id": true,
           "kick": true,
-          "realverification": true,
           "managenitrocolor": true,
           "mute": true,
           "ping": true,
+          "realverification": true,
           "removerole": true,
           "rng": true,
           "senddm": true,
