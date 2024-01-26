@@ -184,7 +184,7 @@ client.on(Events.InteractionCreate, async interaction => {
 // Join/Leave Events
 
 client.on(Events.GuildMemberAdd, async member => {
-	if (guilds[member.guild.id].features.accountAgeCheck) await checkAccountAge(member);
+	if (guilds[member.guild.id].features.checkAccountAge) await checkAccountAge(member);
 });
 
 //////////////////////////////////////
