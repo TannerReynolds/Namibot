@@ -1,8 +1,35 @@
 {
+  "name": "discord-moderation-bot",
+  "description": "A self hostable moderation bot for Discord",
+  "main": "src/index.js",
   "scripts": {
-  "test": "jest"
-},
-"version": "0.7.0",
+    "test": "jest",
+    "deploy": "node src/globalDeply.js",
+    "start": "node src/index.js",
+    "prisma": "prisma generate && prisma migrate dev --name modBot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TannerReynolds/Discord-Moderation-Bot.git"
+  },
+  "keywords": [
+    "discord",
+    "moderator",
+    "moderation",
+    "bot",
+    "discordjs",
+    "self",
+    "host",
+    "hostable",
+    "selfhostable"
+  ],
+  "author": "TannerReynolds",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TannerReynolds/Discord-Moderation-Bot/issues"
+  },
+  "homepage": "https://github.com/TannerReynolds/Discord-Moderation-Bot#readme",
+  "version": "0.7.0",
   "dependencies": {
     "@lanred/discordjs-button-embed-pagination": "^5.0.2",
     "@prisma/client": "^5.8.1",

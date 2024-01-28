@@ -1,7 +1,7 @@
 const ejs = require('ejs');
 const fs = require('fs-extra');
 const { getModChannels } = require('../../utils/getModChannels');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, MessageAttachment } = require('discord.js');
 const { colors, server } = require('../../config.json');
 
 async function bulkDeleteLog(messages, channel, client) {
@@ -20,14 +20,30 @@ async function bulkDeleteLog(messages, channel, client) {
 			}
 		);
 		stream.end();
-		let deleteEmbed = new EmbedBuilder()
-			.setTitle(`Bulk Messages Deleted`)
-			.setColor(colors.main)
-			.addFields({ name: 'Deleted Messages', value: `${server.url}/${fileName}` })
-			.setTimestamp();
-		getModChannels(client, channel.guild.id).secondary.send({
-			embeds: [deleteEmbed],
-		});
+		let deleteEmbed = false;
+		if (server.enabled) {
+			deleteEmbed = new EmbedBuilder()
+				.setTitle(`Bulk Messages Deleted`)
+				.setColor(colors.main)
+				.addFields({ name: 'Deleted Messages', value: `${server.url}/${fileName}` })
+				.setTimestamp();
+			getModChannels(client, channel.guild.id).secondary.send({
+				embeds: [deleteEmbed],
+			});
+		} else {
+			let attach = new MessageAttachment(`./server/public/${fileName}.html`);
+			deleteEmbed = new EmbedBuilder().setTitle(`Bulk Messages Deleted`).setColor(colors.main).setTimestamp();
+			getModChannels(client, channel.guild.id)
+				.secondary.send({
+					embeds: [deleteEmbed],
+					files: [attach],
+				})
+				.then(r => {
+					fs.unlink(`./server/public/${fileName}.html`, err => {
+						if (err) throw err;
+					});
+				});
+		}
 	});
 }
 

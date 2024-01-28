@@ -23,11 +23,7 @@ async function defineTarget(interaction, type) {
 
 	function sendReply(color, message, type) {
 		let replyEmbed = new EmbedBuilder().setColor(colors[color]).setDescription(message).setTimestamp();
-		if (!type) {
-			interaction.reply({ embeds: [replyEmbed] });
-		} else if (type.toLowerCase() === 'edit') {
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
+		interaction.editReply({ embeds: [replyEmbed] });
 	}
 	async function getID(interaction, input) {
 		let member;

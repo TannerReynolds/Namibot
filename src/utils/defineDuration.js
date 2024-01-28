@@ -22,6 +22,7 @@ async function defineDurationString(interaction) {
 		return durationString;
 	} else {
 		let rawDuration = interaction.options.getString('duration');
+		if (isJP(rawDuration)) durationString = `${rawDuration} (eternity)`;
 		if (await isValidDuration(rawDuration)) {
 			durationString = await durationToString(rawDuration);
 			return durationString;
@@ -30,5 +31,7 @@ async function defineDurationString(interaction) {
 		}
 	}
 }
+
+const isJP = str => /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str);
 
 module.exports = { defineDuration, defineDurationString };

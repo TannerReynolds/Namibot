@@ -44,7 +44,7 @@ async function parseNewDate(duration) {
 	return nwd;
 }
 async function durationToString(rawDuration) {
-	let duration = rawDuration
+	let duration = rawDuration;
 	if (isJP(rawDuration)) duration = await toENTime(rawDuration);
 	duration = await mToMi(duration);
 	const durationNames = {
@@ -69,7 +69,7 @@ async function durationToString(rawDuration) {
 	}
 
 	if (isJP(rawDuration)) {
-		return `${rawDuration} (${parsedValues.join(', ').replace(/,([^,]*)$/, ', and$1')})`
+		return `${rawDuration} (${parsedValues.join(', ').replace(/,([^,]*)$/, ', and$1')})`;
 	}
 
 	return parsedValues.join(', ').replace(/,([^,]*)$/, ', and$1');
@@ -108,7 +108,7 @@ async function mToMi(text) {
 	return text.replace(minute, '$1mi');
 }
 
-const isJP = str => /[秒分時間日週月年]/.test(str);
+const isJP = str => /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str);
 
 module.exports = {
 	parseNewDate,

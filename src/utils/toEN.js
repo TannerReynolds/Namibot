@@ -66,13 +66,20 @@ async function toENTime(japaneseNumber) {
 			unitBuffer = '';
 		} else if (!(char in units)) {
 			if (i === japaneseNumber.length - 1 || !(japaneseNumber.substring(i, i + 2) in units)) {
-				throw new Error('Invalid character in input');
+				return 'forever';
 			}
+		} else {
+			return 'forever';
 		}
 	}
 
 	if (numberPart > 0) {
 		result += numberPart;
+	}
+
+	let isStillJP = str => /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str);
+	if (isStillJP(result)) {
+		result = 'forever';
 	}
 
 	return result;

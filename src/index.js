@@ -78,22 +78,25 @@ client.once(Events.ClientReady, async c => {
 
 	log.success(`Watching over ${client.guilds.cache.size} guilds and ${c.users.cache.size} users`);
 
-  if (fs.existsSync('./restart.js')) {
-	try {
-		log.success('Restart successful!');
-	let restartEmbed = new EmbedBuilder().setColor(colors.success).setDescription('Successfully restarted bot!').setTimestamp();
-	let { channel } = require('./restart');
-	client.channels.cache.get(channel).send({ embeds: [restartEmbed] }).then(r => {
-		fs.unlinkSync('./restart.js');
-	}).catch(e => {
-		fs.unlinkSync('./restart.js');
-	})
+	if (fs.existsSync('./restart.js')) {
+		try {
+			log.success('Restart successful!');
+			let restartEmbed = new EmbedBuilder().setColor(colors.success).setDescription('Successfully restarted bot!').setTimestamp();
+			let { channel } = require('./restart');
+			client.channels.cache
+				.get(channel)
+				.send({ embeds: [restartEmbed] })
+				.then(r => {
+					fs.unlinkSync('./restart.js');
+				})
+				.catch(e => {
+					fs.unlinkSync('./restart.js');
+				});
+		} catch (e) {
+			fs.unlinkSync('./restart.js');
+			log.error(`Error performing restart function: ${e}`);
+		}
 	}
-	catch(e) {
-		fs.unlinkSync('./restart.js');
-		log.error(`Error performing restart function: ${e}`)
-	}
-  }
 
 	await checkAndUnbanUsers(client, getModChannels);
 	await checkAndUnmuteUsers(client, getModChannels);
@@ -208,9 +211,7 @@ client.on(Events.GuildMemberAdd, async member => {
 // Message events
 
 client.on(Events.MessageBulkDelete, async (messages, channel) => {
-	log.verbose('yes');
 	if (guilds[channel.guild.id].logs.messageDeleteBulk && server.enabled) {
-		log.verbose('yes');
 		await bulkDeleteLog(messages, channel, client);
 	}
 });
