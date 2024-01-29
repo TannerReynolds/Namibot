@@ -1,0 +1,64 @@
+<html data-theme="night">
+    <head>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<title>Bulk Delete Logs</title>
+<style>
+    .messages {
+        margin: 20px;
+    }
+</style>
+</head>
+
+<body class="flex bg-base-100 justify-center items-center h-screen">
+    <div class="w-full max-w-xs" id="authForm">
+        <form class="shadow-md rounded px-8 pt-6 pb-8 mb-4 bg-base-200">
+            <div class="mb-6">
+                <input type="hidden" value="" id="redirectUrl" disabled class="input w-full max-w-xs bg-base-300" />
+                <label class="block text-sm font-bold mb-2" for="password">
+                    Password
+                </label>
+                <input type="password" id="password" placeholder="**************" class="input w-full max-w-xs bg-base-300" />
+            </div>
+            <div class="flex items-center justify-between ">
+                <button class="btn btn-block bg-base-300 btn-base-300" type="submit">Authorize</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function getRedirectUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('bdl');
+        }
+
+        const originalPath = getRedirectUrl() || '/';
+        document.getElementById('redirectUrl').value = originalPath;
+    </script>
+
+
+
+
+
+
+
+    <script>
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = {
+        redirect: document.getElementById('redirectUrl').value,
+        password: document.getElementById('password').value
+    };
+
+    fetch('/auth', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+});
+    </script>
+</body>
+</html>

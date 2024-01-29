@@ -21,6 +21,7 @@ model Guild {
     colors      NitroColor[]
     failedJoins FailedJoin[]
     highlights  Highlight[]
+    tags        Tag[]
 
     @@unique(id)
     @@index(id)
@@ -129,6 +130,19 @@ model Warning {
     guildId   String
 
     @@index([userID, guildId])
+}
+
+model Tag {
+    id             Int      @id @default(autoincrement())
+    name           String
+    content        String?
+    Guild          Guild?   @relation(fields: [guildId], references: [id])
+    guildId        String?
+    attachmentName String?
+    attachmentData Bytes?
+    createdAt      DateTime @default(now())
+
+    @@unique([name, guildId])
 }
 
 enum LogType {

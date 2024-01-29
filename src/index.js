@@ -18,6 +18,7 @@ const gMemberAdd = './events/guildMemberAdd/';
 const minute = './events/everyMinute/';
 const hour = './events/everyHour/';
 const utils = './utils/';
+const serverDir = './server/';
 const { token, colors, guilds, server } = require('./config.json');
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);
 const { checkAndUnmuteUsers } = require(`${minute}checkMutes`);
@@ -37,6 +38,7 @@ const { checkHighlights } = require(`${mCreate}checkHighlights`);
 const { deleteLog } = require(`${mDelete}deleteLog`);
 const { editLog } = require(`${mEdit}editLog`);
 const { initLog } = require(`${utils}initLog`);
+const { auth } = require(`${serverDir}auth`);
 const log = require(`${utils}log`);
 const { bulkDeleteLog } = require(`${mBulkDelete}bulkDeleteLog`);
 const axios = require('axios');
@@ -266,17 +268,41 @@ if (server.enabled) {
 	app.set('views', './server/views');
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
+	/*
 	app.use(
 		helmet({
 			contentSecurityPolicy: {
 				directives: {
 					defaultSrc: ["'self'"],
-					scriptSrc: ["'self'", 'https://cdn.tailwindcss.com'],
+					scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
 					imgSrc: ["'self'", 'data:', 'https://cdn.discordapp.com', 'https://images-ext-1.discordapp.net'],
 				},
 			},
 		})
 	);
+	*/
+	app.use(
+		helmet({
+			contentSecurityPolicy: false,
+		})
+	);
+
+	app.use((req, res, next) => {
+		log.verbose(req.path);
+		if (req.path.startsWith('/bdl')) {
+			const originalUrl = encodeURIComponent(req.originalUrl);
+			res.redirect(`${server.url}/auth?bdl=${originalUrl}`);
+			next();
+		} else {
+			next();
+		}
+	});
+
+	app.post('/auth', (req, res) => {
+		log.verbose('auth requested');
+		res.setHeader('Content-Type', 'text/html');
+		return auth(req, res);
+	});
 
 	app.use(
 		express.static('./server/public', {

@@ -4,7 +4,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
-    "deploy": "node src/globalDeply.js",
+    "deploy": "node src/globalDeploy.js",
     "start": "node src/index.js",
     "prisma": "prisma generate && prisma migrate dev --name modBot"
   },

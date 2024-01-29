@@ -5,7 +5,7 @@ async function gifDetector(message) {
 	if (message.author.bot) return;
 	log.debug('Starting gif detection');
 	let hasGif = false;
-	let allowedChannels = ['438653183464701963', '438652906116481025'];
+	let allowedChannels = ['438653183464701963', '438652906116481025', '1197694320346665140'];
 	let messageChannel = message.channel.id;
 
 	if (allowedChannels.includes(messageChannel)) return;

@@ -6,7 +6,7 @@ prisma/migrations/
 Thumbs.db
 blockedDomains.json
 debug.log
-*.html
+bdl*.html
 restart.js
 bam.js
 bam.py
