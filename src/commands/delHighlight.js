@@ -24,6 +24,7 @@ module.exports = {
 		let highlight = await prisma.highlight.findUnique({
 			where: {
 				id: Number(highlightID),
+				guildId: interaction.guild.id,
 			},
 		});
 

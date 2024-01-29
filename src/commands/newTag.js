@@ -1,10 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff, hasHigherPerms } = require('../utils/isStaff.js');
-const { defineTarget } = require('../utils/defineTarget.js');
+const { isStaff } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient.js');
-const { getModChannels } = require('../utils/getModChannels.js');
 const { colors } = require('../config.json');
 const log = require('../utils/log.js');
+const axios = require('axios');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -18,11 +17,13 @@ module.exports = {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
 
-		let tagName = interaction.options.getString('tag-name') ? interaction.options.getString('tag-name') : false;
+		let tagName = interaction.options.getString('tag-name') ? interaction.options.getString('tag-name').toLowerCase() : false;
 		let content = interaction.options.getString('content') ? interaction.options.getString('content') : false;
 		let attachment = (await interaction.options.getAttachment('attachment')) ? interaction.options.getAttachment('attachment') : false;
 
 		if (!content && !attachment) return sendReply('main', 'You need to provide either content or an attachment for the tag');
+
+		if (content) content = content.replace(/\{\{newline\}\}/g, String.fromCharCode(10));
 
 		const existingTag = await prisma.tag.findFirst({
 			where: {
@@ -42,6 +43,12 @@ module.exports = {
 
 		let attachmentData = null;
 		if (attachment) {
+			if (!attachment.width || attachment.width === null) {
+				return sendReply('error', 'This attachment is not recognized as an image');
+			}
+			if (attachment.contentType.toLowerCase().includes('video')) {
+				return sendReply('error', 'This attachment is a video, please use an image/gif instead');
+			}
 			if (attachment.size > 25_000_000) {
 				return sendReply('error', `The attachment is too large. The maximum size is 25MB`);
 			}
@@ -81,12 +88,17 @@ module.exports = {
 				return sendReply('error', `There was an error creating the tag: ${e}`);
 			});
 
-		async function downloadAttachmentData(attachmentUrl) {
-			const response = await fetch(attachmentUrl);
-			if (!response.ok) {
-				throw new Error(`Failed to download attachment: ${response.statusText}`);
+		async function downloadAttachmentData(url) {
+			try {
+				const response = await axios.get(url, {
+					responseType: 'arraybuffer',
+				});
+				const buffer = Buffer.from(response.data, 'binary');
+				return buffer;
+			} catch (error) {
+				log.error('Error downloading image:', error);
+				return error;
 			}
-			return response.buffer();
 		}
 
 		function sendReply(type, message) {
