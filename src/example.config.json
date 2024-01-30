@@ -7,7 +7,8 @@
     "colors": { 
       "success": "#66de98", 
       "error": "#FF6961", 
-      "main": "#6C4678" 
+      "main": "#6C4678",
+      "warning": "#f5f562"
     },
     "server": {
       "enabled": true,

@@ -31,6 +31,7 @@ const { isStaff } = require(`${utils}isStaff`);
 const { checkAccountAge } = require(`${gMemberAdd}checkAccountAge`);
 const { wipeFailedJoins } = require(`${hour}wipeFailedJoins`);
 const { turtleCheck } = require(`${mCreate}turtleCheck`);
+const { unshortenMessageURLs } = require(`${mCreate}unshortenMessageURLs`);
 const { fileTypeChecker } = require(`${mCreate}fileTypeChecker`);
 const { deleteTurtles } = require(`${minute}deleteTurtles`);
 const { antiAds } = require(`${mCreate}antiAds`);

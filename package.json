@@ -4,9 +4,9 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
-    "deploy": "node src/globalDeploy.js",
-    "start": "node src/index.js",
-    "prisma": "prisma generate && prisma migrate dev --name modBot"
+    "deploy": "node globalDeploy.js",
+    "start": "node index.js",
+    "prisma": "npx prisma generate && npx prisma migrate dev --name modBot"
   },
   "repository": {
     "type": "git",
