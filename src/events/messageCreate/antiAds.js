@@ -47,7 +47,12 @@ function antiAds(message) {
 	let logEmbed = new EmbedBuilder()
 		.setColor(colors.main)
 		.setTitle('Member Warned')
-		.addFields({ name: 'User', value: `<@${message.author.id}> (${message.author.id})` }, { name: 'Reason', value: 'Discord invite link sent' }, { name: 'Moderator', value: `System` })
+		.addFields(
+			{ name: 'User', value: `<@${message.author.id}> (${message.author.id})` },
+			{ name: 'Reason', value: 'Discord invite link sent' },
+			{ name: 'Invite Link', value: sentInvite[0] },
+			{ name: 'Moderator', value: `System` }
+		)
 		.setTimestamp();
 
 	getModChannels(message.client, message.guild.id)

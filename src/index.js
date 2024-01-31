@@ -1,12 +1,13 @@
 //////////////////////////////////////
 // external lib requires
-const { Client, Events, Collection, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { Client, Events, Collection, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder, ChannelType } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const axios = require('axios');
 
 //////////////////////////////////////
 // Internal requires
@@ -30,6 +31,7 @@ const { isStaff } = require(`${utils}isStaff`);
 //const { updateSnipe } = require(`${mDelete}updateSnipe`);
 const { checkAccountAge } = require(`${gMemberAdd}checkAccountAge`);
 const { wipeFailedJoins } = require(`${hour}wipeFailedJoins`);
+const { deleteModMail } = require(`${hour}deleteModMail`);
 const { turtleCheck } = require(`${mCreate}turtleCheck`);
 const { unshortenMessageURLs } = require(`${mCreate}unshortenMessageURLs`);
 const { fileTypeChecker } = require(`${mCreate}fileTypeChecker`);
@@ -42,7 +44,9 @@ const { initLog } = require(`${utils}initLog`);
 const { auth } = require(`${serverDir}auth`);
 const log = require(`${utils}log`);
 const { bulkDeleteLog } = require(`${mBulkDelete}bulkDeleteLog`);
-const axios = require('axios');
+const { modMailServer, modMailDM } = require(`${mCreate}modMailCon`);
+const { antiSpam } = require(`${mCreate}antiSpam`);
+const prisma = require(`${utils}prismaClient`);
 
 initLog();
 
@@ -105,6 +109,7 @@ client.once(Events.ClientReady, async c => {
 	await checkAndUnmuteUsers(client, getModChannels);
 	await deleteTurtles();
 	await wipeFailedJoins();
+	await deleteModMail(client);
 
 	setInterval(everyMinute, 30000);
 	setInterval(everyHour, 3600000);
@@ -117,6 +122,7 @@ client.once(Events.ClientReady, async c => {
 	}
 	async function everyHour() {
 		await wipeFailedJoins();
+		await deleteModMail(client);
 	}
 });
 
@@ -207,11 +213,37 @@ client.on(Events.InteractionCreate, async interaction => {
 // Join/Leave Events
 
 client.on(Events.GuildMemberAdd, async member => {
-	if (guilds[member.guild.id].features.checkAccountAge) await checkAccountAge(member);
+	if (guilds[member.guild.id].features.checkAccountAge.enabled) await checkAccountAge(member);
 });
 
 //////////////////////////////////////
 // Message events
+
+client.on(Events.ThreadUpdate, async (oldThread, newThread) => {
+	if (newThread.locked || newThread.archived) {
+		if (guilds[newThread.guild.id].features.modMail) {
+			let mail = await prisma.mail.findFirst({ where: { postID: newThread.id } });
+			if (!mail) return;
+			await prisma.mail
+				.delete({
+					where: {
+						postID: newThread.id,
+					},
+				})
+				.then(r => {
+					newThread.client.users.cache
+						.get(mail.userID)
+						.send(`Your mod mail connection in ${newThread.guild.name} has been closed by a staff member.`)
+						.catch(e => {
+							log.error(e);
+						});
+				})
+				.catch(e => {
+					log.error(`Error deleting mod mail: ${e}`);
+				});
+		}
+	}
+});
 
 client.on(Events.MessageBulkDelete, async (messages, channel) => {
 	if (guilds[channel.guild.id].logs.messageDeleteBulk && server.enabled) {
@@ -228,9 +260,16 @@ client.on(Events.MessageUpdate, async (oldMessage, message) => {
 });
 
 client.on(Events.MessageCreate, async message => {
-	if (!message.guild) return;
 	if (message.author.bot) return;
+	if (message.channel.type !== ChannelType.DM) {
+		if (guilds[message.guild.id].features.modMail) {
+			await modMailServer(message);
+		}
+	}
+	await modMailDM(message);
+	if (!message.guild) return;
 	if (guilds[message.guild.id].features.antiAds) await antiAds(message);
+	if (guilds[message.guild.id].features.antiSpam) await antiSpam(message);
 	await messageEvents(message);
 	await checkHighlights(message);
 });
@@ -256,7 +295,7 @@ async function messageEvents(message, oldMessage) {
 	await turtleCheck(message, guildMember);
 	//Ignoring staff
 	if (!isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)) {
-		if (guilds[message.guild.id].features.gifDetector) await gifDetector(message);
+		if (guilds[message.guild.id].features.gifDetector.enabled) await gifDetector(message);
 	}
 	//Not ignoring staff
 	if (guilds[message.guild.id].features.hiddenLinkDetection) await checkForInlineURLs(client, content, message, getModChannels);
@@ -269,19 +308,6 @@ if (server.enabled) {
 	app.set('views', './server/views');
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
-	/*
-	app.use(
-		helmet({
-			contentSecurityPolicy: {
-				directives: {
-					defaultSrc: ["'self'"],
-					scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
-					imgSrc: ["'self'", 'data:', 'https://cdn.discordapp.com', 'https://images-ext-1.discordapp.net'],
-				},
-			},
-		})
-	);
-	*/
 	app.use(
 		helmet({
 			contentSecurityPolicy: false,

@@ -1,29 +1,31 @@
 const prisma = require('../../utils/prismaClient');
 const { EmbedBuilder } = require('discord.js');
+state;
 const c = require('../../config.json');
 const { colors } = require('../../config.json');
 const log = require('../../utils/log');
 
 async function checkAccountAge(member) {
 	let age = member.user.createdAt;
+	let daysReq = c.guilds[member.guild.id].features.checkAccountAge.days;
 	let today = new Date();
-	let weekAgo = today.setDate(today.getDate() - 7);
+	let weekAgo = today.setDate(today.getDate() - daysReq);
 
 	if (age > weekAgo) {
 		await member
 			.send(
-				'Your account is newer than 7 days. Please do not attempt to rejoin this server until your account reaches 7 days old, or you may be considered a bot by our automated system and be banned.'
+				`Your account is newer than ${daysReq} days. Please do not attempt to rejoin this server until your account reaches ${daysReq} days old, or you may be considered a bot by our automated system and be banned.`
 			)
 			.catch(e => log.debug('could not notify member'));
 		member
-			.kick('Account is newer than 7 days.')
+			.kick(`Account is newer than ${daysReq} days.`)
 			.then(k => {
 				let logEmbed = new EmbedBuilder()
 					.setColor(colors.main)
 					.setTitle('Member Kicked')
 					.addFields(
 						{ name: 'User', value: `${member.user.username} (${member.user.id})` },
-						{ name: 'Reason', value: `Account is newer than 7 days | Creation date: ${age}` },
+						{ name: 'Reason', value: `Account is newer than ${daysReq} days | Creation date: ${age}` },
 						{ name: 'Moderator', value: 'System' }
 					)
 					.setTimestamp();
@@ -77,7 +79,7 @@ async function checkAccountAge(member) {
 					});
 				})
 				.catch(e => {
-					log.error(`Error on banning user automatically (newer than 7 days old):\n${e}`);
+					log.error(`Error on banning user automatically (newer than ${daysReq} days old):\n${e}`);
 				});
 		}
 	}

@@ -22,6 +22,7 @@ model Guild {
     failedJoins FailedJoin[]
     highlights  Highlight[]
     tags        Tag[]
+    mail        Mail[]
 
     @@unique(id)
     @@index(id)
@@ -130,6 +131,16 @@ model Warning {
     guildId   String
 
     @@index([userID, guildId])
+}
+
+model Mail {
+    date    DateTime @default(now())
+    postID  String   @id
+    userID  String
+    Guild   Guild    @relation(fields: [guildId], references: [id])
+    guildId String
+
+    @@index([userID, guildId, postID])
 }
 
 model Tag {

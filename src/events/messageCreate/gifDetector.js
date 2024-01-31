@@ -1,11 +1,12 @@
 const log = require('../../utils/log');
+const { guilds } = require('../../config.json');
 
 async function gifDetector(message) {
 	if (!message.channel.guild) return;
 	if (message.author.bot) return;
 	log.debug('Starting gif detection');
 	let hasGif = false;
-	let allowedChannels = ['438653183464701963', '438652906116481025', '1197694320346665140'];
+	let allowedChannels = guilds[message.guild.id].features.gifDetector.allowedChannels;
 	let messageChannel = message.channel.id;
 
 	if (allowedChannels.includes(messageChannel)) return;

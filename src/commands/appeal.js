@@ -43,7 +43,7 @@ module.exports = {
 		}
 
 		log.debug(`Getting debug channel...`);
-		let appealChannel = await guild.channels.cache.get(guilds[guildChoice].appealChannelID);
+		let mailChannel = await guild.channels.cache.get(guilds[guildChoice].mailChannelID);
 
 		let dbBan = await prisma.ban
 			.findUnique({
@@ -61,30 +61,21 @@ module.exports = {
 		log.debug(`Getting avatar URL...`);
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 
+		let logEmbed;
 		if (!dbBan) {
 			log.debug('No ban found...');
-			let logEmbed = new EmbedBuilder()
+			logEmbed = new EmbedBuilder()
 				.setColor(colors.main)
 				.setTitle('New Ban Appeal')
 				.setDescription(`Why I should be unbanned: \`${reason}\``)
 				.addFields({ name: 'Original Ban Reason', value: ban.reason })
 				.setAuthor({ name: interaction.user.username, iconURL: aviURL })
 				.setTimestamp();
-
-			await appealChannel
-				.send({
-					embeds: [logEmbed],
-					content: `<@${interaction.user.id}>`,
-				})
-				.catch(e => {
-					log.error(`Error sending message to appeal channel: ${e}`);
-				});
-			await interaction.editReply('Appeal sent!');
 		} else {
 			log.debug('Ban found');
 			if (dbBan.endDate === new Date(2100, 0, 1)) dbBan.duration = 'Eternity';
 
-			let logEmbed = new EmbedBuilder()
+			logEmbed = new EmbedBuilder()
 				.setColor(colors.main)
 				.setTitle('New Ban Appeal')
 				.setDescription(`Why I should be unbanned: \`${reason}\``)
@@ -96,16 +87,40 @@ module.exports = {
 				)
 				.setAuthor({ name: interaction.user.username, iconURL: aviURL })
 				.setTimestamp();
+		}
 
-			await appealChannel
-				.send({
-					embeds: [logEmbed],
-					content: `<@${interaction.user.id}>`,
-				})
-				.catch(e => {
-					log.error(`Error sending message to appeal channel: ${e}`);
-				});
-			await interaction.editReply('Appeal sent!');
+		mailChannel.threads
+			.create({
+				name: `Ban Appeal From ${interaction.user.username}`,
+				reason: `Ban Appeal From ${interaction.user.username} (${interaction.user.id})`,
+				message: { embeds: [logEmbed], content: `<@${interaction.user.id}>` },
+			})
+			.then(forumPost => {
+				prisma.mail
+					.create({
+						data: {
+							userID: interaction.user.id,
+							guildId: interaction.guild.id,
+							postID: forumPost.id,
+						},
+					})
+					.then(r => {
+						return sendReply('main', 'Appeal Sent!');
+					})
+					.catch(e => {
+						log.error(`Error creating appeal: ${e}`);
+						return sendReply('error', `Error creating appeal: ${e}`);
+					});
+			})
+			.catch(e => {
+				log.error(`Error creating thread: ${e}`);
+				return sendReply('error', `Error creating thread: ${e}`);
+			});
+
+		function sendReply(type, message) {
+			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
+
+			interaction.editReply({ embeds: [replyEmbed] });
 		}
 	},
 };
