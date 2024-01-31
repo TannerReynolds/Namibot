@@ -4,6 +4,7 @@ const prisma = require('../utils/prismaClient.js');
 const { colors } = require('../config.json');
 const log = require('../utils/log.js');
 const axios = require('axios');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -99,12 +100,6 @@ module.exports = {
 				log.error('Error downloading image:', error);
 				return error;
 			}
-		}
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
 		}
 	},
 };

@@ -8,49 +8,7 @@ async function wordFilter(content, message, modChannels) {
 	// Replace all whitespace/blank characters with a normal space
 	preProcessedContent = preProcessedContent.replace(/\u3164/g, ' ');
 	let cleanedContent = remove(preProcessedContent, '');
-	let bannedWords = [
-		'Assfucker',
-		'Bdsm',
-		'Blowjob',
-		'Boob',
-		'Boobs',
-		'cunt',
-		'Cockandball',
-		'Coochie',
-		'Cumface',
-		'Cummie',
-		'Cummies',
-		'Cumslut',
-		'Dildo',
-		'Dildos',
-		'Faggot',
-		'Faggots',
-		'Fleshlight',
-		'Hentai',
-		'Masterbait',
-		'Masterbaiter',
-		'Masturbate',
-		'Masturbator',
-		'Nigga',
-		'Niggas',
-		'Nigger',
-		'Niggers',
-		'Orgy',
-		'Pussies',
-		'Pussy',
-		'Retarded',
-		'Retards',
-		'Retard',
-		'Slut',
-		'Strap-on',
-		'Tiddies',
-		'Tiddy',
-		'Titties',
-		'Titty',
-		'Wank',
-		'kys',
-		'Porn',
-	];
+	
 	const words = cleanedContent.split(' ');
 
 	// To-do: Figure out how to properly process spaced inbetween characters for filter evasion

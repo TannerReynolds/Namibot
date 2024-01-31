@@ -4,9 +4,11 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
-    "deploy": "node globalDeploy.js",
-    "start": "node index.js",
-    "prisma": "npx prisma generate && npx prisma migrate dev --name modBot"
+    "deploy": "node src/globalDeploy.js",
+    "start": "node src/index.js",
+    "validate": "node src/verifyInstall.js",
+    "prisma": "npx prisma generate && npx prisma migrate dev --name modBot",
+    "setup": "npm i && npm i -g prisma pm2 && node src/setupConfs.js && node src/verifyInstall.js && npx prisma generate && npx prisma migrate dev --name modBot && node src/globalDeploy.js && node src/verifyInstall.js --complete"
   },
   "repository": {
     "type": "git",

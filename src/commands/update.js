@@ -5,6 +5,7 @@ const { exec } = require('child_process');
 const https = require('https');
 const fs = require('fs');
 const { version } = require('../../package.json');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('update').setDMPermission(false).setDescription('Update and restart the bot').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
@@ -61,11 +62,5 @@ module.exports = {
 		}
 
 		checkForUpdates();
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 	},
 };

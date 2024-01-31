@@ -3,6 +3,7 @@ const axios = require('axios');
 const { guilds, colors } = require('../config.json');
 const { isStaff } = require('../utils/isStaff.js');
 const log = require('../utils/log.js');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new ContextMenuCommandBuilder().setName('Get Avatar').setDMPermission(false).setType(ApplicationCommandType.User),

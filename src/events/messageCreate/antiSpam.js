@@ -6,25 +6,23 @@ const log = require('../../utils/log');
 const prisma = require('../../utils/prismaClient');
 
 async function antiSpam(message) {
-	const MAX_MENTIONS = 8; // maximum number of mentions allowed
-	const MAX_NEWLINES = 65; // maximum number of consecutive newlines allowed
-	const MAX_CHARS = 2000; // Discord character limit for a message
+	const MAX_MENTIONS = 8;
+	const MAX_NEWLINES = 65;
+	const MAX_CHARS = 2000;
 
 	const reasons = [];
 
-	// Check for message character limit
+	/*
 	if (message.content.length >= MAX_CHARS) {
 		await timeoutUser(message, 10);
 		reasons.push('hitting the message character limit');
-	}
+	}*/
 
-	// Check for mass mentions
 	if (message.mentions.users.size + message.mentions.roles.size > MAX_MENTIONS) {
 		await timeoutUser(message, 10);
 		reasons.push('mass mentioning users or roles');
 	}
 
-	// Check for excessive newlines
 	if (message.content.split('\n').length > MAX_NEWLINES) {
 		await timeoutUser(message, 10);
 		reasons.push('spamming new lines');
@@ -41,7 +39,12 @@ async function antiSpam(message) {
 			.setTitle(`You have been automatically timed out for 10 minutes.`)
 			.setColor(colors.success)
 			.setDescription(`Reason: hitting the spam filter by ${reasons.join(', ')}`);
-		await message.reply({ embeds: [replyEmbed] });
+		message.reply({ embeds: [replyEmbed] }).then(r => {
+			setTimeout(() => {
+				log.debug(`deleting response`);
+				return r.delete();
+			}, 5000);
+		})
 
 		let aviURL = message.client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 			? message.client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
@@ -102,7 +105,7 @@ async function checkRapidMessaging(message) {
 	const timestamps = state.getMessageTimestamps(userID);
 	if (timestamps.length === 3) {
 		const timeDiff = timestamps[2] - timestamps[0];
-		const rapidTimeLimit = 1000; // 1 second
+		const rapidTimeLimit = 1000;
 
 		if (timeDiff <= rapidTimeLimit) {
 			return true;

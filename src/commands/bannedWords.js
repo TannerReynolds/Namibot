@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { colors } = require('../config.json');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('bannedwords').setDMPermission(false).setDescription("See our server's banned words"),
@@ -42,11 +43,5 @@ module.exports = {
 		let doneEmbed = new EmbedBuilder().setColor(colors.main).setDescription('Sent banned words list to your DMs!').setTimestamp();
 
 		return interaction.editReply({ embeds: [doneEmbed] });
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 	},
 };

@@ -3,6 +3,7 @@ const { colors } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
 const { unshortenURL } = require('../utils/unshortenURL');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -27,11 +28,5 @@ module.exports = {
 			.catch(e => {
 				return sendReply('error', `Encountered an error while unshortening URLs: ${e}`);
 			});
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 	},
 };

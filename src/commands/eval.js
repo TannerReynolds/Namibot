@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { botOwnerID, colors } = require('../config.json');
 const log = require('../utils/log');
 const prisma = require('../utils/prismaClient');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()

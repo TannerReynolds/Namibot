@@ -5,8 +5,6 @@ const { guilds, colors } = require('../../config.json');
 const { getModChannels } = require('../../utils/getModChannels');
 const log = require('../../utils/log');
 
-const advertised = new Set();
-
 function antiAds(message) {
 	if (!message.channel.guild) return;
 	if (message.author.bot) return;
@@ -28,6 +26,12 @@ function antiAds(message) {
 
 	if (currentInvite === sentInvite[0] && !sentInvite[1]) {
 		return log.debug(`No other invites and only invite sent was this server's`);
+	}
+
+	let allowed = guilds[message.guild.id].features.antiAds.allowedInvites;
+
+	if (allowed.some(allowedInvite => sentInvite[0] === allowedInvite) && !sentInvite[1]) {
+		return log.debug("allowed invite sent")
 	}
 
 	message.delete().catch(e => {

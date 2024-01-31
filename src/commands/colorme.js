@@ -2,6 +2,7 @@ const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSe
 const { colors } = require('../config.json');
 const prisma = require('../utils/prismaClient');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder().setDMPermission(false).setName('colorme').setDescription('Select a color for yourself!'),
@@ -69,12 +70,6 @@ module.exports = {
 				}, 5000);
 			});
 		});
-
-		function sendReply(interaction, type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.reply({ embeds: [replyEmbed] });
-		}
 	},
 };
 

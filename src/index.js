@@ -254,7 +254,7 @@ client.on(Events.MessageBulkDelete, async (messages, channel) => {
 client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	if (guilds[message.guild.id].features.antiAds) await antiAds(message);
+	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
 	await messageEvents(message, oldMessage);
 	if (guilds[message.guild.id].logs.messageUpdate) await editLog(message, oldMessage);
 });
@@ -268,7 +268,7 @@ client.on(Events.MessageCreate, async message => {
 	}
 	await modMailDM(message);
 	if (!message.guild) return;
-	if (guilds[message.guild.id].features.antiAds) await antiAds(message);
+	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
 	if (guilds[message.guild.id].features.antiSpam) await antiSpam(message);
 	await messageEvents(message);
 	await checkHighlights(message);
@@ -277,7 +277,6 @@ client.on(Events.MessageCreate, async message => {
 client.on(Events.MessageDelete, async message => {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	//updateSnipe(message);
 	if (guilds[message.guild.id].logs.messageDelete) await deleteLog(message);
 });
 

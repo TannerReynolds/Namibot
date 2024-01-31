@@ -3,6 +3,7 @@ const { colors } = require('../config.json');
 const log = require('../utils/log.js');
 const { getModChannels } = require('../utils/getModChannels');
 const { isStaff } = require('../utils/isStaff');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -56,11 +57,5 @@ module.exports = {
 				log.error(error);
 				return sendReply('error', 'There was an error trying to purge messages in this channel!');
 			});
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 	},
 };

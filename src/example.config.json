@@ -10,6 +10,13 @@
       "main": "#6C4678",
       "warning": "#f5f562"
     },
+    "emojis": {
+      "sent": "📨",
+      "yes": "✅",
+      "no": "❌",
+      "success": "✅",
+      "error": "❌"
+    },
     "server": {
       "enabled": true,
       "port": 1746,
@@ -36,7 +43,10 @@
             "enabled": true,
             "days": 7
           },
-          "antiAds": true,
+          "antiAds": {
+            "enabled": true,
+            "allowedInvites": ["https://discord.gg/cars", "https://discord.gg/learnjapanese"]
+          },
           "bannedWordFilter": true,
           "fileTypeChecker": true,
           "gifDetector": {
@@ -103,11 +113,20 @@
           "messageUpdate": true
         },
         "features": {
-          "checkAccountAge": true,
-          "antiAds": true,
+          "checkAccountAge": {
+            "enabled": true,
+            "days": 7
+          },
+          "antiAds": {
+            "enabled": true,
+            "allowedInvites": ["https://discord.gg/cars", "https://discord.gg/learnjapanese"]
+          },
           "bannedWordFilter": true,
           "fileTypeChecker": true,
-          "gifDetector": true,
+          "gifDetector": {
+            "enabled": true,
+            "allowedChannels": ["438653183464701963", "438652906116481025", "1197694320346665140"]
+          },
           "hiddenLinkDetection": true,
           "antiSpam": true,
           "modMail": true
@@ -168,11 +187,20 @@
           "messageUpdate": true
         },
         "features": {
-          "checkAccountAge": true,
-          "antiAds": true,
+          "checkAccountAge": {
+            "enabled": true,
+            "days": 7
+          },
+          "antiAds": {
+            "enabled": true,
+            "allowedInvites": ["https://discord.gg/JRqbHA5gbv"]
+          },
           "bannedWordFilter": true,
           "fileTypeChecker": true,
-          "gifDetector": true,
+          "gifDetector": {
+            "enabled": true,
+            "allowedChannels": ["438653183464701963", "438652906116481025", "1197694320346665140"]
+          },
           "hiddenLinkDetection": true,
           "antiSpam": true,
           "modMail": true

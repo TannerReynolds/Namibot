@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ChannelType } = require('discord.js');
+const { EmbedBuilder, ChannelType } = require('discord.js');
 const prisma = require('../../utils/prismaClient.js');
 const { colors } = require('../../config.json');
 

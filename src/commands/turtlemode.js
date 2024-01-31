@@ -7,6 +7,7 @@ const { defineDuration, defineDurationString } = require('../utils/defineDuratio
 const { parseNewDate, durationToString, isValidDuration, durationToSec } = require('../utils/parseDuration');
 const { getModChannels } = require('../utils/getModChannels');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -104,12 +105,6 @@ module.exports = {
 			embeds: [logEmbed],
 			content: `<@${target}>`,
 		});
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 
 		if (duration !== 'infinite') {
 			await prisma.turtleMode.upsert({

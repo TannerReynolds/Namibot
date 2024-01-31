@@ -3,6 +3,7 @@ const prisma = require('../utils/prismaClient.js');
 const { colors } = require('../config.json');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const log = require('../utils/log.js');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('tags').setDMPermission(false).setDescription("See the server's tags"),
@@ -57,12 +58,6 @@ module.exports = {
 		} catch (error) {
 			sendReply('error', `Error fetching tags: ${error}`);
 			throw error;
-		}
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
 		}
 	},
 };

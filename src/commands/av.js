@@ -4,6 +4,7 @@ const { defineTarget } = require('../utils/defineTarget');
 const { guilds, colors } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()

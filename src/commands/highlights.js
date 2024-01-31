@@ -4,6 +4,7 @@ const prisma = require('../utils/prismaClient');
 const { colors } = require('../config.json');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const log = require('../utils/log.js');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('highlights').setDMPermission(false).setDescription('View your highlights'),
@@ -60,12 +61,6 @@ module.exports = {
 		} catch (error) {
 			sendReply('error', `Error fetching highlights: ${error}`);
 			throw error;
-		}
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
 		}
 	},
 };

@@ -3,6 +3,7 @@ const { colors } = require('../config.json');
 const log = require('../utils/log');
 const { getLogPassword } = require('../utils/sharedState');
 const { isStaff, hasHigherPerms } = require('../utils/isStaff');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('getlogpassword').setDMPermission(false).setDescription('Get the current log password'),
@@ -20,11 +21,5 @@ module.exports = {
 		let doneEmbed = new EmbedBuilder().setColor(colors.main).setDescription('Sent the current log password to your DMs!').setTimestamp();
 
 		return interaction.editReply({ embeds: [doneEmbed] });
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 	},
 };

@@ -38,7 +38,7 @@ async function checkHighlights(message) {
 							embeds: [hEmbed],
 							content: `Jump to Message: ${message.url}`,
 						})
-						.catch(e => log.error(`Couldn't send highlight DM: ${e}`))
+						.catch(e => log.error(`Couldn't send highlight DM to ${h.userID}: ${e}`))
 				);
 			}
 		}

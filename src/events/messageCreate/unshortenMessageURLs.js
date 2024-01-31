@@ -18,6 +18,8 @@ async function unshortenMessageURLs(message) {
 			let urlString = formattedURLs.join(" ⇒ ");
             let unshortEmbed = new EmbedBuilder().setColor(colors.warning).setTitle('Shortened URL Detected').setDescription(urlString).setTimestamp().setAuthor({ name: name, iconURL: aviURL });
             message.reply({ embeds: [unshortEmbed] })
+
+			let blockedDomainsMessage = { guild: message.guild, bot: false, content: urlString, client: message.client }
         })
 	}
 }

@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient');
 const { guilds, colors } = require('../config.json');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -78,11 +79,5 @@ module.exports = {
 				log.error(`Error creating thread: ${e}`);
 				return sendReply('error', `Error creating thread: ${e}`);
 			});
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 	},
 };

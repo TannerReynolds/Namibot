@@ -3,6 +3,7 @@ const { isStaff, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const { guilds, colors } = require('../config.json');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -77,11 +78,5 @@ module.exports = {
 
 				interaction.editReply({ embeds: [roleEmbed] });
 			});
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 	},
 };

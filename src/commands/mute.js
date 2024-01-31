@@ -6,6 +6,7 @@ const prisma = require('../utils/prismaClient');
 const { guilds, colors } = require('../config.json');
 const { getModChannels } = require('../utils/getModChannels');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -94,12 +95,6 @@ module.exports = {
 			.catch(e => {
 				interaction.editReply(`Could not mute member\n${e}`);
 			});
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 
 		await prisma.mute.upsert({
 			where: {

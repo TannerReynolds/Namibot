@@ -7,6 +7,7 @@ const { getModChannels } = require('../utils/getModChannels');
 const { colors } = require('../config.json');
 const c = require('../config.json');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -189,12 +190,6 @@ module.exports = {
 		} catch (e) {
 			log.error(`Error banning user: ${e}`);
 			return sendReply('error', `Error banning user: ${e}`);
-		}
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
 		}
 	},
 };

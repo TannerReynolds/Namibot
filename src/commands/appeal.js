@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const prisma = require('../utils/prismaClient');
 const { guilds, colors } = require('../config.json');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -22,12 +23,6 @@ module.exports = {
 		let reason = await interaction.options.getString('reason');
 		let guild = interaction.client.guilds.cache.get(guildChoice);
 		log.debug(`Getting guild name: ${guild.name}`);
-		let blacklist = ['201718554620329984'];
-		let blacklisted = blacklist.find(e => e === interaction.user.id);
-		if (blacklisted) {
-			log.debug(`User blacklisted user ID: ${interaction.user.id}`);
-			return interaction.editReply('You have been blacklisted from appealing.');
-		}
 
 		log.debug(`Looking for guild ban...`);
 		let ban = false;
@@ -57,6 +52,16 @@ module.exports = {
 			.catch(e => {
 				log.error(`Error fetching ban: ${e}`);
 			});
+
+			const existingMail = await prisma.mail.findFirst({
+				where: {
+					userID: interaction.user.id,
+				},
+			});
+	
+			if (existingMail) {
+				return sendReply('error', 'You already have an active mod mail. Please wait for a response before creating another.');
+			}
 
 		log.debug(`Getting avatar URL...`);
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
@@ -116,11 +121,5 @@ module.exports = {
 				log.error(`Error creating thread: ${e}`);
 				return sendReply('error', `Error creating thread: ${e}`);
 			});
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
-		}
 	},
 };

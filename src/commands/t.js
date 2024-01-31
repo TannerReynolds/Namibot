@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discor
 const prisma = require('../utils/prismaClient.js');
 const { colors } = require('../config.json');
 const log = require('../utils/log.js');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -46,12 +47,6 @@ module.exports = {
 		} else {
 			sendReply('main', 'Sending tag...');
 			interaction.channel.send({ embeds: [tagEmbed] });
-		}
-
-		function sendReply(type, message) {
-			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
-
-			interaction.editReply({ embeds: [replyEmbed] });
 		}
 	},
 };
