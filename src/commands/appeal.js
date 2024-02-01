@@ -53,15 +53,15 @@ module.exports = {
 				log.error(`Error fetching ban: ${e}`);
 			});
 
-			const existingMail = await prisma.mail.findFirst({
-				where: {
-					userID: interaction.user.id,
-				},
-			});
-	
-			if (existingMail) {
-				return sendReply('error', 'You already have an active mod mail. Please wait for a response before creating another.');
-			}
+		const existingMail = await prisma.mail.findFirst({
+			where: {
+				userID: interaction.user.id,
+			},
+		});
+
+		if (existingMail) {
+			return sendReply('error', 'You already have an active mod mail. Please wait for a response before creating another.');
+		}
 
 		log.debug(`Getting avatar URL...`);
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
@@ -101,12 +101,15 @@ module.exports = {
 				message: { embeds: [logEmbed], content: `<@${interaction.user.id}>` },
 			})
 			.then(forumPost => {
+				let wipeDate = new Date();
+				wipeDate.setDate(wipeDate.getDate() + 3);
 				prisma.mail
 					.create({
 						data: {
 							userID: interaction.user.id,
-							guildId: interaction.guild.id,
+							guildId: guildChoice,
 							postID: forumPost.id,
+							date: wipeDate,
 						},
 					})
 					.then(r => {

@@ -1,6 +1,6 @@
 const prisma = require('../../utils/prismaClient');
 const { EmbedBuilder } = require('discord.js');
-state;
+const state = require('../../utils/sharedState');
 const c = require('../../config.json');
 const { colors } = require('../../config.json');
 const log = require('../../utils/log');
