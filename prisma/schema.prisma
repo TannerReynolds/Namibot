@@ -28,6 +28,13 @@ model Guild {
     @@index(id)
 }
 
+model User {
+  id          String       @id
+  name  String
+  xp    Int    @default(0)
+  level Int    @default(1)
+}
+
 model FailedJoin {
     id      Int      @id @default(autoincrement())
     time    DateTime @default(now())
