@@ -1,9 +1,10 @@
-const { colors } = require("../config.json")
+const { colors } = require('../config.json');
+const { EmbedBuilder } = require('discord.js');
 
 function sendReply(interaction, type, message) {
-    let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
+	let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
 
-    interaction.editReply({ embeds: [replyEmbed] });
+	interaction.editReply({ embeds: [replyEmbed] });
 }
 
-module.exports = { sendReply }
+module.exports = { sendReply };

@@ -2,7 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient.js');
 const { colors } = require('../config.json');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
-const log = require('../utils/log.js');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -21,7 +20,7 @@ module.exports = {
 			});
 
 			if (!tags || tags === undefined) {
-				return sendReply('main', 'This server has no tags.');
+				return sendReply(interaction, 'main', 'This server has no tags.');
 			}
 
 			const formattedtags = tags.map(tag => {
@@ -29,7 +28,7 @@ module.exports = {
 			});
 
 			if (formattedtags.length === 0) {
-				return sendReply('main', 'This server has no tags.');
+				return sendReply(interaction, 'main', 'This server has no tags.');
 			}
 
 			const tagsPerPage = 10;
@@ -56,7 +55,7 @@ module.exports = {
 				await interaction.editReply({ embeds: [pages[0]] });
 			}
 		} catch (error) {
-			sendReply('error', `Error fetching tags: ${error}`);
+			sendReply(interaction, 'error', `Error fetching tags: ${error}`);
 			throw error;
 		}
 	},

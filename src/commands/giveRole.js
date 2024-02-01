@@ -14,10 +14,10 @@ module.exports = {
 		.addRoleOption(option => option.setName('role').setDescription('The role to give').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let targetMember;
@@ -32,38 +32,38 @@ module.exports = {
 				log.debug(`failed to fetch member`);
 			}
 		}
-		if (!targetMember) return sendReply('error', 'This user is not a guild member');
+		if (!targetMember) return sendReply(interaction, 'error', 'This user is not a guild member');
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
-			return sendReply('error', 'You or the bot does not have permissions to complete this action');
+			return sendReply(interaction, 'error', 'You or the bot does not have permissions to complete this action');
 		}
 
 		let selectedRole = await interaction.options.getRole('role');
 
 		if (interaction.member.roles.highest.position <= selectedRole.position) {
-			return sendReply('error', 'You dont have high enough permissions to grant this role');
+			return sendReply(interaction, 'error', 'You dont have high enough permissions to grant this role');
 		}
 		if (selectedRole.id === guilds[interaction.guild.id].staffRoleID) {
-			return sendReply('error', 'You cannot give the staff role');
+			return sendReply(interaction, 'error', 'You cannot give the staff role');
 		}
-		if (selectedRole.permissions.has(PermissionFlagsBits.Administrator)) return sendReply('error', 'You cannot give roles with the Administrator permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.BanMembers)) return sendReply('error', 'You cannot give roles with the Ban Members permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.KickMembers)) return sendReply('error', 'You cannot give roles with the Kick Members permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.ManageChannels)) return sendReply('error', 'You cannot give roles with the Manage Channels permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.ManageGuild)) return sendReply('error', 'You cannot give roles with the Manage Guild permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.ManageMessages)) return sendReply('error', 'You cannot give roles with the Manage Messages permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.ManageEvents)) return sendReply('error', 'You cannot give roles with the Manage Events permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.ManageRoles)) return sendReply('error', 'You cannot give roles with the Manage Roles permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.ManageNicknames)) return sendReply('error', 'You cannot give roles with the Manage Nicknames permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.MentionEveryone)) return sendReply('error', 'You cannot give roles with the Mention Everyone permission');
-		if (selectedRole.permissions.has(PermissionFlagsBits.ManageNicknames)) return sendReply('error', 'You cannot give roles with the Manage Nicknames permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.Administrator)) return sendReply(interaction, 'error', 'You cannot give roles with the Administrator permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.BanMembers)) return sendReply(interaction, 'error', 'You cannot give roles with the Ban Members permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.KickMembers)) return sendReply(interaction, 'error', 'You cannot give roles with the Kick Members permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.ManageChannels)) return sendReply(interaction, 'error', 'You cannot give roles with the Manage Channels permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.ManageGuild)) return sendReply(interaction, 'error', 'You cannot give roles with the Manage Guild permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'error', 'You cannot give roles with the Manage Messages permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.ManageEvents)) return sendReply(interaction, 'error', 'You cannot give roles with the Manage Events permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.ManageRoles)) return sendReply(interaction, 'error', 'You cannot give roles with the Manage Roles permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.ManageNicknames)) return sendReply(interaction, 'error', 'You cannot give roles with the Manage Nicknames permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.MentionEveryone)) return sendReply(interaction, 'error', 'You cannot give roles with the Mention Everyone permission');
+		if (selectedRole.permissions.has(PermissionFlagsBits.ManageNicknames)) return sendReply(interaction, 'error', 'You cannot give roles with the Manage Nicknames permission');
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
 		targetMember.roles
 			.add(selectedRole.id)
-			.then(r => {
+			.then(() => {
 				let roleEmbed = new EmbedBuilder()
 					.setTitle(`Role Given`)
 					.setColor(colors.main)

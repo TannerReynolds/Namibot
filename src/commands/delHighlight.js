@@ -2,7 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
 const { colors } = require('../config.json');
-const log = require('../utils/log.js');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -13,14 +12,14 @@ module.exports = {
 		.addStringOption(option => option.setName('id').setDescription('The ID of the highlight to delete').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 
 		if (!interaction.options.getString('id')) {
-			return sendReply('error', 'No highlight ID provided!');
+			return sendReply(interaction, 'error', 'No highlight ID provided!');
 		}
 		let highlightID = interaction.options.getString('id');
 
-		if (isNaN(highlightID)) return sendReply('error', 'Please enter the highlight ID, the input entered is not a number');
+		if (isNaN(highlightID)) return sendReply(interaction, 'error', 'Please enter the highlight ID, the input entered is not a number');
 
 		let highlight = await prisma.highlight.findUnique({
 			where: {
@@ -30,7 +29,7 @@ module.exports = {
 		});
 
 		if (highlight.userID !== interaction.user.id) {
-			return sendReply('error', "You can't delete somebody else's highlight!");
+			return sendReply(interaction, 'error', "You can't delete somebody else's highlight!");
 		}
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
@@ -42,7 +41,7 @@ module.exports = {
 					id: Number(highlightID),
 				},
 			})
-			.then(r => {
+			.then(() => {
 				let highlightEmbed = new EmbedBuilder()
 					.setTitle(`Highlight Deleted`)
 					.setColor(colors.main)
@@ -53,7 +52,7 @@ module.exports = {
 				interaction.editReply({ embeds: [highlightEmbed] });
 			})
 			.catch(e => {
-				sendReply('error', `Could not delete highlight...\n${e}`);
+				sendReply(interaction, 'error', `Could not delete highlight...\n${e}`);
 			});
 	},
 };

@@ -1,5 +1,10 @@
 const { parseNewDate, durationToString, isValidDuration } = require('./parseDuration');
 
+/**
+ * Defines the duration based on the interaction options.
+ * @param {Interaction} interaction - The interaction object.
+ * @returns {Promise<Date>} The defined duration.
+ */
 async function defineDuration(interaction) {
 	let duration;
 	if (!interaction.options.getString('duration')) {
@@ -16,6 +21,11 @@ async function defineDuration(interaction) {
 		}
 	}
 }
+/**
+ * Defines the duration string based on the provided interaction.
+ * @param {Interaction} interaction - The interaction object.
+ * @returns {Promise<string>} The duration string.
+ */
 async function defineDurationString(interaction) {
 	let durationString = 'eternity';
 	if (!interaction.options.getString('duration')) {

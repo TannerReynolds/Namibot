@@ -16,10 +16,10 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for unbanning this user').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
@@ -31,7 +31,7 @@ module.exports = {
 			.remove(target, {
 				reason: `${reason} | Mod: ${interaction.user.username} (${interaction.user.id})`,
 			})
-			.then(b => {
+			.then(() => {
 				let unbanEmbed = new EmbedBuilder()
 					.setTitle(`User Unbanned`)
 					.setColor(colors.success)
@@ -55,7 +55,7 @@ module.exports = {
 			})
 			.catch(e => {
 				log.debug(`Error on unbanning user: ${target}\n\n${e}`);
-				return sendReply('error', `Error unbanning member: ${e}`);
+				return sendReply(interaction, 'error', `Error unbanning member: ${e}`);
 			});
 
 		await prisma.ban.delete({

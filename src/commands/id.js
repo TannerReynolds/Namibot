@@ -1,7 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { colors } = require('../config.json');
-const log = require('../utils/log');
-const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,7 +11,7 @@ module.exports = {
 		interaction.deferReply();
 
 		if (!interaction.options.getString('username')) {
-			return sendReply('error', 'No user entered');
+			return sendReply(interaction, 'error', 'No user entered');
 		}
 
 		let userString = await interaction.options.getString('username');
@@ -22,7 +20,7 @@ module.exports = {
 
 		interaction.editReply(userID);
 
-		function sendReply(type, message) {
+		function sendReply(interaction, type, message) {
 			let replyEmbed = new EmbedBuilder().setColor(colors[type]).setDescription(message).setTimestamp();
 
 			interaction.editReply({ embeds: [replyEmbed] });

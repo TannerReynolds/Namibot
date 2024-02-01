@@ -1,9 +1,9 @@
-const { unshortenURL } = require("../../utils/unshortenURL")
+const { unshortenURL } = require('../../utils/unshortenURL');
 const { EmbedBuilder } = require('discord.js');
 const { colors } = require('../../config.json');
 
 async function unshortenMessageURLs(message) {
-    if (!message.guild) return;
+	if (!message.guild) return;
 	if (message.author.bot) return;
 
 	let urls = await detectURL(message.content);
@@ -11,16 +11,16 @@ async function unshortenMessageURLs(message) {
 
 	for (let url of urls) {
 		unshortenURL(url).then(urls => {
-            if (urls.length === 0) return;
-            let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL;
-		    let name = message.author.username;
-            let formattedURLs = urls.map(url => `\`${url}\``);
-			let urlString = formattedURLs.join(" ⇒ ");
-            let unshortEmbed = new EmbedBuilder().setColor(colors.warning).setTitle('Shortened URL Detected').setDescription(urlString).setTimestamp().setAuthor({ name: name, iconURL: aviURL });
-            message.reply({ embeds: [unshortEmbed] })
+			if (urls.length === 0) return;
+			let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL;
+			let name = message.author.username;
+			let formattedURLs = urls.map(url => `\`${url}\``);
+			let urlString = formattedURLs.join(' ⇒ ');
+			let unshortEmbed = new EmbedBuilder().setColor(colors.warning).setTitle('Shortened URL Detected').setDescription(urlString).setTimestamp().setAuthor({ name: name, iconURL: aviURL });
+			message.reply({ embeds: [unshortEmbed] });
 
-			let blockedDomainsMessage = { guild: message.guild, bot: false, content: urlString, client: message.client }
-        })
+			//let blockedDomainsMessage = { guild: message.guild, bot: false, content: urlString, client: message.client };
+		});
 	}
 }
 
@@ -29,4 +29,4 @@ async function detectURL(string) {
 	return string.match(urlReg);
 }
 
-module.exports = { unshortenMessageURLs }
+module.exports = { unshortenMessageURLs };

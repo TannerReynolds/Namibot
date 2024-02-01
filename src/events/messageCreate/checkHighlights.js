@@ -4,6 +4,11 @@ const { EmbedBuilder } = require('discord.js');
 const state = require('../../utils/sharedState');
 const highlightsCache = require('../../utils/highlightsCache');
 
+/**
+ * Checks for highlights in a message and sends a notification to the user if a highlight is found.
+ * @param {Message} message - The message object to check for highlights.
+ * @returns {Promise<void>}
+ */
 async function checkHighlights(message) {
 	if (message.author.bot || !message.guild.id) return;
 
@@ -15,7 +20,7 @@ async function checkHighlights(message) {
 	const dmPromises = [];
 
 	for (const h of highlights) {
-		let regPhrase = new RegExp(`\\b${h.phrase}\\b`)
+		let regPhrase = new RegExp(`\\b${h.phrase}\\b`);
 		if (regPhrase.test(message.content.toLowerCase()) && message.author.id !== h.userID) {
 			const isCooldown = await state.getHLCoolDown();
 			if (!isCooldown.has(h.userID)) {
@@ -28,7 +33,7 @@ async function checkHighlights(message) {
 					.setColor(colors.main)
 					.setTitle('Highlighter Alert')
 					.setDescription(`Found message containing phrase: \`${h.phrase}\`!`)
-					.addFields({ name: 'Message', value: message.content }, { name: 'Channel', value: `<#${message.channel.id}>`})
+					.addFields({ name: 'Message', value: message.content }, { name: 'Channel', value: `<#${message.channel.id}>` })
 					.setTimestamp();
 
 				dmPromises.push(

@@ -4,7 +4,6 @@ const { defineTarget } = require('../utils/defineTarget');
 const prisma = require('../utils/prismaClient');
 const { colors } = require('../config.json');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
-const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -15,10 +14,10 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to view warns for').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
@@ -33,7 +32,7 @@ module.exports = {
 			});
 
 			if (!warnings || warnings === undefined) {
-				return sendReply('main', 'This user has no warnings.');
+				return sendReply(interaction, 'main', 'This user has no warnings.');
 			}
 
 			const formattedWarnings = warnings.map(warning => {
@@ -42,7 +41,7 @@ module.exports = {
 			});
 
 			if (formattedWarnings.length === 0) {
-				return sendReply('main', 'This user has no warnings.');
+				return sendReply(interaction, 'main', 'This user has no warnings.');
 			}
 
 			const warningsPerPage = 10;
@@ -69,7 +68,7 @@ module.exports = {
 				await interaction.editReply({ embeds: [pages[0]] });
 			}
 		} catch (error) {
-			sendReply('error', `Error fetching warnings: ${error}`);
+			sendReply(interaction, 'error', `Error fetching warnings: ${error}`);
 			throw error;
 		}
 	},

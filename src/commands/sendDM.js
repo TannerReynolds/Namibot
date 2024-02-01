@@ -2,7 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const { colors } = require('../config.json');
-const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -14,10 +13,10 @@ module.exports = {
 		.addStringOption(option => option.setName('msg').setDescription("the message you'd like to DM the user").setMaxLength(2_000).setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let msg = interaction.options.getString('msg');
@@ -31,7 +30,7 @@ module.exports = {
 
 		targetUser
 			.send({ embeds: [msgEmbed] })
-			.then(m => {
+			.then(() => {
 				interaction.editReply('Message successfully sent!');
 			})
 			.catch(e => {

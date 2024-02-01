@@ -1,6 +1,11 @@
 const log = require('../../utils/log');
 const { guilds } = require('../../config.json');
 
+/**
+ * Detects if a message contains a GIF and takes appropriate action.
+ * @param {Message} message - The message object.
+ * @returns {Promise<void>} - A promise that resolves once the detection is complete.
+ */
 async function gifDetector(message) {
 	if (!message.channel.guild) return;
 	if (message.author.bot) return;

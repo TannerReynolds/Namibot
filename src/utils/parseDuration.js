@@ -12,6 +12,12 @@ const regexes = {
 	seconds: /(\d+s)/i,
 };
 
+/**
+ * Parses a duration string and returns a new date.
+ *
+ * @param {string} duration - The duration string to parse.
+ * @returns {Date} The parsed date.
+ */
 async function parseNewDate(duration) {
 	log.debug('Checking to see if date is Japanese');
 	if (isJP(duration)) duration = await toENTime(duration);
@@ -43,6 +49,12 @@ async function parseNewDate(duration) {
 	log.debug(`Returning nwd: ${nwd}`);
 	return nwd;
 }
+
+/**
+ * Converts a raw duration string to a human-readable format.
+ * @param {string} rawDuration - The raw duration string to be parsed.
+ * @returns {string} - The parsed duration string in a human-readable format.
+ */
 async function durationToString(rawDuration) {
 	let duration = rawDuration;
 	if (isJP(rawDuration)) duration = await toENTime(rawDuration);
@@ -75,6 +87,11 @@ async function durationToString(rawDuration) {
 	return parsedValues.join(', ').replace(/,([^,]*)$/, ', and$1');
 }
 
+/**
+ * Checks if a duration string is valid.
+ * @param {string} duration - The duration string to validate.
+ * @returns {boolean} - Returns true if the duration is valid, false otherwise.
+ */
 async function isValidDuration(duration) {
 	if (isJP(duration)) duration = await toENTime(duration);
 	duration = await mToMi(duration);
@@ -88,6 +105,12 @@ async function isValidDuration(duration) {
 	return false;
 }
 
+/**
+ * Converts a duration string to seconds.
+ * If the duration string is in Japanese, it will be converted to English time format before parsing.
+ * @param {string} durationStr - The duration string to be parsed.
+ * @returns {number} - The duration in seconds.
+ */
 async function durationToSec(durationStr) {
 	if (isJP(durationStr)) durationStr = await toENTime(durationStr);
 	const parsedValues = {};
@@ -103,6 +126,11 @@ async function durationToSec(durationStr) {
 	return parsedDuration.as('seconds');
 }
 
+/**
+ * Replaces 'm' with 'mi' in the given text.
+ * @param {string} text - The input text.
+ * @returns {string} The modified text with 'm' replaced by 'mi'.
+ */
 async function mToMi(text) {
 	const minute = /(\d)m(?![imo])/g;
 	return text.replace(minute, '$1mi');

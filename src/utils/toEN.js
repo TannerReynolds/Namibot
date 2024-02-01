@@ -1,3 +1,8 @@
+/**
+ * Converts a Japanese time expression to an English time expression.
+ * @param {string} japaneseNumber - The Japanese time expression to be converted.
+ * @returns {string} - The converted English time expression.
+ */
 async function toENTime(japaneseNumber) {
 	const kanjiNumbers = {
 		一: 1,
@@ -35,6 +40,10 @@ async function toENTime(japaneseNumber) {
 	let lastWasMultiplier = false;
 	let unitBuffer = '';
 
+	/**
+	 * Processes the number part and appends it to the result.
+	 * @param {string} unit - The unit of time.
+	 */
 	const processNumberPart = unit => {
 		if (lastWasMultiplier && numberPart === 0) {
 			numberPart = 1;
@@ -77,6 +86,11 @@ async function toENTime(japaneseNumber) {
 		result += numberPart;
 	}
 
+	/**
+	 * Checks if there are still Japanese characters in the result.
+	 * @param {string} str - The string to be checked.
+	 * @returns {boolean} - True if there are still Japanese characters, false otherwise.
+	 */
 	let isStillJP = str => /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str);
 	if (isStillJP(result)) {
 		result = 'forever';

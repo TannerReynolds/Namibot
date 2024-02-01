@@ -1,5 +1,4 @@
-const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
-const axios = require('axios');
+const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { guilds, colors } = require('../config.json');
 const { isStaff } = require('../utils/isStaff.js');
 const log = require('../utils/log.js');
@@ -23,7 +22,7 @@ module.exports = {
 		let targetUser = interaction.targetUser;
 		if (targetUser === undefined) {
 			log.debug(`Target undefined`);
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 		log.debug(`Target: ${targetUser}`);
 

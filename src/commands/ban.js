@@ -20,7 +20,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		log.debug(`Getting staff status...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		log.debug('User is staff');
 		log.debug('Getting Target...');
 		let target = await defineTarget(interaction, 'edit');
@@ -48,7 +48,7 @@ module.exports = {
 			let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 			if (!canDoAction) {
 				log.debug(`Target member has higher permissions than the interaction user or the bot`);
-				return sendReply('error', 'You or the bot does not have permissions to complete this action');
+				return sendReply(interaction, 'error', 'You or the bot does not have permissions to complete this action');
 			}
 		}
 
@@ -72,7 +72,7 @@ module.exports = {
 				.send(
 					`You have been banned from ${interaction.guild.name} for \`${reason}\`. The length of your ban is ${durationString}. If you want to appeal this ban, run the /appeal command and fill out the information! To run the /appeal command here in our DMs, you need to join the bot's server:\n${c.appealServer}`
 				)
-				.catch(e => {
+				.catch(() => {
 					log.debug("Couldn't send user BAN message");
 				});
 		}
@@ -92,7 +92,7 @@ module.exports = {
 			})
 			.catch(e => {
 				log.error(`Error on banning user: ${target} | ${e}`);
-				return sendReply('error', `Error banning member: ${e}`);
+				return sendReply(interaction, 'error', `Error banning member: ${e}`);
 			});
 
 		try {
@@ -103,7 +103,7 @@ module.exports = {
 				})
 				.catch(e => {
 					log.error(`Error on banning user: ${target} | ${e}`);
-					return sendReply('error', `Error banning member: ${e}`);
+					return sendReply(interaction, 'error', `Error banning member: ${e}`);
 				});
 			log.debug(`Successfully created guild ban in ${interaction.guild.name}`);
 			let banEmbed = new EmbedBuilder()
@@ -189,7 +189,7 @@ module.exports = {
 				});
 		} catch (e) {
 			log.error(`Error banning user: ${e}`);
-			return sendReply('error', `Error banning user: ${e}`);
+			return sendReply(interaction, 'error', `Error banning user: ${e}`);
 		}
 	},
 };

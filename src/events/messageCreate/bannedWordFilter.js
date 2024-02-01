@@ -1,3 +1,4 @@
+/*
 const { remove } = require('confusables');
 const log = require('../../utils/log');
 
@@ -89,4 +90,4 @@ async function wordFilter(content, message, modChannels) {
 	}
 }
 
-module.exports = { wordFilter };
+module.exports = { wordFilter };*/

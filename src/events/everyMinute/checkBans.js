@@ -3,6 +3,12 @@ const { colors } = require('../../config.json');
 const { EmbedBuilder } = require('discord.js');
 const log = require('../../utils/log');
 
+/**
+ * Checks and unbans users whose bans have expired.
+ * @param {Discord.Client} client - The Discord client object.
+ * @param {Function} getModChannels - A function to get the moderation channels.
+ * @returns {Promise<void>} - A promise that resolves once the check and unbanning process is complete.
+ */
 async function checkAndUnbanUsers(client, getModChannels) {
 	try {
 		let now = new Date();
@@ -15,7 +21,7 @@ async function checkAndUnbanUsers(client, getModChannels) {
 					},
 				},
 			})
-			.catch(e => {
+			.catch(() => {
 				return log.error(`Couldn't get ban records`);
 			});
 
@@ -56,13 +62,13 @@ async function checkAndUnbanUsers(client, getModChannels) {
 						},
 					},
 				})
-				.catch(e => {
+				.catch(() => {
 					return log.error(`Couldn't delete ban record`);
 				});
 
 			guild.bans
 				.remove(ban.userID)
-				.then(user => {
+				.then(() => {
 					let logEmbed = new EmbedBuilder()
 						.setColor(colors.main)
 						.setTitle('Member Unbanned')

@@ -8,6 +8,7 @@ const path = require('path');
 const { isStaff } = require('../utils/isStaff');
 const { colors } = require('../config.json');
 const log = require('../utils/log');
+const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -22,7 +23,7 @@ module.exports = {
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let targetMember;
@@ -87,7 +88,7 @@ module.exports = {
 				iconURL: aviURL,
 			});
 
-		bufferAttach = new AttachmentBuilder(bammedBuffer, {
+		let bufferAttach = new AttachmentBuilder(bammedBuffer, {
 			name: 'bam.gif',
 		});
 		banEmbed.setImage('attachment://bam.gif');

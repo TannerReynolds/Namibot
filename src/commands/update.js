@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { botOwnerID, colors } = require('../config.json');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { botOwnerID } = require('../config.json');
 const log = require('../utils/log');
 const { exec } = require('child_process');
 const https = require('https');
@@ -32,31 +32,31 @@ module.exports = {
 						try {
 							const latestVersion = JSON.parse(data).version;
 							if (latestVersion !== currentVersion) {
-								sendReply('main', 'Update available. Updating...');
-								updateApplication();
+								sendReply(interaction, 'main', 'Update available. Updating...');
+								updateApplication(latestVersion);
 							} else {
-								sendReply('main', 'No update available.');
+								sendReply(interaction, 'main', 'No update available.');
 							}
 						} catch (e) {
-							sendReply('error', `Error parsing response: ${e}`);
+							sendReply(interaction, 'error', `Error parsing response: ${e}`);
 						}
 					});
 				})
 				.on('error', e => {
-					sendReply('error', `Error checking for updates: ${e}`);
+					sendReply(interaction, 'error', `Error checking for updates: ${e}`);
 				});
 		}
 
-		function updateApplication() {
+		function updateApplication(latestVersion) {
 			exec('git pull', (error, stdout, stderr) => {
 				if (error) {
-					sendReply('error', `Error occurred: ${error}`);
+					sendReply(interaction, 'error', `Error occurred: ${error}`);
 					return;
 				}
 				log.debug(`stdout: ${stdout}`);
 				log.debug(`stderr: ${stderr}`);
 
-				sendReply('main', `Application updated to version \`${latestVersion}\`. Exiting...`);
+				sendReply(interaction, 'main', `Application updated to version \`${latestVersion}\`. Exiting...`);
 				process.exit();
 			});
 		}

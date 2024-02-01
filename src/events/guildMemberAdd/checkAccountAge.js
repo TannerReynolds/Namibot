@@ -1,10 +1,14 @@
 const prisma = require('../../utils/prismaClient');
 const { EmbedBuilder } = require('discord.js');
-const state = require('../../utils/sharedState');
 const c = require('../../config.json');
 const { colors } = require('../../config.json');
 const log = require('../../utils/log');
 
+/**
+ * Checks the account age of a member and takes appropriate actions if the account is too new.
+ * @param {GuildMember} member - The member whose account age needs to be checked.
+ * @returns {Promise<void>} - A promise that resolves once the account age check is complete.
+ */
 async function checkAccountAge(member) {
 	let age = member.user.createdAt;
 	let daysReq = c.guilds[member.guild.id].features.checkAccountAge.days;
@@ -16,10 +20,10 @@ async function checkAccountAge(member) {
 			.send(
 				`Your account is newer than ${daysReq} days. Please do not attempt to rejoin this server until your account reaches ${daysReq} days old, or you may be considered a bot by our automated system and be banned.`
 			)
-			.catch(e => log.debug('could not notify member'));
+			.catch(() => log.debug('could not notify member'));
 		member
 			.kick(`Account is newer than ${daysReq} days.`)
-			.then(k => {
+			.then(() => {
 				let logEmbed = new EmbedBuilder()
 					.setColor(colors.main)
 					.setTitle('Member Kicked')
@@ -64,7 +68,7 @@ async function checkAccountAge(member) {
 					deleteMessageSeconds: 60 * 60 * 24 * 7,
 					reason: `Suspected bot account`,
 				})
-				.then(b => {
+				.then(() => {
 					let logEmbed = new EmbedBuilder()
 						.setColor(colors.main)
 						.setTitle('Member Banned')

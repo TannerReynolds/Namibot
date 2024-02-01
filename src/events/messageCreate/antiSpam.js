@@ -5,18 +5,16 @@ const { getModChannels } = require('../../utils/getModChannels');
 const log = require('../../utils/log');
 const prisma = require('../../utils/prismaClient');
 
+/**
+ * Handles anti-spam measures for incoming messages.
+ * @param {Message} message - The message object.
+ * @returns {Promise<void>} - A promise that resolves once the anti-spam measures are handled.
+ */
 async function antiSpam(message) {
 	const MAX_MENTIONS = 8;
 	const MAX_NEWLINES = 65;
-	const MAX_CHARS = 2000;
 
 	const reasons = [];
-
-	/*
-	if (message.content.length >= MAX_CHARS) {
-		await timeoutUser(message, 10);
-		reasons.push('hitting the message character limit');
-	}*/
 
 	if (message.mentions.users.size + message.mentions.roles.size > MAX_MENTIONS) {
 		await timeoutUser(message, 10);
@@ -44,7 +42,7 @@ async function antiSpam(message) {
 				log.debug(`deleting response`);
 				return r.delete();
 			}, 5000);
-		})
+		});
 
 		let aviURL = message.client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 			? message.client.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
@@ -88,14 +86,21 @@ async function antiSpam(message) {
 	}
 }
 
+/**
+ * Timeout a user for a specified duration.
+ * @param {Message} message - The message object.
+ * @param {number} duration - The duration in minutes for which the user should be timed out.
+ * @throws {Error} If an error occurs while timing out the user.
+ */
 async function timeoutUser(message, duration) {
-	try {
-		await message.member.timeout(duration * 60 * 1000, 'Spamming');
-	} catch (error) {
-		throw error;
-	}
+	await message.member.timeout(duration * 60 * 1000, 'Spamming');
 }
 
+/**
+ * Checks if a user is sending messages too rapidly.
+ * @param {Message} message - The message object.
+ * @returns {boolean} - Returns true if the user is sending messages too rapidly, false otherwise.
+ */
 async function checkRapidMessaging(message) {
 	const userID = message.author.id;
 	const currentTimestamp = message.createdTimestamp;

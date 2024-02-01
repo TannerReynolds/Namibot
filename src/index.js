@@ -1,5 +1,13 @@
+/**
+ * @fileoverview This file serves as the entry point for the Discord Moderation Bot.
+ * It initializes the necessary libraries, sets up event handlers, and handles interactions and commands.
+ */
+
+require('longjohn');
+
 //////////////////////////////////////
 // external lib requires
+
 const { Client, Events, Collection, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder, ChannelType } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -11,16 +19,28 @@ const axios = require('axios');
 
 //////////////////////////////////////
 // Internal requires
+
+// Event handlers for message creation, deletion, bulk deletion, and editing
 const mCreate = './events/messageCreate/';
 const mDelete = './events/messageDelete/';
 const mBulkDelete = './events/messageDeleteBulk/';
 const mEdit = './events/messageEdit/';
+
+// Event handlers for guild member addition, every minute, and every hour
 const gMemberAdd = './events/guildMemberAdd/';
 const minute = './events/everyMinute/';
 const hour = './events/everyHour/';
+
+// Utility functions
 const utils = './utils/';
+
+// Server-related files
 const serverDir = './server/';
+
+// Configuration file
 const { token, colors, guilds, server } = require('./config.json');
+
+// Importing various utility functions and event handlers
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);
 const { checkAndUnmuteUsers } = require(`${minute}checkMutes`);
 const { refreshHighlightsCache } = require(`${minute}refreshHighlightsCache`);
@@ -33,7 +53,7 @@ const { checkAccountAge } = require(`${gMemberAdd}checkAccountAge`);
 const { wipeFailedJoins } = require(`${hour}wipeFailedJoins`);
 const { deleteModMail } = require(`${hour}deleteModMail`);
 const { turtleCheck } = require(`${mCreate}turtleCheck`);
-const { unshortenMessageURLs } = require(`${mCreate}unshortenMessageURLs`);
+//const { unshortenMessageURLs } = require(`${mCreate}unshortenMessageURLs`);
 const { fileTypeChecker } = require(`${mCreate}fileTypeChecker`);
 const { deleteTurtles } = require(`${minute}deleteTurtles`);
 const { antiAds } = require(`${mCreate}antiAds`);
@@ -48,8 +68,14 @@ const { modMailServer, modMailDM } = require(`${mCreate}modMailCon`);
 const { antiSpam } = require(`${mCreate}antiSpam`);
 const prisma = require(`${utils}prismaClient`);
 
+/**
+ * Initializes the log file.
+ */
 initLog();
 
+/**
+ * Creates a new Discord client instance.
+ */
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -63,12 +89,17 @@ const client = new Client({
 	],
 });
 
+/**
+ * Event handler for when the client is ready.
+ * @param {Client} c - The client instance.
+ */
 client.once(Events.ClientReady, async c => {
 	log.success(`Successfully connected to Discord! Logged in as ${c.user.tag}`);
 	client.user.setActivity({ name: 'over everyone', type: 3 });
 	await refreshHighlightsCache(client);
 
 	let startTime = Date.now();
+	// eslint-disable-next-line no-unused-vars
 	let response = await axios.get('https://discord.com/api/v9/gateway');
 	let latency = Date.now() - startTime;
 	log.verbose(`Discord API Response Time: ${latency}ms`);
@@ -93,10 +124,10 @@ client.once(Events.ClientReady, async c => {
 			client.channels.cache
 				.get(channel)
 				.send({ embeds: [restartEmbed] })
-				.then(r => {
+				.then(() => {
 					fs.unlinkSync('./restart.js');
 				})
-				.catch(e => {
+				.catch(() => {
 					fs.unlinkSync('./restart.js');
 				});
 		} catch (e) {
@@ -114,12 +145,21 @@ client.once(Events.ClientReady, async c => {
 	setInterval(everyMinute, 30000);
 	setInterval(everyHour, 3600000);
 
+	/**
+	 * Function that runs every minute.
+	 * Performs various checks and updates.
+	 */
 	async function everyMinute() {
 		await checkAndUnbanUsers(client, getModChannels);
 		await checkAndUnmuteUsers(client, getModChannels);
 		await deleteTurtles();
 		await refreshHighlightsCache(client);
 	}
+
+	/**
+	 * Function that runs every hour.
+	 * Performs various checks and updates.
+	 */
 	async function everyHour() {
 		await wipeFailedJoins();
 		await deleteModMail(client);
@@ -129,6 +169,10 @@ client.once(Events.ClientReady, async c => {
 //////////////////////////////////////
 // Interaction and command handling
 
+/**
+ * Collection to store command objects.
+ * @type {Collection<string, object>}
+ */
 client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
@@ -146,6 +190,10 @@ for (const file of commandFiles) {
 	}
 }
 
+/**
+ * Set to keep track of ratelimited commands.
+ * @type {Set}
+ */
 const ratelimited = new Set();
 const pingStaffRatelimited = new Set();
 
@@ -230,7 +278,7 @@ client.on(Events.ThreadUpdate, async (oldThread, newThread) => {
 						postID: newThread.id,
 					},
 				})
-				.then(r => {
+				.then(() => {
 					newThread.client.users.cache
 						.get(mail.userID)
 						.send(`Your mod mail connection in ${newThread.guild.name} has been closed by a staff member.`)
@@ -280,7 +328,7 @@ client.on(Events.MessageDelete, async message => {
 	if (guilds[message.guild.id].logs.messageDelete) await deleteLog(message);
 });
 
-async function messageEvents(message, oldMessage) {
+async function messageEvents(message) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	let content = message.content || 'N/A';

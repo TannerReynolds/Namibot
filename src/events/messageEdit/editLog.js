@@ -3,6 +3,12 @@ const { EmbedBuilder } = require('discord.js');
 const { colors } = require('../../config.json');
 const log = require('../../utils/log');
 
+/**
+ * Logs the edited message and sends a notification to the moderation channels.
+ * @param {Message} message - The new message object.
+ * @param {Message} oldMessage - The old message object.
+ * @returns {Promise<void>}
+ */
 async function editLog(message, oldMessage) {
 	if (!message.guild) return;
 	if (message.author.bot) return;

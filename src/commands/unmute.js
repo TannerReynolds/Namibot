@@ -16,10 +16,10 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to unmute.').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let targetMember;
@@ -34,10 +34,10 @@ module.exports = {
 				log.debug(`failed to fetch member`);
 			}
 		}
-		if (!targetMember) return sendReply('error', 'This user is not a guild member');
+		if (!targetMember) return sendReply(interaction, 'error', 'This user is not a guild member');
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
-			return sendReply('error', 'You or the bot does not have permissions to complete this action');
+			return sendReply(interaction, 'error', 'You or the bot does not have permissions to complete this action');
 		}
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
@@ -59,7 +59,7 @@ module.exports = {
 				return log.error(`Could not remove mute from guild after member leave`);
 			}
 			log.debug(`User is not a member of this guild`);
-			return sendReply('error', 'User is not a member of this guild');
+			return sendReply(interaction, 'error', 'User is not a member of this guild');
 		}
 
 		try {
@@ -101,7 +101,7 @@ module.exports = {
 			});
 		} catch (e) {
 			log.error(`Error unmuting user: ${e}`);
-			return sendReply('error', `Error unmuting user: ${e}`);
+			return sendReply(interaction, 'error', `Error unmuting user: ${e}`);
 		}
 	},
 };

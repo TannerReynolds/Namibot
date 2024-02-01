@@ -28,18 +28,18 @@ module.exports = {
 
 		let validRole = await isSnowflake(roleID);
 		if (!validRole) {
-			return sendReply(interaction, 'error', 'Invalid role input. Must be a valid snowflake representing the role.');
+			return sendReply(interaction, interaction, 'error', 'Invalid role input. Must be a valid snowflake representing the role.');
 		}
 
 		let validEmoji = await isEmoji(emoji);
 		if (!validEmoji && action === 'add') {
-			return sendReply(interaction, 'error', 'Invalid emoji input');
+			return sendReply(interaction, interaction, 'error', 'Invalid emoji input');
 		}
 
 		if (action === 'add') {
 			let roleObj = await interaction.guild.roles.fetch(roleID);
 			if (roleObj === null) {
-				return sendReply(interaction, 'error', 'The supplied role does not exist');
+				return sendReply(interaction, interaction, 'error', 'The supplied role does not exist');
 			}
 			await prisma.nitroColor.create({
 				data: {
@@ -49,7 +49,7 @@ module.exports = {
 					guildId: interaction.guild.id,
 				},
 			});
-			sendReply(interaction, 'success', 'Added role to nitro color list!');
+			sendReply(interaction, interaction, 'success', 'Added role to nitro color list!');
 		} else {
 			try {
 				await prisma.nitroColor.delete({
@@ -60,10 +60,10 @@ module.exports = {
 						},
 					},
 				});
-				sendReply(interaction, 'success', 'Deleted role from list!');
+				sendReply(interaction, interaction, 'success', 'Deleted role from list!');
 			} catch (err) {
 				log.debug(err);
-				sendReply(interaction, 'error', 'Could not delete role');
+				sendReply(interaction, interaction, 'error', 'Could not delete role');
 			}
 		}
 	},

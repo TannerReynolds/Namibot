@@ -1,5 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
-const axios = require('axios');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { defineTarget } = require('../utils/defineTarget');
 const { guilds, colors } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
@@ -28,7 +27,7 @@ module.exports = {
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			log.debug(`Target undefined`);
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 		log.debug(`Target: ${target}`);
 

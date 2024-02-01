@@ -8,7 +8,7 @@
     "start": "cd src && node index.js",
     "validate": "cd src && node verifyInstall.js",
     "prisma": "npx prisma generate && npx prisma migrate dev --name modBot",
-    "setup": "cd src && npm i && npm i -g prisma pm2 && node setupConfs.js && node verifyInstall.js && npx prisma generate && npx prisma migrate dev --name modBot && node globalDeploy.js && node verifyInstall.js --complete"
+    "setup": "cd src && npm i && npm i -g prisma pm2 && node setupConfs.js && node verifyInstall.js && cd.. && npx prisma generate && npx prisma migrate dev --name modBot && cd src && node globalDeploy.js && node verifyInstall.js --complete"
   },
   "repository": {
     "type": "git",
@@ -44,12 +44,15 @@
     "express": "^4.18.2",
     "fs-extra": "^11.2.0",
     "helmet": "^7.1.0",
+    "longjohn": "^0.2.12",
     "luxon": "^3.3.0",
     "sharp": "^0.33.2"
   },
   "devDependencies": {
     "body-parser": "^1.20.2",
     "ejs": "^3.1.9",
+    "eslint": "^8.56.0",
+    "eslint-config-fbjs": "^4.0.0",
     "express": "^4.18.2",
     "fs-extra": "^11.2.0",
     "helmet": "^7.1.0",

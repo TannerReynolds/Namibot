@@ -1,6 +1,10 @@
 const prisma = require('../../utils/prismaClient');
 const log = require('../../utils/log');
 
+/**
+ * Deletes expired turtle mode entries from the database.
+ * @returns {Promise<void>} A promise that resolves when the deletion is complete.
+ */
 async function deleteTurtles() {
 	try {
 		let now = new Date();
@@ -13,7 +17,7 @@ async function deleteTurtles() {
 					},
 				},
 			})
-			.catch(e => {
+			.catch(() => {
 				log.error(`Couldn't get expiredTurts`);
 			});
 

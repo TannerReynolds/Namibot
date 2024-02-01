@@ -3,6 +3,12 @@ const { EmbedBuilder } = require('discord.js');
 const { guilds, colors } = require('../../config.json');
 const log = require('../../utils/log');
 
+/**
+ * Checks and unmutes users whose mute duration has expired.
+ * @param {Discord.Client} client - The Discord client object.
+ * @param {Function} getModChannels - A function to get the moderation channels.
+ * @returns {Promise<void>} - A promise that resolves once the check and unmute process is complete.
+ */
 async function checkAndUnmuteUsers(client, getModChannels) {
 	try {
 		let now = new Date();
@@ -15,7 +21,7 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 					},
 				},
 			})
-			.catch(e => {
+			.catch(() => {
 				log.debug(`Couldn't get expired mutes`);
 			});
 
@@ -36,7 +42,7 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 						},
 					},
 				})
-				.catch(e => {
+				.catch(() => {
 					log.error(`Couldn't delete mute record`);
 				});
 
@@ -47,7 +53,7 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 				return log.debug(`couldn't get guildMember object for muted member`);
 			}
 
-			guildMember.roles.remove(guilds[mute.guildId].muteRoleID).then(user => {
+			guildMember.roles.remove(guilds[mute.guildId].muteRoleID).then(() => {
 				let logEmbed = new EmbedBuilder()
 					.setColor(colors.main)
 					.setTitle('Member Unmuted')

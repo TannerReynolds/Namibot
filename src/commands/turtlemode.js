@@ -4,7 +4,7 @@ const prisma = require('../utils/prismaClient');
 const { colors } = require('../config.json');
 const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');
-const { parseNewDate, durationToString, isValidDuration, durationToSec } = require('../utils/parseDuration');
+const { durationToString, isValidDuration, durationToSec } = require('../utils/parseDuration');
 const { getModChannels } = require('../utils/getModChannels');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
@@ -20,10 +20,10 @@ module.exports = {
 		.addStringOption(option => option.setName('duration').setDescription('How long should this slowmode last ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let targetMember;
@@ -38,10 +38,10 @@ module.exports = {
 				log.debug(`failed to fetch member`);
 			}
 		}
-		if (!targetMember) return sendReply('error', 'This user is not a guild member');
+		if (!targetMember) return sendReply(interaction, 'error', 'This user is not a guild member');
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
-			return sendReply('error', 'You or the bot does not have permissions to complete this action');
+			return sendReply(interaction, 'error', 'You or the bot does not have permissions to complete this action');
 		}
 
 		let duration = await defineDuration(interaction);
@@ -66,7 +66,7 @@ module.exports = {
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
 
 		if (targetMember) {
-			await targetMember.send(`You have been turtleModed in ${interaction.guild.name} for \`${reason}\`. The length of your turtleMode is ${durationString}.`).catch(e => {
+			await targetMember.send(`You have been turtleModed in ${interaction.guild.name} for \`${reason}\`. The length of your turtleMode is ${durationString}.`).catch(() => {
 				log.debug("Couldn't send member TURTLE message");
 			});
 		}

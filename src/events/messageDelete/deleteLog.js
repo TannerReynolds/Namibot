@@ -1,7 +1,6 @@
 const { getModChannels } = require('../../utils/getModChannels');
 const { EmbedBuilder } = require('discord.js');
 const { colors } = require('../../config.json');
-const log = require('../../utils/log');
 
 async function deleteLog(message) {
 	if (!message.guild) return;

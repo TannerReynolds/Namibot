@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType, EmbedBuilder } = require('discord.js');
 const { colors } = require('../config.json');
 const prisma = require('../utils/prismaClient');
-const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -11,7 +10,7 @@ module.exports = {
 		let boosterRole = interaction.guild.roles.premiumSubscriberRole.id || null;
 
 		if (!authorRoles.has(boosterRole) && interaction.user.id !== '478044823882825748') {
-			return sendReply(interaction, 'error', 'You are not a nitro booster');
+			return sendReply(interaction, interaction, 'error', 'You are not a nitro booster');
 		}
 
 		await prisma.guild.upsert({
@@ -74,7 +73,7 @@ module.exports = {
 };
 
 function extractSnowflake(str) {
-	const regex = /(?<=\:)(\d+)(?=\>)/;
+	const regex = /(?<=:)(\d+)(?=>)/;
 	const match = str.match(regex);
 	return match ? match[0] : null;
 }

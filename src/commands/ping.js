@@ -2,7 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient');
 const { colors } = require('../config.json');
 const log = require('../utils/log');
-const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('ping').setDMPermission(false).setDescription('Pong'),

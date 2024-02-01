@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient');
 const { guilds, colors } = require('../config.json');
 const log = require('../utils/log');
@@ -60,7 +60,7 @@ module.exports = {
 		});
 
 		if (existingMail) {
-			return sendReply('error', 'You already have an active mod mail. Please wait for a response before creating another.');
+			return sendReply(interaction, 'error', 'You already have an active mod mail. Please wait for a response before creating another.');
 		}
 
 		log.debug(`Getting avatar URL...`);
@@ -112,17 +112,17 @@ module.exports = {
 							date: wipeDate,
 						},
 					})
-					.then(r => {
-						return sendReply('main', 'Appeal Sent!');
+					.then(() => {
+						return sendReply(interaction, 'main', 'Appeal Sent!');
 					})
 					.catch(e => {
 						log.error(`Error creating appeal: ${e}`);
-						return sendReply('error', `Error creating appeal: ${e}`);
+						return sendReply(interaction, 'error', `Error creating appeal: ${e}`);
 					});
 			})
 			.catch(e => {
 				log.error(`Error creating thread: ${e}`);
-				return sendReply('error', `Error creating thread: ${e}`);
+				return sendReply(interaction, 'error', `Error creating thread: ${e}`);
 			});
 	},
 };

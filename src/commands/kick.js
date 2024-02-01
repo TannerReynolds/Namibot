@@ -16,10 +16,10 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for kicking this user').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.KickMembers)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.KickMembers)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let targetMember;
@@ -34,16 +34,16 @@ module.exports = {
 				log.debug(`failed to fetch member`);
 			}
 		}
-		if (!targetMember) return sendReply('error', 'This user is not a guild member');
+		if (!targetMember) return sendReply(interaction, 'error', 'This user is not a guild member');
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
-			return sendReply('error', 'You or the bot does not have permissions to complete this action');
+			return sendReply(interaction, 'error', 'You or the bot does not have permissions to complete this action');
 		}
 
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
 
 		if (targetMember) {
-			await targetMember.send(`You have been kicked from ${interaction.guild.name} for \`${reason}\`. Feel free to rejoin using this link:\n${guilds[interaction.guild.id].invite}`).catch(e => {
+			await targetMember.send(`You have been kicked from ${interaction.guild.name} for \`${reason}\`. Feel free to rejoin using this link:\n${guilds[interaction.guild.id].invite}`).catch(() => {
 				log.debug("Couldn't send user KICK message");
 			});
 		}
@@ -54,7 +54,7 @@ module.exports = {
 		let guildMember = await interaction.guild.members.fetch(target);
 		guildMember
 			.kick(reason)
-			.then(k => {
+			.then(() => {
 				let kickEmbed = new EmbedBuilder()
 					.setTitle(`User Kicked`)
 					.setColor(colors.success)
@@ -83,7 +83,7 @@ module.exports = {
 				});
 			})
 			.catch(e => {
-				return sendReply('error', `Error when attemping to kick member:\n${e}`);
+				return sendReply(interaction, 'error', `Error when attemping to kick member:\n${e}`);
 			});
 
 		await prisma.warning.create({

@@ -1,7 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { colors } = require('../config.json');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const log = require('../utils/log.js');
-const { getModChannels } = require('../utils/getModChannels');
 const { isStaff } = require('../utils/isStaff');
 const { sendReply } = require('../utils/sendReply');
 
@@ -18,12 +16,12 @@ module.exports = {
 		.addBooleanOption(option => option.setName('bots').setDescription('Filter messages sent by bots')),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 
 		const amount = interaction.options.getInteger('amount');
-		if (isNaN(amount)) return sendReply('error', 'Please enter a valid number for the amount');
-		if (amount < 1) return sendReply('error', 'Must be a number greater than 1');
-		if (amount > 500) return sendReply('error', 'Must be a number less than 500');
+		if (isNaN(amount)) return sendReply(interaction, 'error', 'Please enter a valid number for the amount');
+		if (amount < 1) return sendReply(interaction, 'error', 'Must be a number greater than 1');
+		if (amount > 500) return sendReply(interaction, 'error', 'Must be a number less than 500');
 		const user = interaction.options.getUser('user') ? interaction.options.getUser('user') : false;
 		const media = interaction.options.getBoolean('media') ? interaction.options.getBoolean('media') : false;
 		const bots = interaction.options.getBoolean('bots') ? interaction.options.getBoolean('bots') : false;
@@ -51,11 +49,11 @@ module.exports = {
 		await channel
 			.bulkDelete(filteredMessages, true)
 			.then(messages => {
-				return sendReply('main', `Successfully deleted ${messages.size} messages.`);
+				return sendReply(interaction, 'main', `Successfully deleted ${messages.size} messages.`);
 			})
 			.catch(error => {
 				log.error(error);
-				return sendReply('error', 'There was an error trying to purge messages in this channel!');
+				return sendReply(interaction, 'error', 'There was an error trying to purge messages in this channel!');
 			});
 	},
 };

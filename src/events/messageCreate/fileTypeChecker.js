@@ -1,5 +1,11 @@
 const log = require('../../utils/log');
 
+/**
+ * Checks if a message contains potentially malicious file types in its content or attachments.
+ * If a malicious file type is detected, it sends a warning message and deletes the original message.
+ * @param {Message} message - The message to be checked.
+ * @returns {Promise<void>} - A promise that resolves once the file type check is complete.
+ */
 async function fileTypeChecker(message) {
 	if (!message.channel.guild) return;
 	if (message.author.bot) return;
@@ -79,6 +85,11 @@ async function fileTypeChecker(message) {
 		return log.debug('No malicious filetype detected');
 	}
 
+	/**
+	 * Detects URLs in a string.
+	 * @param {string} string - The string to be checked for URLs.
+	 * @returns {string[]} - An array of URLs found in the string.
+	 */
 	async function detectURL(string) {
 		const urlReg = /https?:\/\/(www\.)?[a-zA-Z0-9\-.]+[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]*/g;
 		return string.match(urlReg);

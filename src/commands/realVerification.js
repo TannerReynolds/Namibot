@@ -7,7 +7,6 @@ const { createCanvas, loadImage, registerFont } = require('canvas');
 const fsPromises = require('fs').promises;
 const sharp = require('sharp');
 registerFont('./img/Chicken Scratch.ttf', { family: 'Chicken Scratch' });
-const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()

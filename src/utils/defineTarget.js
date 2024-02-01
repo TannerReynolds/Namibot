@@ -2,6 +2,12 @@ const { extractSnowflake, isSnowflake } = require('./validate');
 const { colors } = require('../config.json');
 const { EmbedBuilder } = require('discord.js');
 
+/**
+ * Defines the target user based on the interaction and type.
+ * @param {Object} interaction - The interaction object.
+ * @param {string} type - The type of target.
+ * @returns {Promise<string|null>} - The ID of the target user if found, otherwise null.
+ */
 async function defineTarget(interaction, type) {
 	if (!interaction.options.getString('user')) {
 		return sendReply('error', 'No user entered', type);
@@ -21,10 +27,22 @@ async function defineTarget(interaction, type) {
 		return extractSnowflake(userString)[0];
 	}
 
-	function sendReply(color, message, type) {
+	/**
+	 * Sends a reply message with the specified color, message, and type.
+	 * @param {string} color - The color of the reply message.
+	 * @param {string} message - The content of the reply message.
+	 */
+	function sendReply(color, message) {
 		let replyEmbed = new EmbedBuilder().setColor(colors[color]).setDescription(message).setTimestamp();
 		interaction.editReply({ embeds: [replyEmbed] });
 	}
+
+	/**
+	 * Retrieves the ID of a member based on the input provided.
+	 * @param {Object} interaction - The interaction object.
+	 * @param {string} input - The input to search for.
+	 * @returns {Promise<string|null>} - The ID of the member if found, otherwise null.
+	 */
 	async function getID(interaction, input) {
 		let member;
 		await interaction.guild.members.fetch();

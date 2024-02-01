@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient.js');
 const { colors } = require('../config.json');
-const log = require('../utils/log.js');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -23,7 +22,7 @@ module.exports = {
 		});
 
 		if (!tag) {
-			return sendReply('error', 'That tag does not exist');
+			return sendReply(interaction, 'error', 'That tag does not exist');
 		}
 
 		let tagEmbed = new EmbedBuilder().setColor(colors.main);
@@ -34,7 +33,7 @@ module.exports = {
 			try {
 				attachmentData = new AttachmentBuilder(Buffer.from(tag.attachmentData), { name: tag.attachmentName });
 			} catch (e) {
-				return sendReply('error', `There was an error forming the buffer attachment: ${e}`);
+				return sendReply(interaction, 'error', `There was an error forming the buffer attachment: ${e}`);
 			}
 		}
 
@@ -42,10 +41,10 @@ module.exports = {
 		if (attachmentData) tagEmbed.setImage(`attachment://${tag.attachmentName}`);
 
 		if (attachmentData) {
-			sendReply('main', 'Sending tag...');
+			sendReply(interaction, 'main', 'Sending tag...');
 			interaction.channel.send({ embeds: [tagEmbed], files: [attachmentData] });
 		} else {
-			sendReply('main', 'Sending tag...');
+			sendReply(interaction, 'main', 'Sending tag...');
 			interaction.channel.send({ embeds: [tagEmbed] });
 		}
 	},

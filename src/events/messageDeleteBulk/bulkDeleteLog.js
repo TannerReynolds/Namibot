@@ -4,6 +4,13 @@ const { getModChannels } = require('../../utils/getModChannels');
 const { EmbedBuilder, MessageAttachment } = require('discord.js');
 const { colors, server } = require('../../config.json');
 
+/**
+ * Writes a log file and sends an embed message when bulk messages are deleted.
+ * @param {Array} messages - The array of deleted messages.
+ * @param {Object} channel - The channel where the messages were deleted.
+ * @param {Object} client - The Discord client object.
+ * @returns {Promise<void>}
+ */
 async function bulkDeleteLog(messages, channel, client) {
 	let fileName = `bdl${randomToken(8)}`;
 	const stream = fs.createWriteStream(`./server/public/${fileName}.html`);
@@ -38,7 +45,7 @@ async function bulkDeleteLog(messages, channel, client) {
 					embeds: [deleteEmbed],
 					files: [attach],
 				})
-				.then(r => {
+				.then(() => {
 					fs.unlink(`./server/public/${fileName}.html`, err => {
 						if (err) throw err;
 					});
@@ -49,6 +56,12 @@ async function bulkDeleteLog(messages, channel, client) {
 
 module.exports = { bulkDeleteLog };
 
+/**
+ * Generates a random token of specified length.
+ * @param {number} number - The length of the token.
+ * @param {boolean} symbols - Whether to include symbols in the token.
+ * @returns {string} - The randomly generated token.
+ */
 function randomToken(number, symbols) {
 	number = parseInt(number, 10);
 	let text = '';

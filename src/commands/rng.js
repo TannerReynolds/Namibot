@@ -1,10 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
-const { parseNewDate, durationToString, isValidDuration } = require('../utils/parseDuration.js');
-const prisma = require('../utils/prismaClient');
 const { colors } = require('../config.json');
-const { getModChannels } = require('../utils/getModChannels');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
@@ -17,10 +14,10 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for subjecting this user to fate').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply('error', 'This user does not exist');
+			return sendReply(interaction, 'error', 'This user does not exist');
 		}
 
 		let targetMember;
@@ -37,7 +34,7 @@ module.exports = {
 		}
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
-			return sendReply('error', 'You or the bot does not have permissions to complete this action');
+			return sendReply(interaction, 'error', 'You or the bot does not have permissions to complete this action');
 		}
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;

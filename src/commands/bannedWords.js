@@ -18,13 +18,13 @@ module.exports = {
 
 		if (!bannedWordsRule) {
 			log.debug("didn't find any banned words autoMod");
-			return sendReply('error', "Couldn't find any banned word filters in server AutoMod rules. Please ensure banned words filter is named `Banned Words`");
+			return sendReply(interaction, 'error', "Couldn't find any banned word filters in server AutoMod rules. Please ensure banned words filter is named `Banned Words`");
 		}
 
 		let bannedWords = bannedWordsRule.triggerMetadata.keywordFilter;
 		if (!bannedWords) {
 			log.debug("didn't find any banned words inside of the banned words rule");
-			return sendReply('error', 'The banned words list is empty');
+			return sendReply(interaction, 'error', 'The banned words list is empty');
 		}
 
 		log.debug('Constructing banned words embed');
@@ -35,9 +35,9 @@ module.exports = {
 			.addFields({ name: `Banned Words For ${interaction.guild.name}`, value: `\`\`\`txt\n${bannedWords.join(', ')}\n\`\`\`` });
 
 		log.debug('Sending user banned words DM');
-		interaction.user.send({ embeds: [bwEmbed] }).catch(e => {
+		interaction.user.send({ embeds: [bwEmbed] }).catch(() => {
 			log.debug(`Couldn't send user ${interaction.user.username} (${interaction.user.id}) banned words list`);
-			return sendReply('error', 'I was not able to send you a DM');
+			return sendReply(interaction, 'error', 'I was not able to send you a DM');
 		});
 
 		let doneEmbed = new EmbedBuilder().setColor(colors.main).setDescription('Sent banned words list to your DMs!').setTimestamp();

@@ -5,6 +5,10 @@ const { guilds, colors } = require('../../config.json');
 const { getModChannels } = require('../../utils/getModChannels');
 const log = require('../../utils/log');
 
+/**
+ * Checks if a message contains advertisements and takes appropriate actions.
+ * @param {Message} message - The message object.
+ */
 function antiAds(message) {
 	if (!message.channel.guild) return;
 	if (message.author.bot) return;
@@ -31,7 +35,7 @@ function antiAds(message) {
 	let allowed = guilds[message.guild.id].features.antiAds.allowedInvites;
 
 	if (allowed.some(allowedInvite => sentInvite[0] === allowedInvite) && !sentInvite[1]) {
-		return log.debug("allowed invite sent")
+		return log.debug('allowed invite sent');
 	}
 
 	message.delete().catch(e => {
@@ -40,7 +44,7 @@ function antiAds(message) {
 
 	message.author
 		.send('You have been warned for sending a Discord invite link. Please do not send them before clearing it with staff. If you wish to partner with us, please DM the owners of the server')
-		.catch(e => {
+		.catch(() => {
 			log.debug(`Couldn't send message to author`);
 		});
 

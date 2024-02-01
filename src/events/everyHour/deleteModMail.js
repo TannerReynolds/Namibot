@@ -13,7 +13,7 @@ async function deleteModMail(client) {
 					},
 				},
 			})
-			.catch(e => {
+			.catch(() => {
 				log.error(`Couldn't get expiredMail`);
 			});
 
@@ -31,7 +31,7 @@ async function deleteModMail(client) {
 						},
 					},
 				})
-				.then(r => {
+				.then(() => {
 					let user = client.users.cache.get(m.userID);
 					if (!user) return log.debug(`couldn't get user`);
 					user.send(`Your mod mail connection in ${client.guilds.cache.get(m.guildId).name} has been deleted due to inactivity.`).catch(e => {

@@ -1,3 +1,8 @@
+/**
+ * @file Add Highlight Command
+ * @description Command to create a new highlighted phrase to be notified for (not case sensitive)
+ */
+
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff');
 const { colors } = require('../config.json');
@@ -6,14 +11,23 @@ const prisma = require('../utils/prismaClient');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
+	/**
+	 * Slash Command Data
+	 * @type {SlashCommandBuilder}
+	 */
 	data: new SlashCommandBuilder()
 		.setName('addhighlight')
 		.setDescription('Create a new highlighted phrase to be notified for (not case sensitive)')
 		.setDMPermission(false)
 		.addStringOption(option => option.setName('phrase').setDescription("The phrase you'd like to highlight").setMaxLength(1_000).setRequired(true)),
+
+	/**
+	 * Execute the command
+	 * @param {Object} interaction - The interaction object
+	 */
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
 
 		let phrase = interaction.options.getString('phrase').toLowerCase();
 
@@ -30,7 +44,7 @@ module.exports = {
 					userID: interaction.user.id,
 				},
 			})
-			.then(r => {
+			.then(() => {
 				interaction.editReply({ embeds: [msgEmbed] }).catch(e => {
 					interaction.editReply(`Message failed to send:\n${e}`);
 				});

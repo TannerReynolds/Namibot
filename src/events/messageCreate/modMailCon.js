@@ -2,6 +2,12 @@ const { EmbedBuilder, ChannelType } = require('discord.js');
 const prisma = require('../../utils/prismaClient.js');
 const { colors } = require('../../config.json');
 
+/**
+ * Handles the mod mail server functionality.
+ *
+ * @param {Message} message - The message object received in the mod mail channel.
+ * @returns {Promise<void>} - A promise that resolves once the mod mail response is sent.
+ */
 async function modMailServer(message) {
 	if (message.channel.type !== ChannelType.PublicThread) return;
 	if (message.author.bot) return;
@@ -26,7 +32,7 @@ async function modMailServer(message) {
 
 	user
 		.send({ embeds: [mailEmbed] })
-		.then(m => {
+		.then(() => {
 			message.react('✅');
 		})
 		.catch(e => {
@@ -34,6 +40,11 @@ async function modMailServer(message) {
 		});
 }
 
+/**
+ * Sends a mod mail response to the appropriate thread channel.
+ * @param {Message} message - The message object representing the mod mail response.
+ * @returns {Promise<void>} - A promise that resolves once the response is sent.
+ */
 async function modMailDM(message) {
 	if (message.channel.type !== ChannelType.DM) return;
 	if (message.author.bot) return;
@@ -54,7 +65,7 @@ async function modMailDM(message) {
 		if (thread && thread.type === ChannelType.PublicThread) {
 			thread
 				.send({ embeds: [mailEmbed] })
-				.then(m => {
+				.then(() => {
 					message.react('✅');
 				})
 				.catch(e => {
