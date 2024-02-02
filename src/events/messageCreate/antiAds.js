@@ -66,7 +66,7 @@ function antiAds(message) {
 	getModChannels(message.client, message.guild.id)
 		.main.send({
 			embeds: [logEmbed],
-			content: `<@${message.author.id}>`,
+			content: `<@${message.author.id}> :: https://${sentInvite[0]}`,
 		})
 		.catch(e => {
 			log.error(`Couldn't log warning: ${e}`);

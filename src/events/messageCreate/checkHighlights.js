@@ -28,6 +28,9 @@ async function checkHighlights(message) {
 
 				const aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL;
 				const name = message.author.username;
+				if (message.content.length > 1024) {
+					message.content = `${message.content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+				}
 				const hEmbed = new EmbedBuilder()
 					.setAuthor({ name: name, iconURL: aviURL })
 					.setColor(colors.main)

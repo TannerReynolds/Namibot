@@ -39,7 +39,12 @@ module.exports = {
 
 		let tagEmbed = new EmbedBuilder().setTitle(`New Tag Added`).setColor(colors.main).setTimestamp();
 
-		if (content) tagEmbed.addFields({ name: 'Content', value: content });
+		if (content) {
+			if (content.length > 1024) {
+				content = `${content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+			}
+			tagEmbed.addFields({ name: 'Content', value: content });
+		}
 		if (attachment) tagEmbed.addFields({ name: 'Attachment', value: attachment.name });
 
 		let attachmentData = null;

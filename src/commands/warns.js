@@ -56,6 +56,9 @@ module.exports = {
 					.setAuthor({ name: name, iconURL: aviURL });
 
 				pageWarnings.forEach(warning => {
+					if (warning[1].length > 1024) {
+						warning[1] = `${warning[1].substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+					}
 					embed.addFields({ name: warning[0], value: warning[1] });
 				});
 

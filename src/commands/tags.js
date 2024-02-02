@@ -43,6 +43,9 @@ module.exports = {
 					.setAuthor({ name: name, iconURL: aviURL });
 
 				pagetags.forEach(tag => {
+					if (tag[1].length > 1024) {
+						tag[1] = `${tag[1].substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+					}
 					embed.addFields({ name: tag[0], value: tag[1] });
 				});
 

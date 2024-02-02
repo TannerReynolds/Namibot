@@ -61,6 +61,7 @@ const { checkHighlights } = require(`${mCreate}checkHighlights`);
 const { deleteLog } = require(`${mDelete}deleteLog`);
 const { editLog } = require(`${mEdit}editLog`);
 const { initLog } = require(`${utils}initLog`);
+const { initGuildMemberCache, syncMemberCache } = require(`${utils}guildMemberCacheSync`);
 const { auth } = require(`${serverDir}auth`);
 const log = require(`${utils}log`);
 const { bulkDeleteLog } = require(`${mBulkDelete}bulkDeleteLog`);
@@ -69,9 +70,10 @@ const { antiSpam } = require(`${mCreate}antiSpam`);
 const prisma = require(`${utils}prismaClient`);
 
 /**
- * Initializes the log file.
+ * Initial boot files.
  */
 initLog();
+initGuildMemberCache();
 
 /**
  * Creates a new Discord client instance.
@@ -163,6 +165,7 @@ client.once(Events.ClientReady, async c => {
 	async function everyHour() {
 		await wipeFailedJoins();
 		await deleteModMail(client);
+		await syncMemberCache();
 	}
 });
 
@@ -408,6 +411,9 @@ process.on('unhandledRejection', async err => {
 process.on('uncaughtException', async err => {
 	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${err.stack}${endColor}`);
 });
+
+process.on('SIGINT', syncMemberCache());
+process.on('SIGTERM', syncMemberCache());
 
 function timestamp() {
 	const time = new Date();

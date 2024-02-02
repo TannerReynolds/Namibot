@@ -54,6 +54,9 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 			}
 
 			guildMember.roles.remove(guilds[mute.guildId].muteRoleID).then(() => {
+				if (mute.reason.length > 1024) {
+					mute.reason = `${mute.reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+				}
 				let logEmbed = new EmbedBuilder()
 					.setColor(colors.main)
 					.setTitle('Member Unmuted')

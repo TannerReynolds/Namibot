@@ -35,7 +35,7 @@ module.exports = {
 				.setAuthor({ name: name, iconURL: aviURL })
 				.addFields(
 					{ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` },
-					{ name: 'Result', value: `\`\`\`xl\n${evaled.length > 1100 ? `${evaled.match(/^.{0,1100}/s)[0]}...` : evaled.match(/^.{0,1100}/s)[0]}\n\`\`\`` }
+					{ name: 'Result', value: `\`\`\`xl\n${evaled.length > 1000 ? `${evaled.match(/^.{0,1000}/s)[0]}...` : evaled.match(/^.{0,1000}/s)[0]}\n\`\`\`` }
 				);
 
 			interaction.editReply({ embeds: [responseEmbed] });
@@ -46,7 +46,7 @@ module.exports = {
 				.setAuthor({ name: name, iconURL: aviURL })
 				.addFields(
 					{ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` },
-					{ name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err.length > 1100 ? `${err.match(/^.{0,1100}/s)[0]}...` : err.match(/^.{0,1100}/s)[0]}\n\`\`\`` }
+					{ name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err.length > 1000 ? `${err.match(/^.{0,1000}/s)[0]}...` : err.match(/^.{0,1000}/s)[0]}\n\`\`\`` }
 				);
 			interaction.editReply({ embeds: [responseEmbed] });
 		}

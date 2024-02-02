@@ -28,11 +28,14 @@ module.exports = {
 		}
 
 		log.debug('Constructing banned words embed');
-
+		let bwString = bannedWords.join(', ');
+		if (bwString.length > 1024) {
+			bwString = `${bwString.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+		}
 		let bwEmbed = new EmbedBuilder()
 			.setColor(colors.main)
 			.setTimestamp()
-			.addFields({ name: `Banned Words For ${interaction.guild.name}`, value: `\`\`\`txt\n${bannedWords.join(', ')}\n\`\`\`` });
+			.addFields({ name: `Banned Words For ${interaction.guild.name}`, value: `\`\`\`txt\n${bwString}\n\`\`\`` });
 
 		log.debug('Sending user banned words DM');
 		interaction.user.send({ embeds: [bwEmbed] }).catch(() => {

@@ -6,6 +6,9 @@ async function deleteLog(message) {
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	let content = message.cleanContent || message.content;
+	if (content.length > 1024) {
+		content = `${content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+	}
 	let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 		? message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 		: message.author.defaultAvatarURL;

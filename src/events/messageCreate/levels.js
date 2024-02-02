@@ -1,4 +1,4 @@
-const usersCache = require("../../utils/usersCache")
+const guildMemberCache = require('../../utils/guildMemberCache');
 
 // Assuming a quadratic progression, define a coefficient for the quadratic term
 // This coefficient determines how quickly levels increase in difficulty
@@ -8,32 +8,34 @@ const a = 839500 / Math.pow(100, 2); // Adjust 'a' as needed to fit the desired 
 
 // Function to calculate level based on XP using a quadratic curve
 function calculateLevel(xp) {
-  // Adjust the formula to use a quadratic progression for levels
-  // The formula for level based on XP can be derived from the quadratic equation: xp = a * level^2
-  // Solving for level gives: level = sqrt(xp / a)
-  return Math.floor(Math.sqrt(xp / a));
+	// Adjust the formula to use a quadratic progression for levels
+	// The formula for level based on XP can be derived from the quadratic equation: xp = a * level^2
+	// Solving for level gives: level = sqrt(xp / a)
+	return Math.floor(Math.sqrt(xp / a));
 }
 
-function addUserToCache(userId) {
-    if (!usersCache[userId]) {
-      usersCache[userId] = { xp: 0, level: 1, changed: false };
-    }
+function addMemberToCache(guildId, userId) {
+	if (!guildMemberCache[guildId] || !guildMemberCache[guildId][userId]) {
+		guildMemberCache[guildId][userId] = { xp: 0, level: 1, changed: false };
+	}
 }
 
-// Updated function to add XP and calculate new level accordingly
-function addXP(userId) {
-  if (!usersCache[userId]) addUserToCache(userId);
+function addXP(message, guildId, userId) {
+	if (!guildMemberCache[guildId] || !guildMemberCache[guildId][userId]) {
+		addMemberToCache(guildId, userId);
+	}
 
-  let user = usersCache[userId];
-  user.xp += 10;
-  user.changed = true;
+	let member = guildMemberCache[guildId][userId];
+	member.xp += 10;
+	member.messageCount += 1;
+	member.changed = true; // Mark as changed
 
-  let newLevel = calculateLevel(user.xp);
+	let newLevel = calculateLevel(member.xp);
 
-  if (newLevel !== user.level) {
-    user.level = newLevel;
-    user.changed = true;
-  }
+	if (newLevel !== member.level) {
+		member.level = newLevel;
+		member.changed = true;
+	}
 }
 
-module.exports = { addXp }
+module.exports = { addXP };

@@ -20,6 +20,12 @@ async function editLog(message, oldMessage) {
 	} catch (e) {
 		log.debug('No message content');
 	}
+	if (newContent.length > 1024) {
+		newContent = `${newContent.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+	}
+	if (oldContent.length > 1024) {
+		oldContent = `${oldContent.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+	}
 	let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 		? message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 })
 		: message.author.defaultAvatarURL;

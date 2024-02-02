@@ -69,6 +69,9 @@ async function checkAndUnbanUsers(client, getModChannels) {
 			guild.bans
 				.remove(ban.userID)
 				.then(() => {
+					if (ban.reason.length > 1024) {
+						ban.reason = `${ban.reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+					}
 					let logEmbed = new EmbedBuilder()
 						.setColor(colors.main)
 						.setTitle('Member Unbanned')

@@ -23,16 +23,21 @@ model Guild {
     highlights  Highlight[]
     tags        Tag[]
     mail        Mail[]
+    members     Member[]
 
     @@unique(id)
     @@index(id)
 }
 
-model User {
-  id          String       @id
-  name  String
-  xp    Int    @default(0)
-  level Int    @default(1)
+model Member {
+    userID       String
+    xp           Int    @default(0)
+    level        Int    @default(1)
+    messageCount Int    @default(0)
+    Guild        Guild  @relation(fields: [guildId], references: [id])
+    guildId      String
+
+    @@id([userID, guildId])
 }
 
 model FailedJoin {
@@ -68,13 +73,6 @@ model NitroColor {
     guildId String?
 
     @@unique([roleID, guildId])
-}
-
-model Member {
-    id String @id
-
-    @@unique(id)
-    @@index(id)
 }
 
 model Mute {

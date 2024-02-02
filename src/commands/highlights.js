@@ -46,6 +46,9 @@ module.exports = {
 					.setAuthor({ name: name, iconURL: aviURL });
 
 				pageHighlights.forEach(h => {
+					if (h[1].length > 1024) {
+						h[1] = `${h[1].substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+					}
 					embed.addFields({ name: h[0], value: h[1] });
 				});
 

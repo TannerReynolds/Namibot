@@ -116,7 +116,9 @@ module.exports = {
 			interaction.editReply({ embeds: [banEmbed] });
 
 			log.debug(`Sending log embed`);
-
+			if (reason.length > 1024) {
+				reason = `${reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+			}
 			let logEmbed = new EmbedBuilder()
 				.setColor(colors.main)
 				.setTitle('Member Banned')
