@@ -55,9 +55,14 @@
           },
           "hiddenLinkDetection": true,
           "antiSpam": true,
-          "modMail": true
+          "modMail": true,
+          "autoRole": {
+            "enabled": true,
+            "roles": [""]
+          }
         },
         "commands": {
+          "dangerroles": true,
           "unshort": true,
           "purge": true,
           "modmail": true,
@@ -129,9 +134,14 @@
           },
           "hiddenLinkDetection": true,
           "antiSpam": true,
-          "modMail": true
+          "modMail": true,
+          "autoRole": {
+            "enabled": true,
+            "roles": [""]
+          }
         },
         "commands": {
+          "dangerroles": true,
           "unshort": true,
           "purge": true,
           "modmail": true,
@@ -203,9 +213,14 @@
           },
           "hiddenLinkDetection": true,
           "antiSpam": true,
-          "modMail": true
+          "modMail": true,
+          "autoRole": {
+            "enabled": true,
+            "roles": [""]
+          }
         },
         "commands": {
+          "dangerroles": true,
           "unshort": true,
           "purge": true,
           "modmail": true,

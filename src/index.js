@@ -67,6 +67,7 @@ const log = require(`${utils}log`);
 const { bulkDeleteLog } = require(`${mBulkDelete}bulkDeleteLog`);
 const { modMailServer, modMailDM } = require(`${mCreate}modMailCon`);
 const { antiSpam } = require(`${mCreate}antiSpam`);
+const { autoRole } = require(`${gMemberAdd}autoRole`);
 const prisma = require(`${utils}prismaClient`);
 
 /**
@@ -264,7 +265,8 @@ client.on(Events.InteractionCreate, async interaction => {
 // Join/Leave Events
 
 client.on(Events.GuildMemberAdd, async member => {
-	if (guilds[member.guild.id].features.checkAccountAge.enabled) await checkAccountAge(member);
+	if (guilds[member.guild.id].features.checkAccountAge.enabled) checkAccountAge(member);
+	if (guilds[member.guild.id].features.autoRole.enabled) autoRole(member);
 });
 
 //////////////////////////////////////
