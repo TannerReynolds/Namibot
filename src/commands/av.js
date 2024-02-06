@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { defineTarget } = require('../utils/defineTarget');
-const { guilds, colors } = require('../config.json');
+const { guilds, colors, emojis } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
@@ -19,7 +19,7 @@ module.exports = {
 		log.debug(`Command channel: ${commandChannel}`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
 			return interaction.editReply({
-				content: `You have to go to the <#${commandChannel}> channel to use this command`,
+				content: `${emojis.error} You have to go to the <#${commandChannel}> channel to use this command`,
 				ephemeral: true,
 			});
 

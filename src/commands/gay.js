@@ -4,7 +4,6 @@ const { createCanvas, Image } = require('canvas');
 const axios = require('axios');
 const { guilds } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
-const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder().setDMPermission(false).setName('gay').setDescription('Make your pfp gay'),
@@ -29,7 +28,7 @@ module.exports = {
 		}
 		overlayImage(pfpBuffer, '.\\img\\gay.png', 0.4).then(r => {
 			let gayEmbed = new EmbedBuilder();
-			bufferAttach = new AttachmentBuilder(r, { name: 'gay.png' });
+			let bufferAttach = new AttachmentBuilder(r, { name: 'gay.png' });
 			gayEmbed = gayEmbed.setImage('attachment://gay.png');
 			interaction.editReply({
 				embeds: [gayEmbed],

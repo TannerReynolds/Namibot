@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff } = require('../utils/isStaff.js');
 const { defineTarget } = require('../utils/defineTarget');
 const prisma = require('../utils/prismaClient');
-const { colors } = require('../config.json');
+const { colors, emojis } = require('../config.json');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const { sendReply } = require('../utils/sendReply');
 
@@ -14,10 +14,11 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to view warns for').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
+			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply(interaction, 'error', 'This user does not exist');
+			return sendReply(interaction, 'error', `${emojis.error} This user does not exist`);
 		}
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
@@ -32,7 +33,7 @@ module.exports = {
 			});
 
 			if (!warnings || warnings === undefined) {
-				return sendReply(interaction, 'main', 'This user has no warnings.');
+				return sendReply(interaction, 'main', `${emojis.error} This user has no warnings.`);
 			}
 
 			const formattedWarnings = warnings.map(warning => {
@@ -41,7 +42,7 @@ module.exports = {
 			});
 
 			if (formattedWarnings.length === 0) {
-				return sendReply(interaction, 'main', 'This user has no warnings.');
+				return sendReply(interaction, 'main', `${emojis.error} This user has no warnings.`);
 			}
 
 			const warningsPerPage = 10;
@@ -50,7 +51,7 @@ module.exports = {
 				const pageWarnings = formattedWarnings.slice(i, i + warningsPerPage);
 				const embed = new EmbedBuilder()
 					.setTitle('Warnings')
-					.setDescription(`Showing all warnings for user <@${target}>`)
+					.setDescription(`${emojis.success} Showing all warnings for user <@${target}>`)
 					.setColor(colors.main)
 					.setTimestamp()
 					.setAuthor({ name: name, iconURL: aviURL });
@@ -71,7 +72,7 @@ module.exports = {
 				await interaction.editReply({ embeds: [pages[0]] });
 			}
 		} catch (error) {
-			sendReply(interaction, 'error', `Error fetching warnings: ${error}`);
+			sendReply(interaction, 'error', `${emojis.error} Error fetching warnings: ${error}`);
 			throw error;
 		}
 	},

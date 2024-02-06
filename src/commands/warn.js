@@ -3,7 +3,7 @@ const { isStaff, hasHigherPerms } = require('../utils/isStaff.js');
 const { defineTarget } = require('../utils/defineTarget');
 const prisma = require('../utils/prismaClient');
 const { getModChannels } = require('../utils/getModChannels');
-const { colors } = require('../config.json');
+const { colors, emojis } = require('../config.json');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
@@ -16,10 +16,11 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for warning this user').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
+			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply(interaction, 'error', 'This user does not exist');
+			return sendReply(interaction, 'error', `${emojis.error} This user does not exist`);
 		}
 
 		let targetMember;
@@ -34,10 +35,10 @@ module.exports = {
 				log.debug(`failed to fetch member`);
 			}
 		}
-		if (!targetMember) return sendReply(interaction, 'error', 'This user is not a guild member');
+		if (!targetMember) return sendReply(interaction, 'error', `${emojis.error} This user is not a guild member`);
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
-			return sendReply(interaction, 'error', 'You or the bot does not have permissions to complete this action');
+			return sendReply(interaction, 'error', `${emojis.error} You or the bot does not have permissions to complete this action`);
 		}
 
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
@@ -51,7 +52,12 @@ module.exports = {
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
-		let warnEmbed = new EmbedBuilder().setTitle(`User Warned`).setColor(colors.main).setDescription(`Warned <@${target}>. Reason: ${reason}`).setTimestamp().setAuthor({ name: name, iconURL: aviURL });
+		let warnEmbed = new EmbedBuilder()
+			.setTitle(`User Warned`)
+			.setColor(colors.main)
+			.setDescription(`${emojis.success} Warned <@${target}>. Reason: ${reason}`)
+			.setTimestamp()
+			.setAuthor({ name: name, iconURL: aviURL });
 
 		interaction.editReply({ embeds: [warnEmbed] });
 		if (reason.length > 1024) {

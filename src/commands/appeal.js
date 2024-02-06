@@ -65,7 +65,9 @@ module.exports = {
 
 		log.debug(`Getting avatar URL...`);
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
-
+		if (ban.reason.length > 1024) {
+			ban.reason = `${ban.reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+		}
 		let logEmbed;
 		if (!dbBan) {
 			log.debug('No ban found...');
@@ -73,7 +75,7 @@ module.exports = {
 				.setColor(colors.main)
 				.setTitle('New Ban Appeal')
 				.setDescription(`Why I should be unbanned: \`${reason}\``)
-				.addFields({ name: 'Original Ban Reason', value: ban.reason })
+				.addFields({ name: 'Original Ban Reason', value: ban.reason || 'N/A' })
 				.setAuthor({ name: interaction.user.username, iconURL: aviURL })
 				.setTimestamp();
 		} else {

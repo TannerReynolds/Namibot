@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
 const axios = require('axios');
-const { guilds, colors } = require('../config.json');
+const { guilds, colors, emojis } = require('../config.json');
 const { isStaff } = require('../utils/isStaff');
 const log = require('../utils/log');
 const { createCanvas, loadImage, registerFont } = require('canvas');
@@ -22,7 +22,7 @@ module.exports = {
 		log.debug(`Command channel: ${commandChannel}`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages) && interaction.channel.id !== commandChannel)
 			return interaction.editReply({
-				content: `You have to go to the <#${commandChannel}> channel to use this command`,
+				content: `${emojis.error} You have to go to the <#${commandChannel}> channel to use this command`,
 				ephemeral: true,
 			});
 

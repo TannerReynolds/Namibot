@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient');
-const { colors } = require('../config.json');
+const { colors, emojis } = require('../config.json');
 const log = require('../utils/log');
 
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
 			create: { id: interaction.guild.id },
 		});
 
-		let pingEmbed = new EmbedBuilder().setColor(colors.main).setDescription('Pong').setTimestamp();
+		let pingEmbed = new EmbedBuilder().setColor(colors.main).setDescription(`${emojis.success} Pong!`).setTimestamp();
 
 		interaction.editReply({ embeds: [pingEmbed] });
 	},

@@ -4,7 +4,7 @@ const prisma = require('../utils/prismaClient');
 const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');
 const { getModChannels } = require('../utils/getModChannels');
-const { colors } = require('../config.json');
+const { colors, emojis } = require('../config.json');
 const c = require('../config.json');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
@@ -20,7 +20,8 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		log.debug(`Getting staff status...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers)) return sendReply(interaction, 'main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers))
+			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
 		log.debug('User is staff');
 		log.debug('Getting Target...');
 		let target = await defineTarget(interaction, 'edit');
@@ -48,7 +49,7 @@ module.exports = {
 			let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 			if (!canDoAction) {
 				log.debug(`Target member has higher permissions than the interaction user or the bot`);
-				return sendReply(interaction, 'error', 'You or the bot does not have permissions to complete this action');
+				return sendReply(interaction, 'error', `${emojis.error} You or the bot does not have permissions to complete this action`);
 			}
 		}
 
@@ -92,7 +93,7 @@ module.exports = {
 			})
 			.catch(e => {
 				log.error(`Error on banning user: ${target} | ${e}`);
-				return sendReply(interaction, 'error', `Error banning member: ${e}`);
+				return sendReply(interaction, 'error', `${emojis.error} Error banning member: ${e}`);
 			});
 
 		try {
@@ -103,13 +104,13 @@ module.exports = {
 				})
 				.catch(e => {
 					log.error(`Error on banning user: ${target} | ${e}`);
-					return sendReply(interaction, 'error', `Error banning member: ${e}`);
+					return sendReply(interaction, 'error', `${emojis.error} Error banning member: ${e}`);
 				});
 			log.debug(`Successfully created guild ban in ${interaction.guild.name}`);
 			let banEmbed = new EmbedBuilder()
 				.setTitle(`User Banned`)
-				.setColor(colors.success)
-				.setDescription(`Successfully banned <@${target}> for ${durationString}. Reason: ${reason}`)
+				.setColor(colors.main)
+				.setDescription(`${emojis.success} Successfully banned <@${target}> for ${durationString}. Reason: ${reason}`)
 				.setTimestamp()
 				.setAuthor({ name: name, iconURL: aviURL });
 
@@ -191,7 +192,7 @@ module.exports = {
 				});
 		} catch (e) {
 			log.error(`Error banning user: ${e}`);
-			return sendReply(interaction, 'error', `Error banning user: ${e}`);
+			return sendReply(interaction, 'error', `${emojis.error} Error banning user: ${e}`);
 		}
 	},
 };

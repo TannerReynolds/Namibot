@@ -11,11 +11,11 @@
       "warning": "#f5f562"
     },
     "emojis": {
-      "sent": "📨",
-      "yes": "✅",
-      "no": "❌",
-      "success": "✅",
-      "error": "❌"
+      "sent": "<:sent:1203188998097604608>",
+      "yes": "<:check:1203191199251300402>",
+      "no": "<:x_:1203191562084032594>",
+      "success": "<:check:1203191199251300402>",
+      "error": "<:x_:1203191562084032594>"
     },
     "server": {
       "enabled": true,
@@ -58,7 +58,19 @@
           "modMail": true,
           "autoRole": {
             "enabled": true,
-            "roles": [""]
+            "roles": ["573167869433610251"]
+          },
+          "levels": {
+            "enabled": false,
+            "levelUpMessage": "You have leveled up to level {{level}}!",
+            "levelRoles": {
+              "1": "1203186738898665533",
+              "10": "1203186765289234523",
+              "20": "1203186804828930108",
+              "30": "1203186840639905832",
+              "40": "1203186865398747166",
+              "50": "1203186889637629983"
+            }
           }
         },
         "commands": {
@@ -137,7 +149,19 @@
           "modMail": true,
           "autoRole": {
             "enabled": true,
-            "roles": [""]
+            "roles": ["1087482841731956917"]
+          },
+          "levels": {
+            "enabled": true,
+            "levelUpMessage": "You have leveled up to level {{level}}!",
+            "levelRoles": {
+              "1": "1203186738898665533",
+              "10": "1203186765289234523",
+              "20": "1203186804828930108",
+              "30": "1203186840639905832",
+              "40": "1203186865398747166",
+              "50": "1203186889637629983"
+            }
           }
         },
         "commands": {
@@ -215,8 +239,20 @@
           "antiSpam": true,
           "modMail": true,
           "autoRole": {
-            "enabled": true,
+            "enabled": false,
             "roles": [""]
+          },
+          "levels": {
+            "enabled": false,
+            "levelUpMessage": "You have leveled up to level {{level}}!",
+            "levelRoles": {
+              "1": "1203186738898665533",
+              "10": "1203186765289234523",
+              "20": "1203186804828930108",
+              "30": "1203186840639905832",
+              "40": "1203186865398747166",
+              "50": "1203186889637629983"
+            }
           }
         },
         "commands": {

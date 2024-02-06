@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType, EmbedBuilder } = require('discord.js');
-const { colors } = require('../config.json');
+const { colors, emojis } = require('../config.json');
 const prisma = require('../utils/prismaClient');
 const { sendReply } = require('../utils/sendReply');
 
@@ -10,7 +10,7 @@ module.exports = {
 		let boosterRole = interaction.guild.roles.premiumSubscriberRole.id || null;
 
 		if (!authorRoles.has(boosterRole) && interaction.user.id !== '478044823882825748') {
-			return sendReply(interaction, interaction, 'error', 'You are not a nitro booster');
+			return sendReply(interaction, interaction, 'error', `${emojis.error} You are not a nitro booster`);
 		}
 
 		await prisma.guild.upsert({

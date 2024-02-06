@@ -6,7 +6,7 @@ const { spawnSync } = require('child_process');
 const axios = require('axios');
 const path = require('path');
 const { isStaff } = require('../utils/isStaff');
-const { colors } = require('../config.json');
+const { colors, emojis } = require('../config.json');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
@@ -20,7 +20,7 @@ module.exports = {
 		.addStringOption(option => option.setName('duration').setDescription('The amount of time to bam this user for ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', 'You dont have the necessary permissions to complete this action');
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages)) return sendReply('main', `${emojis.error} You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply(interaction, 'error', 'This user does not exist');

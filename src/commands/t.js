@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient.js');
-const { colors } = require('../config.json');
+const { colors, emojis } = require('../config.json');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
 		});
 
 		if (!tag) {
-			return sendReply(interaction, 'error', 'That tag does not exist');
+			return sendReply(interaction, 'error', `${emojis.error} That tag does not exist`);
 		}
 
 		let tagEmbed = new EmbedBuilder().setColor(colors.main);
@@ -33,7 +33,7 @@ module.exports = {
 			try {
 				attachmentData = new AttachmentBuilder(Buffer.from(tag.attachmentData), { name: tag.attachmentName });
 			} catch (e) {
-				return sendReply(interaction, 'error', `There was an error forming the buffer attachment: ${e}`);
+				return sendReply(interaction, 'error', `${emojis.error} There was an error forming the buffer attachment: ${e}`);
 			}
 		}
 
