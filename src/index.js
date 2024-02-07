@@ -270,8 +270,8 @@ client.on(Events.GuildMemberAdd, async member => {
 });
 
 client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
-	if(guilds[newMember.guild.id].features.nitroRoles.enabled) checkBoosterStatus(newMember);
-})
+	if (guilds[newMember.guild.id].features.nitroRoles.enabled) checkBoosterStatus(newMember);
+});
 
 //////////////////////////////////////
 // Message events

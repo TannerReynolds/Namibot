@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ChannelType } = require('discord.js');
 const prisma = require('../utils/prismaClient');
 const { guilds, colors, emojis } = require('../config.json');
 const log = require('../utils/log');
@@ -19,6 +19,11 @@ module.exports = {
 		.addStringOption(option => option.setName('message').setDescription('What you would like to talk to staff members about').setMaxLength(1_900).setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
+
+		if (message.channel.type !== ChannelType.DM) {
+			return sendReply(interaction, 'error', `${emojis.error} You can only use this command in DMs`);
+		}
+
 		let guildChoice = await interaction.options.getString('server');
 		let message = await interaction.options.getString('message');
 		let guild = interaction.client.guilds.cache.get(guildChoice);
