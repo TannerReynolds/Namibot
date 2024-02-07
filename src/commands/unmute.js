@@ -2,9 +2,9 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const prisma = require('../utils/prismaClient');
-const { guilds, emojis } = require('../config.json');
+const { guilds, emojis } = require('../config');
 const { getModChannels } = require('../utils/getModChannels');
-const { colors } = require('../config.json');
+const { colors } = require('../config');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 

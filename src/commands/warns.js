@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaff } = require('../utils/isStaff.js');
 const { defineTarget } = require('../utils/defineTarget');
 const prisma = require('../utils/prismaClient');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const { sendReply } = require('../utils/sendReply');
 

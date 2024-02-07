@@ -2,7 +2,7 @@ const ejs = require('ejs');
 const fs = require('fs-extra');
 const { getModChannels } = require('../../utils/getModChannels');
 const { EmbedBuilder, MessageAttachment } = require('discord.js');
-const { colors, server } = require('../../config.json');
+const { colors, server } = require('../../config');
 
 /**
  * Writes a log file and sends an embed message when bulk messages are deleted.

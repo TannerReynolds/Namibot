@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient.js');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const log = require('../utils/log.js');
 const axios = require('axios');
 const { sendReply } = require('../utils/sendReply');

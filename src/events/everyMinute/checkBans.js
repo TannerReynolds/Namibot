@@ -1,5 +1,5 @@
 const prisma = require('../../utils/prismaClient');
-const { colors } = require('../../config.json');
+const { colors } = require('../../config');
 const { EmbedBuilder } = require('discord.js');
 const log = require('../../utils/log');
 

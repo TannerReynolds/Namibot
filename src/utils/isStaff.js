@@ -1,4 +1,4 @@
-const { guilds } = require('../config.json');
+const { guilds } = require('../config');
 
 function isStaff(message, guildMember, permissionOverride) {
 	let staffRole = guilds[message.guild.id].staffRoleID;

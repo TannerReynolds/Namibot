@@ -1,5 +1,5 @@
 const log = require('../../utils/log');
-const { colors } = require('../../config.json');
+const { colors } = require('../../config');
 const { EmbedBuilder } = require('discord.js');
 const state = require('../../utils/sharedState');
 const highlightsCache = require('../../utils/highlightsCache');

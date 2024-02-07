@@ -7,7 +7,7 @@
 Self hosting is not supported at the moment
 
 ## Features
-#### Many of these features are optional and may be turned off in the config.json file
+#### Many of these features are optional and may be turned off in the config.js file
 
  * Message edit and delete logs *with* attachment support
  * Slash commands with required fields. Moderators will never need to memorize syntax, so syntax will never be a problem for mods. Also requires mods to always input a reason for their actions.

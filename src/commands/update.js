@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { botOwnerID } = require('../config.json');
+const { botOwnerID } = require('../config');
 const log = require('../utils/log');
 const { exec } = require('child_process');
 const https = require('https');

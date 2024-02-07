@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { botOwnerID, colors, emojis } = require('../config.json');
+const { botOwnerID, colors, emojis } = require('../config');
 const sharedState = require('../utils/sharedState');
 
 module.exports = {

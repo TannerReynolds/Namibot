@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient.js');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const { sendReply } = require('../utils/sendReply');
 

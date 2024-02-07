@@ -1,5 +1,5 @@
 const log = require('../../utils/log');
-const { guilds } = require('../../config.json');
+const { guilds } = require('../../config');
 
 /**
  * Detects if a message contains a GIF and takes appropriate action.

@@ -1,5 +1,5 @@
 const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { guilds, colors } = require('../config.json');
+const { guilds, colors } = require('../config');
 const { isStaff } = require('../utils/isStaff.js');
 const log = require('../utils/log.js');
 const { sendReply } = require('../utils/sendReply');

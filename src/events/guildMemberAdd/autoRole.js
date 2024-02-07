@@ -1,4 +1,4 @@
-let { guilds } = require("../../config.json")
+let { guilds } = require('../../config')
 let log = require("../../utils/log")
 
 async function autoRole(member) {

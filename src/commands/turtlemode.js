@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff, hasHigherPerms } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');
 const { durationToString, isValidDuration, durationToSec } = require('../utils/parseDuration');

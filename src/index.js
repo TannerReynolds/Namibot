@@ -38,7 +38,7 @@ const utils = './utils/';
 const serverDir = './server/';
 
 // Configuration file
-const { token, colors, guilds, server } = require('./config.json');
+const { token, colors, guilds, server } = require('./config.js');
 
 // Importing various utility functions and event handlers
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);
@@ -270,7 +270,7 @@ client.on(Events.GuildMemberAdd, async member => {
 });
 
 client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
-	if (guilds[newMember.guild.id].features.nitroRoles.enabled) checkBoosterStatus(newMember);
+	if (guilds[newMember.guild.id].features.nitroRoles.enabled) checkBoosterStatus(oldMember, newMember);
 });
 
 //////////////////////////////////////

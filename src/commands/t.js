@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient.js');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {

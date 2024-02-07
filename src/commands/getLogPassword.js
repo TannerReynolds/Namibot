@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const log = require('../utils/log');
 const { getLogPassword } = require('../utils/sharedState');
 const { isStaff } = require('../utils/isStaff');

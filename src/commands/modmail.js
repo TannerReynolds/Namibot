@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ChannelType } = require('discord.js');
 const prisma = require('../utils/prismaClient');
-const { guilds, colors, emojis } = require('../config.json');
+const { guilds, colors, emojis } = require('../config');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 

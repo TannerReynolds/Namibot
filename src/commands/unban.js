@@ -3,7 +3,7 @@ const { isStaff } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const prisma = require('../utils/prismaClient');
 const { getModChannels } = require('../utils/getModChannels');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 

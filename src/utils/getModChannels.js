@@ -1,4 +1,4 @@
-const { guilds } = require('../config.json');
+const { guilds } = require('../config');
 function getModChannels(client, id) {
 		return {
 			main: client.guilds.cache.get(id).channels.cache.get(guilds[id].mainLogChannelID),

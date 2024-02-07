@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
 		.setDescription('Send a DM to a user')
 		.setDMPermission(false)
 		.addStringOption(option => option.setName('user').setDescription('The user to message.').setRequired(true))
-		.addStringOption(option => option.setName('msg').setDescription("the message you'd like to DM the user").setMaxLength(2_000).setRequired(true)),
+		.addStringOption(option => option.setName('msg').setDescription("the message you'd like to DM the user").setMaxLength(4_000).setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { guilds, emojis } = require('../config.json');
+const { guilds, emojis } = require('../config');
 const { isStaff } = require('../utils/isStaff');
 const { unshortenURL } = require('../utils/unshortenURL');
 const { sendReply } = require('../utils/sendReply');

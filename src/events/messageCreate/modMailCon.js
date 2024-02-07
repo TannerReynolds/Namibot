@@ -1,6 +1,6 @@
 const { EmbedBuilder, ChannelType } = require('discord.js');
 const prisma = require('../../utils/prismaClient.js');
-const { colors } = require('../../config.json');
+const { colors } = require('../../config');
 
 /**
  * Handles the mod mail server functionality.

@@ -4,8 +4,8 @@ const prisma = require('../utils/prismaClient');
 const { defineTarget } = require('../utils/defineTarget');
 const { defineDuration, defineDurationString } = require('../utils/defineDuration');
 const { getModChannels } = require('../utils/getModChannels');
-const { colors, emojis } = require('../config.json');
-const c = require('../config.json');
+const { colors, emojis } = require('../config');
+const c = require('../config');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 

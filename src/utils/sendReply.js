@@ -1,4 +1,4 @@
-const { colors } = require('../config.json');
+const { colors } = require('../config');
 const { EmbedBuilder } = require('discord.js');
 
 function sendReply(interaction, type, message) {

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { botOwnerID, colors } = require('../config.json');
+const { botOwnerID, colors } = require('../config');
 const log = require('../utils/log');
 const prisma = require('../utils/prismaClient');
 const { sendReply } = require('../utils/sendReply');

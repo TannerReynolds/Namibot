@@ -1,24 +1,21 @@
-const prisma = require('../utils/prismaClient');
+const { guilds } = require("../../config");
+const log = require('../../utils/log')
 
-async function checkBoosterStatus(newMember) {
-	if (newMember.user.bot) return;
-	if (newMember.premiumSince !== null) return;
+async function checkBoosterStatus(oldMember, newMember) {
+    if (newMember.user.bot) return;
+    if (newMember.premiumSince || oldMember.premiumSince === newMember.premiumSince) return;
 
-	let guild = newMember.guild;
+    let nitroColors = guilds[newMember.guild.id]?.features.nitroRoles.roles.map(r => r.id) || [];
 
-	let nitroColors = await prisma.nitroColor.findMany({
-		where: {
-			guildId: interaction.guild.id,
-		},
-	});
-
-	const delRole = async () => {
-		for (let i = 0; i < nitroRoleIDs.length; i++) {
-			if (newMember.roles.cache.has(nitroRoleIDs[i])) {
-				await newMember.roles.remove(nitroRoleIDs[i]);
-			}
-		}
-	};
+    for (let color of nitroColors) {
+        try {
+            if (newMember.roles.cache.has(color)) {
+                await newMember.roles.remove(color);
+            }
+        } catch (e) {
+            log.error(`Failed to remove Nitro role ${color} from user ${newMember.id}: ${e}`);
+        }
+    }
 }
 
 module.exports = { checkBoosterStatus };

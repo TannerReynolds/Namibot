@@ -24,12 +24,12 @@ function copyAndDelete(originalFile, newFile) {
 const exampleEnvPath = path.join('../', 'example.env');
 const envPath = path.join('../', '.env');
 
-const exampleConfigPath = path.join('./', 'example.config.json');
-const configPath = path.join('./', 'config.json');
+const exampleConfigPath = path.join('./', 'example.config.js');
+const configPath = path.join('./', 'config.js');
 
 console.log(`${fg.blue}REPLACING EXAMPLE.ENV WITH .ENV${endColor}`);
 copyAndDelete(exampleEnvPath, envPath);
-console.log(`${fg.blue}REPLACING EXAMPLE.CONFIG.JSON WITH CONFIG.JSON${endColor}`);
+console.log(`${fg.blue}REPLACING EXAMPLE.config.js WITH config.js${endColor}`);
 copyAndDelete(exampleConfigPath, configPath);
 
 console.log(`${fg.green}SUCCESSFULLY CREATED CONFIG FILES${endColor}`);

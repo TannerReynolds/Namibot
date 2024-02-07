@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {

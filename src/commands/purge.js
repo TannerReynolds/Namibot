@@ -2,7 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const log = require('../utils/log.js');
 const { isStaff } = require('../utils/isStaff');
 const { sendReply } = require('../utils/sendReply');
-const { emojis } = require('../config.json');
+const { emojis } = require('../config');
 
 module.exports = {
 	data: new SlashCommandBuilder()

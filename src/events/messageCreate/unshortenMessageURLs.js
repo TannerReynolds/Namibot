@@ -1,6 +1,6 @@
 const { unshortenURL } = require('../../utils/unshortenURL');
 const { EmbedBuilder } = require('discord.js');
-const { colors } = require('../../config.json');
+const { colors } = require('../../config');
 
 async function unshortenMessageURLs(message) {
 	if (!message.guild) return;
