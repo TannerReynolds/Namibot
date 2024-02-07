@@ -269,6 +269,10 @@ client.on(Events.GuildMemberAdd, async member => {
 	if (guilds[member.guild.id].features.autoRole.enabled) autoRole(member);
 });
 
+client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
+	if(guilds[newMember.guild.id].features.nitroRoles.enabled) checkBoosterStatus(newMember);
+})
+
 //////////////////////////////////////
 // Message events
 
