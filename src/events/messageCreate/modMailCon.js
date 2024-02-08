@@ -1,6 +1,6 @@
 const { EmbedBuilder, ChannelType } = require('discord.js');
 const prisma = require('../../utils/prismaClient.js');
-const { colors } = require('../../config');
+const { colors, emojis } = require('../../config');
 
 /**
  * Handles the mod mail server functionality.
@@ -33,10 +33,10 @@ async function modMailServer(message) {
 	user
 		.send({ embeds: [mailEmbed] })
 		.then(() => {
-			message.react('✅');
+			message.react(emojis.sent);
 		})
 		.catch(e => {
-			message.reply(`Error sending message: ${e}`);
+			message.reply(`${emojis.error} Error sending message: ${e}`);
 		});
 }
 
@@ -66,10 +66,10 @@ async function modMailDM(message) {
 			thread
 				.send({ embeds: [mailEmbed] })
 				.then(() => {
-					message.react('✅');
+					message.react(emojis.sent);
 				})
 				.catch(e => {
-					message.reply(`Error sending message: ${e}`);
+					message.reply(`${emojis.error} Error sending message: ${e}`);
 				});
 		}
 	});
