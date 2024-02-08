@@ -38,7 +38,7 @@ const utils = './utils/';
 const serverDir = './server/';
 
 // Configuration file
-const { token, colors, guilds, server } = require('./config.js');
+const { token, colors, guilds, server, status } = require('./config.js');
 
 // Importing various utility functions and event handlers
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);
@@ -98,7 +98,7 @@ const client = new Client({
  */
 client.once(Events.ClientReady, async c => {
 	log.success(`Successfully connected to Discord! Logged in as ${c.user.tag}`);
-	client.user.setActivity({ name: 'over everyone', type: 3 });
+	client.user.setActivity({ name: status.content, type: status.type });
 	await refreshHighlightsCache(client);
 
 	let startTime = Date.now();
@@ -110,6 +110,13 @@ client.once(Events.ClientReady, async c => {
 
 	for (const guild of client.guilds.cache.values()) {
 		try {
+			prisma.guild.upsert({
+				where: { id: guild.id },
+				update: {},
+				create: { id: guild.id },
+			}).catch(e => {
+				log.error(`Could not upsert guild (${guild.id}) into database: ${e}`)
+			})
 			await guild.members.fetch();
 			log.success(`Cached members for guild: ${guild.name}`);
 		} catch (err) {
@@ -245,6 +252,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	try {
 		await command.execute(interaction);
+		if(guilds[interaction.guild.id].logs.interactionCreate) interactionCreate(interaction);
 	} catch (error) {
 		log.error(error);
 		await interaction
@@ -262,7 +270,6 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 //////////////////////////////////////
-// Join/Leave Events
 
 client.on(Events.GuildMemberAdd, async member => {
 	if (guilds[member.guild.id].features.checkAccountAge.enabled) checkAccountAge(member);
@@ -272,6 +279,26 @@ client.on(Events.GuildMemberAdd, async member => {
 client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 	if (guilds[newMember.guild.id].features.nitroRoles.enabled) checkBoosterStatus(oldMember, newMember);
 });
+
+client.on(Events.GuildBanAdd, async ban => {
+	if (guilds[message.guild.id].logs.guildBanAdd) guildBanLog(ban)
+})
+
+client.on(Events.GuildBanRemove, async ban => {
+	if (guilds[message.guild.id].logs.guildBanRemove) guildUnbanLog(ban)
+})
+
+client.on(Events.GuildCreate, async guild => {
+	prisma.guild.upsert({
+		where: { id: guild.id },
+		update: {},
+		create: { id: guild.id },
+	}).then(() => {
+		log.success(`Joined guild (${guild.id}) and added it to database!`)
+	}).catch(e => {
+		log.error(`Could not upsert guild (${guild.id}) into database: ${e}`)
+	})
+})
 
 //////////////////////////////////////
 // Message events

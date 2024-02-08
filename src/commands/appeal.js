@@ -104,7 +104,7 @@ module.exports = {
 			})
 			.then(forumPost => {
 				let wipeDate = new Date();
-				wipeDate.setDate(wipeDate.getDate() + 3);
+				wipeDate.setDate(wipeDate.getDate() + 7);
 				prisma.mail
 					.create({
 						data: {

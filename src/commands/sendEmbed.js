@@ -5,7 +5,7 @@ const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('sendEmbed')
+		.setName('sendembed')
 		.setDMPermission(false)
 		.setDescription('Send an embed')
 		.addStringOption(option => option.setName('title').setDescription('Embed Title').setMaxLength(120))

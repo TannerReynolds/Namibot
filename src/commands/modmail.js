@@ -59,7 +59,7 @@ module.exports = {
 			})
 			.then(forumPost => {
 				let wipeDate = new Date();
-				wipeDate.setDate(wipeDate.getDate() + 3);
+				wipeDate.setDate(wipeDate.getDate() + 7);
 				prisma.mail
 					.create({
 						data: {
@@ -73,7 +73,7 @@ module.exports = {
 						return sendReply(
 							interaction,
 							'main',
-							`${emojis.success} Mod Mail Sent! This channel connection will be deleted in 3 days, or when a staff member locks/closes the thread. No need to run any commands to respond. All messages sent in this DM will be sent to the staff of the server until the connection is closed.`
+							`${emojis.success} Mod Mail Sent! This channel connection will be deleted in 7 days, or when a staff member locks/closes the thread. No need to run any commands to respond. All messages sent in this DM will be sent to the staff of the server until the connection is closed.`
 						);
 					})
 					.catch(e => {
