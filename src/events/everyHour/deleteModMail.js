@@ -24,11 +24,7 @@ async function deleteModMail(client) {
 			await prisma.mail
 				.delete({
 					where: {
-						userID_guildId_postID: {
-							userID: m.userID,
-							guildId: m.guildId,
-							postID: m.postID,
-						},
+						postID: m.postID,
 					},
 				})
 				.then(() => {
