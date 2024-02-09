@@ -19,7 +19,7 @@ module.exports = {
 		log.debug(`Command channel: ${commandChannel}`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
 			return interaction.editReply({
-				content: `${emojis.error} You have to go to the <#${commandChannel}> channel to use this command`,
+				content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
 				ephemeral: true,
 			});
 

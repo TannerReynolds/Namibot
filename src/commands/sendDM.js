@@ -14,10 +14,10 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply(interaction, 'error', `${emojis.error} This user does not exist`);
+			return sendReply(interaction, 'error', `${emojis.error}  This user does not exist`);
 		}
 
 		let msg = interaction.options.getString('msg');

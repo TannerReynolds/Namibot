@@ -13,14 +13,14 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
 		if (!interaction.options.getString('tag-id')) {
-			return sendReply(interaction, 'error', `${emojis.error} No tag ID provided!`);
+			return sendReply(interaction, 'error', `${emojis.error}  No tag ID provided!`);
 		}
 		let tagID = interaction.options.getString('tag-id');
 
-		if (isNaN(tagID)) return sendReply(interaction, 'error', `${emojis.error} Please enter the tag ID, the input entered is not a number`);
+		if (isNaN(tagID)) return sendReply(interaction, 'error', `${emojis.error}  Please enter the tag ID, the input entered is not a number`);
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
@@ -36,14 +36,14 @@ module.exports = {
 				let tagEmbed = new EmbedBuilder()
 					.setTitle(`Tag Deleted`)
 					.setColor(colors.main)
-					.setDescription(`${emojis.success} tag ${tagID} Deleted`)
+					.setDescription(`${emojis.success}  tag ${tagID} Deleted`)
 					.setTimestamp()
 					.setAuthor({ name: name, iconURL: aviURL });
 
 				interaction.editReply({ embeds: [tagEmbed] });
 			})
 			.catch(e => {
-				sendReply(interaction, 'error', `${emojis.error} Could not delete tag...\n${e}`);
+				sendReply(interaction, 'error', `${emojis.error}  Could not delete tag...\n${e}`);
 			});
 	},
 };

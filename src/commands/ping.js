@@ -14,7 +14,7 @@ module.exports = {
 			create: { id: interaction.guild.id },
 		});
 
-		let pingEmbed = new EmbedBuilder().setColor(colors.main).setDescription(`${emojis.success} Pong!`).setTimestamp();
+		let pingEmbed = new EmbedBuilder().setColor(colors.main).setDescription(`${emojis.success}  Pong!`).setTimestamp();
 
 		interaction.editReply({ embeds: [pingEmbed] });
 	},

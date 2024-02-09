@@ -18,13 +18,13 @@ module.exports = {
 
 		if (!bannedWordsRule) {
 			log.debug("didn't find any banned words autoMod");
-			return sendReply(interaction, 'error', `${emojis.error} Couldn't find any banned word filters in server AutoMod rules. Please ensure banned words filter is named \`Banned Words\``);
+			return sendReply(interaction, 'error', `${emojis.error}  Couldn't find any banned word filters in server AutoMod rules. Please ensure banned words filter is named \`Banned Words\``);
 		}
 
 		let bannedWords = bannedWordsRule.triggerMetadata.keywordFilter;
 		if (!bannedWords) {
 			log.debug("didn't find any banned words inside of the banned words rule");
-			return sendReply(interaction, 'error', `${emojis.error} The banned words list is empty`);
+			return sendReply(interaction, 'error', `${emojis.error}  The banned words list is empty`);
 		}
 
 		log.debug('Constructing banned words embed');
@@ -40,10 +40,10 @@ module.exports = {
 		log.debug('Sending user banned words DM');
 		interaction.user.send({ embeds: [bwEmbed] }).catch(() => {
 			log.debug(`Couldn't send user ${interaction.user.username} (${interaction.user.id}) banned words list`);
-			return sendReply(interaction, 'error', `${emojis.error} I was not able to send you a DM`);
+			return sendReply(interaction, 'error', `${emojis.error}  I was not able to send you a DM`);
 		});
 
-		let doneEmbed = new EmbedBuilder().setColor(colors.main).setDescription(`${emojis.success} Sent banned words list to your DMs!`).setTimestamp();
+		let doneEmbed = new EmbedBuilder().setColor(colors.main).setDescription(`${emojis.success}  Sent banned words list to your DMs!`).setTimestamp();
 
 		return interaction.editReply({ embeds: [doneEmbed] });
 	},

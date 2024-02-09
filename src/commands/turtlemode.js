@@ -21,10 +21,10 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply(interaction, 'error', `${emojis.error} This user does not exist`);
+			return sendReply(interaction, 'error', `${emojis.error}  This user does not exist`);
 		}
 
 		let targetMember;
@@ -39,10 +39,10 @@ module.exports = {
 				log.debug(`failed to fetch member`);
 			}
 		}
-		if (!targetMember) return sendReply(interaction, 'error', `${emojis.error} This user is not a guild member`);
+		if (!targetMember) return sendReply(interaction, 'error', `${emojis.error}  This user is not a guild member`);
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
-			return sendReply(interaction, 'error', `${emojis.error} You or the bot does not have permissions to complete this action`);
+			return sendReply(interaction, 'error', `${emojis.error}  You or the bot does not have permissions to complete this action`);
 		}
 
 		let duration = await defineDuration(interaction);
@@ -78,7 +78,7 @@ module.exports = {
 		let turtleEmbed = new EmbedBuilder()
 			.setTitle(`Turned user into a slow little turt`)
 			.setColor(colors.success)
-			.setDescription(`${emojis.success} Successfully initiated slowmode on <@${target}> at an interval of ${intervalString}, for ${durationString}! Reason: ${reason}`)
+			.setDescription(`${emojis.success}  Successfully initiated slowmode on <@${target}> at an interval of ${intervalString}, for ${durationString}! Reason: ${reason}`)
 			.setTimestamp()
 			.setAuthor({ name: name, iconURL: aviURL });
 

@@ -17,10 +17,10 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			return sendReply(interaction, 'error', `${emojis.error} This user does not exist`);
+			return sendReply(interaction, 'error', `${emojis.error}  This user does not exist`);
 		}
 
 		let targetMember;
@@ -35,10 +35,10 @@ module.exports = {
 				log.debug(`failed to fetch member`);
 			}
 		}
-		if (!targetMember) return sendReply(interaction, 'error', `${emojis.error} This user is not a guild member`);
+		if (!targetMember) return sendReply(interaction, 'error', `${emojis.error}  This user is not a guild member`);
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 		if (!canDoAction) {
-			return sendReply(interaction, 'error', `${emojis.error} You or the bot does not have permissions to complete this action`);
+			return sendReply(interaction, 'error', `${emojis.error}  You or the bot does not have permissions to complete this action`);
 		}
 
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
@@ -55,7 +55,7 @@ module.exports = {
 		let warnEmbed = new EmbedBuilder()
 			.setTitle(`User Warned`)
 			.setColor(colors.main)
-			.setDescription(`${emojis.success} Warned <@${target}>. Reason: ${reason}`)
+			.setDescription(`${emojis.success}  Warned <@${target}>. Reason: ${reason}`)
 			.setTimestamp()
 			.setAuthor({ name: name, iconURL: aviURL });
 

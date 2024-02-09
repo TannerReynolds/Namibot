@@ -29,7 +29,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}   You dont have the necessary permissions to complete this action`);
 
 		let phrase = interaction.options.getString('phrase').toLowerCase();
 
@@ -39,7 +39,7 @@ module.exports = {
 		let msgEmbed = new EmbedBuilder()
 			.setTitle(`New Highlight Added`)
 			.setColor(colors.main)
-			.setDescription(`${emojis.success} Created highlight for ${phrase}`)
+			.setDescription(`${emojis.success}  Created highlight for ${phrase}`)
 			.setTimestamp()
 			.setAuthor({ name: name, iconURL: aviURL });
 
@@ -53,7 +53,7 @@ module.exports = {
 			})
 			.then(() => {
 				interaction.editReply({ embeds: [msgEmbed] }).catch(e => {
-					interaction.editReply(`${emojis.error} Message failed to send:\n${e}`);
+					interaction.editReply(`${emojis.error}  Message failed to send:\n${e}`);
 				});
 			})
 			.catch(e => {

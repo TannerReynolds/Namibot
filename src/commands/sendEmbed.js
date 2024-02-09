@@ -31,7 +31,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let craftedEmbed = new EmbedBuilder();
 
 		let title = interaction.options.getString('title') || false;
@@ -39,7 +39,7 @@ module.exports = {
 
 		let color = interaction.options.getString('color') || false;
 		if (color) {
-			if (!/^#[0-9A-F]{6}$/i.test(color)) return sendReply(interaction, 'main', `${emojis.error} The inputted color is not a valid hex color code. Correct Example: #ff4d6b`);
+			if (!/^#[0-9A-F]{6}$/i.test(color)) return sendReply(interaction, 'main', `${emojis.error}  The inputted color is not a valid hex color code. Correct Example: #ff4d6b`);
 			craftedEmbed.setColor(color);
 		} else {
 			craftedEmbed.setColor(colors.main);
@@ -90,16 +90,16 @@ module.exports = {
 		if (f7Name && f7Content) craftedEmbed.addFields({ name: f7Name, value: f7Content });
 
 		if (!title && !img && !author && !desc && !f1Name && !f2Name && !f3Name && !f4Name && !f5Name && !f6Name && !f7Name && !thumb) {
-			return sendReply(interaction, 'main', `${emojis.error} Cannot send a blank embed...`);
+			return sendReply(interaction, 'main', `${emojis.error}  Cannot send a blank embed...`);
 		}
 
 		interaction.channel
 			.send({ embeds: [craftedEmbed] })
 			.then(() => {
-				return sendReply(interaction, 'main', `${emojis.success} Successfully sent embed!`);
+				return sendReply(interaction, 'main', `${emojis.success}  Successfully sent embed!`);
 			})
 			.catch(e => {
-				return sendReply(interaction, 'main', `${emojis.error} Error sending embed: ${e}`);
+				return sendReply(interaction, 'main', `${emojis.error}  Error sending embed: ${e}`);
 			});
 	},
 };

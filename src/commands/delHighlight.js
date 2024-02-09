@@ -13,14 +13,14 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
 		if (!interaction.options.getString('id')) {
-			return sendReply(interaction, 'error', `${emojis.error} No highlight ID provided!`);
+			return sendReply(interaction, 'error', `${emojis.error}  No highlight ID provided!`);
 		}
 		let highlightID = interaction.options.getString('id');
 
-		if (isNaN(highlightID)) return sendReply(interaction, 'error', `${emojis.error} Please enter the highlight ID, the input entered is not a number`);
+		if (isNaN(highlightID)) return sendReply(interaction, 'error', `${emojis.error}  Please enter the highlight ID, the input entered is not a number`);
 
 		let highlight = await prisma.highlight.findUnique({
 			where: {
@@ -30,7 +30,7 @@ module.exports = {
 		});
 
 		if (highlight.userID !== interaction.user.id) {
-			return sendReply(interaction, 'error', `${emojis.error} You can't delete somebody else's highlight!`);
+			return sendReply(interaction, 'error', `${emojis.error}  You can't delete somebody else's highlight!`);
 		}
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
@@ -46,14 +46,14 @@ module.exports = {
 				let highlightEmbed = new EmbedBuilder()
 					.setTitle(`Highlight Deleted`)
 					.setColor(colors.main)
-					.setDescription(`${emojis.success} Highlight \`${highlightID}\` Deleted`)
+					.setDescription(`${emojis.success}  Highlight \`${highlightID}\` Deleted`)
 					.setTimestamp()
 					.setAuthor({ name: name, iconURL: aviURL });
 
 				interaction.editReply({ embeds: [highlightEmbed] });
 			})
 			.catch(e => {
-				sendReply(interaction, 'error', `${emojis.error} Could not delete highlight...\n${e}`);
+				sendReply(interaction, 'error', `${emojis.error}  Could not delete highlight...\n${e}`);
 			});
 	},
 };

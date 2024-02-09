@@ -36,7 +36,7 @@ async function modMailServer(message) {
 			message.react(emojis.sent);
 		})
 		.catch(e => {
-			message.reply(`${emojis.error} Error sending message: ${e}`);
+			message.reply(`${emojis.error}  Error sending message: ${e}`);
 		});
 }
 
@@ -69,7 +69,7 @@ async function modMailDM(message) {
 					message.react(emojis.sent);
 				})
 				.catch(e => {
-					message.reply(`${emojis.error} Error sending message: ${e}`);
+					message.reply(`${emojis.error}  Error sending message: ${e}`);
 				});
 		}
 	});

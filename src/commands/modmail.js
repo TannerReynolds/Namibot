@@ -21,7 +21,7 @@ module.exports = {
 		await interaction.deferReply();
 
 		if (message.channel.type !== ChannelType.DM) {
-			return sendReply(interaction, 'error', `${emojis.error} You can only use this command in DMs`);
+			return sendReply(interaction, 'error', `${emojis.error}  You can only use this command in DMs`);
 		}
 
 		let guildChoice = await interaction.options.getString('server');
@@ -36,7 +36,7 @@ module.exports = {
 		});
 
 		if (existingMail) {
-			return sendReply(interaction, 'error', `${emojis.error} You already have an active mod mail. Please wait for a response before creating another.`);
+			return sendReply(interaction, 'error', `${emojis.error}  You already have an active mod mail. Please wait for a response before creating another.`);
 		}
 
 		log.debug(`Getting debug channel...`);
@@ -73,17 +73,17 @@ module.exports = {
 						return sendReply(
 							interaction,
 							'main',
-							`${emojis.success} Mod Mail Sent! This channel connection will be deleted in 7 days, or when a staff member locks/closes the thread. No need to run any commands to respond. All messages sent in this DM will be sent to the staff of the server until the connection is closed.`
+							`${emojis.success}  Mod Mail Sent! This channel connection will be deleted in 7 days, or when a staff member locks/closes the thread. No need to run any commands to respond. All messages sent in this DM will be sent to the staff of the server until the connection is closed.`
 						);
 					})
 					.catch(e => {
 						log.error(`Error creating mod mail: ${e}`);
-						return sendReply(interaction, 'error', `${emojis.error} Error creating mod mail: ${e}`);
+						return sendReply(interaction, 'error', `${emojis.error}  Error creating mod mail: ${e}`);
 					});
 			})
 			.catch(e => {
 				log.error(`Error creating thread: ${e}`);
-				return sendReply(interaction, 'error', `${emojis.error} Error creating thread: ${e}`);
+				return sendReply(interaction, 'error', `${emojis.error}  Error creating thread: ${e}`);
 			});
 	},
 };

@@ -9,7 +9,7 @@ module.exports = {
 		.setName('purge')
 		.setDMPermission(false)
 		.setDescription('Purge a bunch of messages from the channel')
-		.addStringOption(option => option.setName('amount').setDescription('Number of messages to delete. Maximum: 500').setRequired(true))
+		.addIntegerOption(option => option.setName('amount').setDescription('Number of messages to delete. Maximum: 500').setRequired(true))
 		.addUserOption(option => option.setName('user').setDescription('Filter messages by a specific user'))
 		.addBooleanOption(option => option.setName('media').setDescription('Filter messages containing media'))
 		.addChannelOption(option => option.setName('channel').setDescription('Perform action in specific channel'))
@@ -18,12 +18,12 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
 		const amount = interaction.options.getInteger('amount');
-		if (isNaN(amount)) return sendReply(interaction, 'error', `${emojis.error} Please enter a valid number for the amount`);
-		if (amount < 1) return sendReply(interaction, 'error', `${emojis.error} Must be a number greater than 1`);
-		if (amount > 500) return sendReply(interaction, 'error', `${emojis.error} Must be a number less than 500`);
+		if (isNaN(amount)) return sendReply(interaction, 'error', `${emojis.error}  Please enter a valid number for the amount`);
+		if (amount < 1) return sendReply(interaction, 'error', `${emojis.error}  Must be a number greater than 1`);
+		if (amount > 500) return sendReply(interaction, 'error', `${emojis.error}  Must be a number less than 500`);
 		const user = interaction.options.getUser('user') ? interaction.options.getUser('user') : false;
 		const media = interaction.options.getBoolean('media') ? interaction.options.getBoolean('media') : false;
 		const bots = interaction.options.getBoolean('bots') ? interaction.options.getBoolean('bots') : false;
@@ -37,7 +37,7 @@ module.exports = {
 				if (m.author.id !== user.id) return false;
 			}
 			if (media) {
-				if (!m.attachments.size > 0 && !m.embeds.length > 0) return false;
+				if (m.attachments.size < 0 && m.embeds.length < 0) return false;
 			}
 			if (bots) {
 				if (!m.author.bot) return false;
@@ -51,11 +51,11 @@ module.exports = {
 		await channel
 			.bulkDelete(filteredMessages, true)
 			.then(messages => {
-				return sendReply(interaction, 'main', `${emojis.success} Successfully deleted ${messages.size} messages.`);
+				return sendReply(interaction, 'main', `${emojis.success}  Successfully deleted ${messages.size} messages.`);
 			})
 			.catch(error => {
 				log.error(error);
-				return sendReply(interaction, 'error', `${emojis.error} There was an error trying to purge messages in this channel!`);
+				return sendReply(interaction, 'error', `${emojis.error}  There was an error trying to purge messages in this channel!`);
 			});
 	},
 };

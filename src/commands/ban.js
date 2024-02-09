@@ -21,7 +21,7 @@ module.exports = {
 		await interaction.deferReply();
 		log.debug(`Getting staff status...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		log.debug('User is staff');
 		log.debug('Getting Target...');
 		let target = await defineTarget(interaction, 'edit');
@@ -49,7 +49,7 @@ module.exports = {
 			let canDoAction = await hasHigherPerms(interaction.member, targetMember);
 			if (!canDoAction) {
 				log.debug(`Target member has higher permissions than the interaction user or the bot`);
-				return sendReply(interaction, 'error', `${emojis.error} You or the bot does not have permissions to complete this action`);
+				return sendReply(interaction, 'error', `${emojis.error}  You or the bot does not have permissions to complete this action`);
 			}
 		}
 
@@ -93,7 +93,7 @@ module.exports = {
 			})
 			.catch(e => {
 				log.error(`Error on banning user: ${target} | ${e}`);
-				return sendReply(interaction, 'error', `${emojis.error} Error banning member: ${e}`);
+				return sendReply(interaction, 'error', `${emojis.error}  Error banning member: ${e}`);
 			});
 
 		try {
@@ -104,13 +104,13 @@ module.exports = {
 				})
 				.catch(e => {
 					log.error(`Error on banning user: ${target} | ${e}`);
-					return sendReply(interaction, 'error', `${emojis.error} Error banning member: ${e}`);
+					return sendReply(interaction, 'error', `${emojis.error}  Error banning member: ${e}`);
 				});
 			log.debug(`Successfully created guild ban in ${interaction.guild.name}`);
 			let banEmbed = new EmbedBuilder()
 				.setTitle(`User Banned`)
 				.setColor(colors.main)
-				.setDescription(`${emojis.success} Successfully banned <@${target}> for ${durationString}. Reason: ${reason}`)
+				.setDescription(`${emojis.success}  Successfully banned <@${target}> for ${durationString}. Reason: ${reason}`)
 				.setTimestamp()
 				.setAuthor({ name: name, iconURL: aviURL });
 
@@ -192,7 +192,7 @@ module.exports = {
 				});
 		} catch (e) {
 			log.error(`Error banning user: ${e}`);
-			return sendReply(interaction, 'error', `${emojis.error} Error banning user: ${e}`);
+			return sendReply(interaction, 'error', `${emojis.error}  Error banning user: ${e}`);
 		}
 	},
 };

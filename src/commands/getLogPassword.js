@@ -10,16 +10,16 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error} You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		log.debug('Constructing banned words embed');
 
 		log.debug('Sending user banned words DM');
 		interaction.user.send(`\`${getLogPassword()}\``).catch(e => {
 			log.debug(`Couldn't send user ${interaction.user.username} (${interaction.user.id}) the current log password: ${e}`);
-			return sendReply(interaction, 'error', `${emojis.error} I was not able to send you a DM`);
+			return sendReply(interaction, 'error', `${emojis.error}  I was not able to send you a DM`);
 		});
 
-		let doneEmbed = new EmbedBuilder().setColor(colors.main).setDescription(`${emojis.success} Sent the current log password to your DMs!`).setTimestamp();
+		let doneEmbed = new EmbedBuilder().setColor(colors.main).setDescription(`${emojis.success}  Sent the current log password to your DMs!`).setTimestamp();
 
 		return interaction.editReply({ embeds: [doneEmbed] });
 	},

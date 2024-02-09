@@ -12,13 +12,13 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (interaction.user.id !== botOwnerID) {
-			return interaction.editReply(`${emojis.error} Only the bot owner can run this command`);
+			return interaction.editReply(`${emojis.error}  Only the bot owner can run this command`);
 		}
 		let boolean = interaction.options.getBoolean('state');
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 		sharedState.setDebugMode(boolean);
-		let responseEmbed = new EmbedBuilder().setTimestamp().setColor(colors.main).setAuthor({ name: name, iconURL: aviURL }).setTitle(`${emojis.success} Set Debug Mode To ${boolean}`);
+		let responseEmbed = new EmbedBuilder().setTimestamp().setColor(colors.main).setAuthor({ name: name, iconURL: aviURL }).setTitle(`${emojis.success}  Set Debug Mode To ${boolean}`);
 
 		interaction.editReply({ embeds: [responseEmbed] });
 	},

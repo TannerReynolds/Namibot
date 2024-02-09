@@ -354,7 +354,14 @@ client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
-	await messageEvents(message, oldMessage);
+	let guildMember = false;
+	try {
+		guildMember = await message.guild.members.fetch(message.author.id);
+	} catch (e) {
+		log.debug(`User is not a member of this guild: ${e}`);
+	}
+	let isStaff = isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)
+	await messageEvents(isStaff, message, oldMessage);
 	if (guilds[message.guild.id].logs.messageUpdate) await editLog(message, oldMessage);
 });
 
@@ -369,9 +376,16 @@ client.on(Events.MessageCreate, async message => {
 	}
 	await modMailDM(message);
 	if (!message.guild) return;
+	let guildMember = false;
+	try {
+		guildMember = await message.guild.members.fetch(message.author.id);
+	} catch (e) {
+		log.debug(`User is not a member of this guild: ${e}`);
+	}
+	let isStaff = isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)
 	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
-	if (guilds[message.guild.id].features.antiSpam) await antiSpam(message);
-	await messageEvents(message);
+	if (guilds[message.guild.id].features.antiSpam && !isStaff) await antiSpam(message);
+	await messageEvents(isStaff, message);
 	await checkHighlights(message);
 	if (guilds[message.guild.id].features.aiModeration.enabled) await aiModeration(message);
 	if (guilds[message.guild.id].features.levels.enabled) {
@@ -390,20 +404,13 @@ client.on(Events.MessageDelete, async message => {
 	if (guilds[message.guild.id].logs.messageDelete) await deleteLog(message);
 });
 
-async function messageEvents(message) {
+async function messageEvents(isStaff, message, oldMessage) {
 	if (!message.guild) return;
-	if (message.author.bot) return;
 	let content = message.content || 'N/A';
-	let guildMember = false;
-	try {
-		guildMember = await message.guild.members.fetch(message.author.id);
-	} catch (e) {
-		log.debug(`User is not a member of this guild: ${e}`);
-	}
 	if (guilds[message.guild.id].features.fileTypeChecker) await fileTypeChecker(message);
 	await turtleCheck(message, guildMember);
 	//Ignoring staff
-	if (!isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)) {
+	if (!isStaff) {
 		if (guilds[message.guild.id].features.gifDetector.enabled) await gifDetector(message);
 	}
 	//Not ignoring staff
