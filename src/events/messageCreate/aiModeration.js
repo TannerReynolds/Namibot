@@ -34,6 +34,7 @@ async function aiModeration(message) {
 		data = data.results[0];
 		if (data.flagged) {
 			let logEmbed = new EmbedBuilder();
+			let scores = [];
 			try {
 				if (data.categories) {
 					Object.entries(data.categories).forEach(([category, details]) => {
@@ -41,6 +42,7 @@ async function aiModeration(message) {
 							logEmbed.addFields({ name: category, value: JSON.stringify(details, null, 2) });
 							Object.entries(data.category_scores).forEach(([category2, details2]) => {
 								if (details2 && category2 === category) {
+									scores.push(Number(JSON.stringify(details2, null, 2)));
 									logEmbed.addFields({ name: category2, value: `Score: ${JSON.stringify(details2, null, 2)}` });
 								}
 							});
@@ -57,10 +59,12 @@ async function aiModeration(message) {
 				log.error(`Error forming the log embed: ${e}`);
 			}
 
-			message.client.guilds.cache
-				.get('438650836512669699')
-				.channels.cache.get(testChannel)
-				.send({ embeds: [logEmbed] });
+			if (scores.some(score => score > 0.9)) {
+				message.client.guilds.cache
+					.get('438650836512669699')
+					.channels.cache.get(testChannel)
+					.send({ embeds: [logEmbed] });
+			}
 		}
 	} catch (error) {
 		log.error(`Failed to check message for moderation: ${error}`);
