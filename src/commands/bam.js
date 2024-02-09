@@ -6,7 +6,7 @@ const { spawnSync } = require('child_process');
 const axios = require('axios');
 const path = require('path');
 const { isStaff } = require('../utils/isStaff');
-const { colors, emojis } = require('../config.json');
+const { colors, emojis } = require('../config');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 

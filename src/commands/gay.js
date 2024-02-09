@@ -2,7 +2,7 @@ const { SlashCommandBuilder, AttachmentBuilder, EmbedBuilder, PermissionFlagsBit
 const fs = require('fs');
 const { createCanvas, Image } = require('canvas');
 const axios = require('axios');
-const { guilds } = require('../config.json');
+const { guilds } = require('../config');
 const { isStaff } = require('../utils/isStaff');
 
 module.exports = {

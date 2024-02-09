@@ -1,4 +1,5 @@
 const guildMemberCache = require('../../utils/guildMemberCache');
+const { guilds } = require('../../config');
 
 // Assuming a quadratic progression, define a coefficient for the quadratic term
 // This coefficient determines how quickly levels increase in difficulty
@@ -20,7 +21,7 @@ function addMemberToCache(guildId, userId) {
 	}
 }
 
-function addXP(message, guildId, userId) {
+function addXP(guildId, userId, message) {
 	if (!guildMemberCache[guildId] || !guildMemberCache[guildId][userId]) {
 		addMemberToCache(guildId, userId);
 	}
@@ -28,14 +29,19 @@ function addXP(message, guildId, userId) {
 	let member = guildMemberCache[guildId][userId];
 	member.xp += 10;
 	member.messageCount += 1;
-	member.changed = true; // Mark as changed
+	member.changed = true;
 
 	let newLevel = calculateLevel(member.xp);
 
 	if (newLevel !== member.level) {
 		member.level = newLevel;
 		member.changed = true;
+		sendLevelUp(message, member.level);
 	}
+}
+
+function sendLevelUp(message, level) {
+	message.channel.send(guilds[message.guild.id].features.levels.levelUpMessage.replace(/\{\{level\}\}/gi, level));
 }
 
 module.exports = { addXP };

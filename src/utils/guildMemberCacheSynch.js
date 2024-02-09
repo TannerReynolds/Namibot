@@ -59,9 +59,9 @@ async function syncMemberCache() {
 				}
 			}
 		}
-		console.log('Cache successfully synchronized with the database.');
+		log.success('Cache successfully synchronized with the database.');
 	} catch (error) {
-		console.error('Failed to synchronize cache with the database:', error);
+		log.error(`Failed to synchronize cache with the database: ${error}`);
 	}
 }
 

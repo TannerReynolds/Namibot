@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
 const axios = require('axios');
-const { guilds, colors, emojis } = require('../config.json');
+const { guilds, colors, emojis } = require('../config');
 const { isStaff } = require('../utils/isStaff');
 const log = require('../utils/log');
 const { createCanvas, loadImage, registerFont } = require('canvas');

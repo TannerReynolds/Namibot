@@ -28,6 +28,10 @@ const mEdit = './events/messageEdit/';
 
 // Event handlers for guild member addition, every minute, and every hour
 const gMemberAdd = './events/guildMemberAdd/';
+const gBanAdd = './events/guildBanAdd/';
+const gBanRemove = './events/guildBanRemove/';
+const gMemberUpdate = './events/guildMemberUpdate/';
+const interactionCreate = './events/interactionCreate/';
 const minute = './events/everyMinute/';
 const hour = './events/everyHour/';
 
@@ -61,13 +65,18 @@ const { checkHighlights } = require(`${mCreate}checkHighlights`);
 const { deleteLog } = require(`${mDelete}deleteLog`);
 const { editLog } = require(`${mEdit}editLog`);
 const { initLog } = require(`${utils}initLog`);
-const { initGuildMemberCache, syncMemberCache } = require(`${utils}guildMemberCacheSync`);
+const { initGuildMemberCache, syncMemberCache } = require(`${utils}guildMemberCacheSynch`);
 const { auth } = require(`${serverDir}auth`);
 const log = require(`${utils}log`);
 const { bulkDeleteLog } = require(`${mBulkDelete}bulkDeleteLog`);
 const { modMailServer, modMailDM } = require(`${mCreate}modMailCon`);
 const { antiSpam } = require(`${mCreate}antiSpam`);
 const { autoRole } = require(`${gMemberAdd}autoRole`);
+const { guildBanLog } = require(`${gBanAdd}guildBanLog`);
+const { guildUnbanLog } = require(`${gBanRemove}guildUnbanLog`);
+const { checkBoosterStatus } = require(`${gMemberUpdate}checkBoosterStatus`);
+const { interactionLog } = require(`${interactionCreate}interactionLog`);
+const { addXP } = require(`${mCreate}levels`);
 const prisma = require(`${utils}prismaClient`);
 
 /**
@@ -110,13 +119,15 @@ client.once(Events.ClientReady, async c => {
 
 	for (const guild of client.guilds.cache.values()) {
 		try {
-			prisma.guild.upsert({
-				where: { id: guild.id },
-				update: {},
-				create: { id: guild.id },
-			}).catch(e => {
-				log.error(`Could not upsert guild (${guild.id}) into database: ${e}`)
-			})
+			prisma.guild
+				.upsert({
+					where: { id: guild.id },
+					update: {},
+					create: { id: guild.id },
+				})
+				.catch(e => {
+					log.error(`Could not upsert guild (${guild.id}) into database: ${e}`);
+				});
 			await guild.members.fetch();
 			log.success(`Cached members for guild: ${guild.name}`);
 		} catch (err) {
@@ -252,7 +263,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	try {
 		await command.execute(interaction);
-		if(guilds[interaction.guild.id].logs.interactionCreate) interactionCreate(interaction);
+		if (guilds[interaction.guild.id].logs.interactionCreate) interactionLog(interaction);
 	} catch (error) {
 		log.error(error);
 		await interaction
@@ -281,24 +292,27 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 });
 
 client.on(Events.GuildBanAdd, async ban => {
-	if (guilds[message.guild.id].logs.guildBanAdd) guildBanLog(ban)
-})
+	if (guilds[ban.guild.id].logs.guildBanAdd) guildBanLog(ban);
+});
 
 client.on(Events.GuildBanRemove, async ban => {
-	if (guilds[message.guild.id].logs.guildBanRemove) guildUnbanLog(ban)
-})
+	if (guilds[ban.guild.id].logs.guildBanRemove) guildUnbanLog(ban);
+});
 
 client.on(Events.GuildCreate, async guild => {
-	prisma.guild.upsert({
-		where: { id: guild.id },
-		update: {},
-		create: { id: guild.id },
-	}).then(() => {
-		log.success(`Joined guild (${guild.id}) and added it to database!`)
-	}).catch(e => {
-		log.error(`Could not upsert guild (${guild.id}) into database: ${e}`)
-	})
-})
+	prisma.guild
+		.upsert({
+			where: { id: guild.id },
+			update: {},
+			create: { id: guild.id },
+		})
+		.then(() => {
+			log.success(`Joined guild (${guild.id}) and added it to database!`);
+		})
+		.catch(e => {
+			log.error(`Could not upsert guild (${guild.id}) into database: ${e}`);
+		});
+});
 
 //////////////////////////////////////
 // Message events
@@ -343,6 +357,7 @@ client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	if (guilds[message.guild.id].logs.messageUpdate) await editLog(message, oldMessage);
 });
 
+const recentChatter = new Set();
 client.on(Events.MessageCreate, async message => {
 	if (message.author.bot) return;
 	if (message.channel.type !== ChannelType.DM) {
@@ -356,6 +371,14 @@ client.on(Events.MessageCreate, async message => {
 	if (guilds[message.guild.id].features.antiSpam) await antiSpam(message);
 	await messageEvents(message);
 	await checkHighlights(message);
+	if (guilds[message.guild.id].features.levels.enabled) {
+		let compositeKey = `${message.guild.id}:${message.author.id}`;
+		if (!recentChatter.has(compositeKey)) {
+			await addXP(message.guild.id, message.author.id, message);
+			recentChatter.add(compositeKey);
+			setTimeout(() => recentChatter.delete(compositeKey), 60_000);
+		}
+	}
 });
 
 client.on(Events.MessageDelete, async message => {
@@ -445,8 +468,16 @@ process.on('uncaughtException', async err => {
 	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${err.stack}${endColor}`);
 });
 
-process.on('SIGINT', syncMemberCache());
-process.on('SIGTERM', syncMemberCache());
+process.on('SIGINT', async () => {
+	log.verbose('Caught SIGINT... Exiting');
+	await syncMemberCache();
+	process.exit(0);
+});
+process.on('SIGTERM', async () => {
+	log.verbose('Caught SIGTERM... Exiting');
+	await syncMemberCache();
+	process.exit(0);
+});
 
 function timestamp() {
 	const time = new Date();
