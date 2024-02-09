@@ -109,6 +109,9 @@ const config = {
 						{ emoji: '', id: '' }, // Array of objects. Key is the emoji (Same as the emoji codes above), value is the role ID.
 					],
 				},
+				aiModeration: {
+					enabled: true, // Enable AI moderation. This will use OpenAI's GPT-3 to moderate messages. YOU NEED AN API KEY TO USE THIS
+				},
 			},
 			commands: {
 				// Full list of commands allowing you to enable them or disable them.
@@ -215,6 +218,9 @@ const config = {
 					enabled: false,
 					roles: [{ emoji: '', id: '' }],
 				},
+				aiModeration: {
+					enabled: true, // Enable AI moderation. This will use OpenAI's GPT-3 to moderate messages. YOU NEED AN API KEY TO USE THIS
+				},
 			},
 			commands: {
 				reload: true,
@@ -318,6 +324,9 @@ const config = {
 				selfRoles: {
 					enabled: false,
 					roles: [{ emoji: '', id: '' }],
+				},
+				aiModeration: {
+					enabled: true, // Enable AI moderation. This will use OpenAI's GPT-3 to moderate messages. YOU NEED AN API KEY TO USE THIS
 				},
 			},
 			commands: {

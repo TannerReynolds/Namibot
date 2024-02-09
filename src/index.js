@@ -77,6 +77,7 @@ const { guildUnbanLog } = require(`${gBanRemove}guildUnbanLog`);
 const { checkBoosterStatus } = require(`${gMemberUpdate}checkBoosterStatus`);
 const { interactionLog } = require(`${interactionCreate}interactionLog`);
 const { addXP } = require(`${mCreate}levels`);
+const { aiModeration } = require(`${mCreate}aiModeration`);
 const prisma = require(`${utils}prismaClient`);
 
 /**
@@ -358,6 +359,7 @@ client.on(Events.MessageUpdate, async (oldMessage, message) => {
 });
 
 const recentChatter = new Set();
+
 client.on(Events.MessageCreate, async message => {
 	if (message.author.bot) return;
 	if (message.channel.type !== ChannelType.DM) {
@@ -371,6 +373,7 @@ client.on(Events.MessageCreate, async message => {
 	if (guilds[message.guild.id].features.antiSpam) await antiSpam(message);
 	await messageEvents(message);
 	await checkHighlights(message);
+	if (guilds[message.guild.id].features.aiModeration.enabled) await aiModeration(message);
 	if (guilds[message.guild.id].features.levels.enabled) {
 		let compositeKey = `${message.guild.id}:${message.author.id}`;
 		if (!recentChatter.has(compositeKey)) {

@@ -19,7 +19,6 @@ async function initGuildMemberCache() {
 				guildMemberCache[guild.id][member.userID] = {
 					xp: member.xp,
 					level: member.level,
-					messageCount: member.messageCount,
 					changed: false,
 				};
 			});
@@ -45,14 +44,12 @@ async function syncMemberCache() {
 						update: {
 							xp: member.xp,
 							level: member.level,
-							messageCount: member.messageCount,
 						},
 						create: {
 							userID: userId,
 							guildId: guildId,
 							xp: member.xp,
 							level: member.level,
-							messageCount: member.messageCount,
 						},
 					});
 					member.changed = false;

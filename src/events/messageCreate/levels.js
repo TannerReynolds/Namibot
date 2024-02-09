@@ -28,7 +28,6 @@ function addXP(guildId, userId, message) {
 
 	let member = guildMemberCache[guildId][userId];
 	member.xp += 10;
-	member.messageCount += 1;
 	member.changed = true;
 
 	let newLevel = calculateLevel(member.xp);
@@ -36,12 +35,14 @@ function addXP(guildId, userId, message) {
 	if (newLevel !== member.level) {
 		member.level = newLevel;
 		member.changed = true;
-		sendLevelUp(message, member.level);
+		if (newLevel > 0) {
+			sendLevelUp(message, member.level);
+		}
 	}
 }
 
 function sendLevelUp(message, level) {
-	message.channel.send(guilds[message.guild.id].features.levels.levelUpMessage.replace(/\{\{level\}\}/gi, level));
+	message.reply(guilds[message.guild.id].features.levels.levelUpMessage.replace(/\{\{level\}\}/gi, level));
 }
 
 module.exports = { addXP };
