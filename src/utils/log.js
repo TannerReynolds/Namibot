@@ -1,4 +1,5 @@
 const sharedState = require('./sharedState');
+const fs = require('fs');
 const fg = {
 	black: '\x1b[30m',
 	red: '\x1b[31m',
@@ -30,6 +31,8 @@ function timestamp() {
 		hour12: true,
 	});
 }
+
+const debugLogs = [];
 function debugMode() {
 	return sharedState.getDebugMode();
 }
@@ -58,7 +61,6 @@ function verbose(log) {
  *
  * @returns {void}
  */
-
 function debug(log) {
 	//const fs = require('fs');
 	// Only log the error if the application is in debug mode
@@ -71,23 +73,27 @@ function debug(log) {
 
 		const lineInfo = stackLines[2].trim();
 
-		console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.yellow} | //////////////// DEBUG LOG ////////////////${endColor}`);
-		console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.yellow} | Location: ${lineInfo}${endColor}`);
-		console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.black}${bg.yellow} | ${log}${endColor}${endColor}`);
+		//console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.yellow} | //////////////// DEBUG LOG ////////////////${endColor}`);
+		//console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.yellow} | Location: ${lineInfo}${endColor}`);
+		//console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.black}${bg.yellow} | ${log}${endColor}${endColor}`);
 
-		/*
-		try {
-			// Write the debug log to the file
-			fs.appendFileSync('debug.log', `Location: ${lineInfo}\n[${timestamp()}] | ${log}\n\n`);
-		} catch (error) {
-			console.error(`An error occurred while writing to the log file: ${error}`);
-		}*/
+		let logText = `//////////////// DEBUG LOG ////////////////\nLocation: ${lineInfo}\n[${timestamp()}] | ${log}\n`;
+		debugLogs.push(logText);
 	}
 }
+
+function writeDebugLogs() {
+	if (debugLogs.length === 0) return;
+	verbose('Writing debug logs to debug.log');
+	fs.writeFileSync('debug.log', debugLogs.join('\n'), 'utf8');
+	success('Debug logs written to debug.log');
+}
+
 module.exports = {
 	error,
 	success,
 	warning,
 	verbose,
 	debug,
+	writeDebugLogs,
 };

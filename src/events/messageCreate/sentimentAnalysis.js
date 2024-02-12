@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const fetch = require('node-fetch');
 const guildMemberCache = require('../../utils/guildMemberCache');
 const { guilds, colors } = require('../../config');
 const { getModChannels } = require('../../utils/getModChannels');
@@ -13,6 +14,10 @@ async function sentimentAnalysis(message) {
 	const url = 'https://api.openai.com/v1/moderations';
 	const openAIToken = guilds[message.guild.id].features.sentimentAnalysis.openAIToken;
 
+	const controller = new AbortController();
+	const signal = controller.signal;
+	const timeoutId = setTimeout(() => controller.abort(), 5000);
+
 	try {
 		const response = await fetch(url, {
 			method: 'POST',
@@ -23,7 +28,11 @@ async function sentimentAnalysis(message) {
 			body: JSON.stringify({
 				input: message.content,
 			}),
+			signal: signal,
 		});
+
+		clearTimeout(timeoutId);
+
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
 		}
@@ -59,7 +68,7 @@ async function sentimentAnalysis(message) {
 
 			if (scores.some(score => score > guilds[message.guild.id].features.sentimentAnalysis.sensitivity)) {
 				let negativeMessages = guildMemberCache[message.guild.id][message.author.id].negativeMessages || false;
-				if (!negativeMessages) {
+				if (!negativeMessages || negativeMessages < 1) {
 					guildMemberCache[message.guild.id][message.author.id].negativeMessages = 1;
 				} else {
 					guildMemberCache[message.guild.id][message.author.id].negativeMessages += 1;
@@ -73,7 +82,13 @@ async function sentimentAnalysis(message) {
 			}
 		}
 	} catch (error) {
-		log.error(`Failed to check message for moderation: ${error}`);
+		clearTimeout(timeoutId); // Clear the timeout if an error occurs
+
+		if (error.name === 'AbortError') {
+			log.debug('Fetch aborted due to timeout');
+		} else {
+			log.debug(`Failed to check message for moderation: ${error}`);
+		}
 	}
 }
 

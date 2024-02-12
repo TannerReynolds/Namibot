@@ -31,9 +31,10 @@ async function confirmationButton(interaction) {
 	} catch (error) {
 		if (error.message.toLowerCase().includes('unknown member')) {
 			targetMember = false;
+			return;
 		} else {
 			targetMember = false;
-			log.debug(`failed to fetch member`);
+			return log.debug(`failed to fetch member`);
 		}
 	}
 

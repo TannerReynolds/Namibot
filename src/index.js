@@ -378,40 +378,54 @@ const recentChatter = new Set();
 
 client.on(Events.MessageCreate, async message => {
 	if (message.author.bot) return;
+	log.debug('Message received');
 	if (message.channel.type !== ChannelType.DM) {
 		if (guilds[message.guild.id].features.modMail) {
 			await modMailServer(message);
 		}
 	}
 
+	log.debug('modMailDM');
 	await modMailDM(message);
 	if (!message.guild) return;
 	let guildMember = false;
 
 	try {
+		log.debug('Fetching guild member');
 		guildMember = await message.guild.members.fetch(message.author.id);
 	} catch (e) {
 		log.debug(`User is not a member of this guild: ${e}`);
 	}
 
+	log.debug('Checking staff status');
 	let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
 
+	log.debug('Checking for antiAds');
 	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
 
+	log.debug('Checking for antiSpam');
 	if (guilds[message.guild.id].features.antiSpam && !isStaff) await antiSpam(message);
 
+	log.debug('Checking for message events');
 	await messageEvents(isStaffBool, message, guildMember);
+
+	log.debug('Checking for highlights');
 	await checkHighlights(message);
 
+	log.debug('Checking for sentimentAnalysis');
 	if (guilds[message.guild.id].features.sentimentAnalysis.enabled) await sentimentAnalysis(message);
 
+	log.debug('Getting guild member cache');
 	if (!guildMemberCache[message.guild.id] || !guildMemberCache[message.guild.id][message.author.id]) {
+		log.debug("didn't find guild member cache for member");
 		guildMemberCache[message.guild.id][message.author.id] = { xp: 0, level: 1, changed: false };
 	}
 	if (guilds[message.guild.id].features.levels.enabled) {
+		log.debug('guild has levelling enabled');
 		let compositeKey = `${message.guild.id}:${message.author.id}`;
 		let totalMessages = guildMemberCache[message.guild.id][message.author.id].totalMessages || false;
 		if (!totalMessages) {
+			log.debug('totalMessages not found');
 			guildMemberCache[message.guild.id][message.author.id].totalMessages = 1;
 		} else {
 			guildMemberCache[message.guild.id][message.author.id].totalMessages += 1;
@@ -508,11 +522,13 @@ process.on('uncaughtException', async err => {
 process.on('SIGINT', async () => {
 	log.verbose('Caught SIGINT... Exiting');
 	await syncMemberCache();
+	await log.writeDebugLogs();
 	process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
 	log.verbose('Caught SIGTERM... Exiting');
 	await syncMemberCache();
+	await log.writeDebugLogs();
 	process.exit(0);
 });
