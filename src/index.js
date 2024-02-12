@@ -30,6 +30,7 @@ const mEdit = './events/messageEdit/';
 const gMemberAdd = './events/guildMemberAdd/';
 const gBanAdd = './events/guildBanAdd/';
 const gBanRemove = './events/guildBanRemove/';
+const cDelete = './events/channelDelete/';
 const gMemberUpdate = './events/guildMemberUpdate/';
 const interactionCreate = './events/interactionCreate/';
 const minute = './events/everyMinute/';
@@ -79,6 +80,8 @@ const { interactionLog } = require(`${interactionCreate}interactionLog`);
 const { confirmationButton } = require(`${interactionCreate}confirmationButton`);
 const { addXP } = require(`${mCreate}levels`);
 const { sentimentAnalysis } = require(`${mCreate}sentimentAnalysis`);
+const { antiChannelNuke, channelDeletor } = require(`${cDelete}antiChannelNuke`);
+const { antiBanNuke, getBanner } = require(`${gBanAdd}antiBanNuke`);
 const prisma = require(`${utils}prismaClient`);
 const guildMemberCache = require(`${utils}guildMemberCache`);
 
@@ -292,6 +295,26 @@ client.on(Events.InteractionCreate, async interaction => {
 
 //////////////////////////////////////
 
+let channelDeletesRapid = new Set();
+let channelDeletesSlow = new Map();
+client.on(Events.ChannelDelete, async channel => {
+	if(guilds[channel.guild.id].features.antiNuke.enabled) {
+		let deletor = await channelDeletor(channel);
+		if (channelDeletesRapid.has(deletor.id)) {
+			return antiChannelNuke(channel, deletor)
+		}
+		channelDeletesRapid.add(deletor.id);
+		setTimeout(() => channelDeletesRapid.delete(deletor.id), 1_500);
+
+		let slowCount = channelDeletesSlow.get(deletor.id) || 0;
+		if (slowCount === 4) {
+			return antiChannelNuke(channel, deletor)
+		}
+		channelDeletesSlow.set(deletor.id, slowCount + 1);
+		setTimeout(() => channelDeletesSlow.set(deletor.id, 0), 30_000);
+	}
+})
+
 client.on(Events.GuildMemberAdd, async member => {
 	if (guilds[member.guild.id].features.checkAccountAge.enabled) checkAccountAge(member);
 	if (guilds[member.guild.id].features.autoRole.enabled) autoRole(member);
@@ -301,8 +324,18 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 	if (guilds[newMember.guild.id].features.nitroRoles.enabled) checkBoosterStatus(oldMember, newMember);
 });
 
+let banTracker = new Map();
 client.on(Events.GuildBanAdd, async ban => {
 	if (guilds[ban.guild.id].logs.guildBanAdd) guildBanLog(ban);
+	if(guilds[ban.guild.id].features.antiNuke.enabled) {
+		let banner = await getBanner(ban);
+		let slowCount = banTracker.get(banner.id) || 0;
+		if (slowCount === 10) {
+			return antiBanNuke(ban, banner)
+		}
+		banTracker.set(banner.id, slowCount + 1);
+		setTimeout(() => banTracker.set(banner.id, 0), 60_000);
+	}
 });
 
 client.on(Events.GuildBanRemove, async ban => {
