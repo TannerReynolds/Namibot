@@ -1,12 +1,12 @@
 const { colors } = require('../../config');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, AuditLogEvent } = require('discord.js');
 const log = require('../../utils/log');
 const { getModChannels } = require('../../utils/getModChannels');
 
 async function guildBanLog(ban) {
 	const fetchedLogs = await ban.guild.fetchAuditLogs({
 		limit: 1,
-		type: 'MEMBER_BAN_ADD',
+		type: AuditLogEvent.MemberBanAdd,
 	});
 	const banLog = fetchedLogs.entries.first();
 

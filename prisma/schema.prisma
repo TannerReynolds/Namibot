@@ -11,30 +11,57 @@ datasource db {
 }
 
 model Guild {
-    id          String       @id
-    logs        LogType?
-    mutes       Mute[]
-    bans        Ban[]
-    turlemodes  TurtleMode[]
-    warns       Warning[]
-    mutedRole   String?
-    colors      NitroColor[]
-    failedJoins FailedJoin[]
-    highlights  Highlight[]
-    tags        Tag[]
-    mail        Mail[]
-    members     Member[]
+    id            String         @id
+    logs          LogType?
+    mutes         Mute[]
+    bans          Ban[]
+    turlemodes    TurtleMode[]
+    warns         Warning[]
+    mutedRole     String?
+    colors        NitroColor[]
+    failedJoins   FailedJoin[]
+    highlights    Highlight[]
+    tags          Tag[]
+    mail          Mail[]
+    members       Member[]
+    reactRoles    ReactRole[]
+    confirmations Confirmation[]
 
     @@unique(id)
     @@index(id)
 }
 
+model Confirmation {
+    id        Int    @id @default(autoincrement())
+    messageID String
+    channelID String
+    roleID    String
+    Guild     Guild  @relation(fields: [guildId], references: [id])
+    guildId   String
+
+    @@unique([messageID])
+}
+
+model ReactRole {
+    id        Int    @id @default(autoincrement())
+    roleID    String
+    messageID String
+    channelID String
+    emoji     String
+    Guild     Guild  @relation(fields: [guildId], references: [id])
+    guildId   String
+
+    @@unique([roleID, messageID])
+}
+
 model Member {
-    userID  String
-    xp      Int    @default(0)
-    level   Int    @default(1)
-    Guild   Guild  @relation(fields: [guildId], references: [id])
-    guildId String
+    userID           String
+    xp               Int    @default(0)
+    level            Int    @default(1)
+    negativeMessages Int    @default(0)
+    totalMessages    Int    @default(0)
+    Guild            Guild  @relation(fields: [guildId], references: [id])
+    guildId          String
 
     @@id([userID, guildId])
 }

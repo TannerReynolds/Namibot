@@ -76,9 +76,11 @@ const { guildBanLog } = require(`${gBanAdd}guildBanLog`);
 const { guildUnbanLog } = require(`${gBanRemove}guildUnbanLog`);
 const { checkBoosterStatus } = require(`${gMemberUpdate}checkBoosterStatus`);
 const { interactionLog } = require(`${interactionCreate}interactionLog`);
+const { confirmationButton } = require(`${interactionCreate}confirmationButton`);
 const { addXP } = require(`${mCreate}levels`);
-const { aiModeration } = require(`${mCreate}aiModeration`);
+const { sentimentAnalysis } = require(`${mCreate}sentimentAnalysis`);
 const prisma = require(`${utils}prismaClient`);
+const guildMemberCache = require(`${utils}guildMemberCache`);
 
 /**
  * Initial boot files.
@@ -106,6 +108,7 @@ const client = new Client({
  * Event handler for when the client is ready.
  * @param {Client} c - The client instance.
  */
+
 client.once(Events.ClientReady, async c => {
 	log.success(`Successfully connected to Discord! Logged in as ${c.user.tag}`);
 	client.user.setActivity({ name: status.content, type: status.type });
@@ -221,7 +224,13 @@ const ratelimited = new Set();
 const pingStaffRatelimited = new Set();
 
 client.on(Events.InteractionCreate, async interaction => {
-	//if (!interaction.isChatInputCommand()) return;
+	if (interaction.isButton()) {
+		let id = interaction.component.customId;
+		if (id === 'confirmation') {
+			await confirmationButton(interaction);
+			return;
+		}
+	}
 
 	if (ratelimited.has(interaction.user.id)) {
 		let cooldownEmbed = new EmbedBuilder().setTitle(`Please wait a few seconds before running another command!`).setColor(colors.main).setTimestamp();
@@ -360,8 +369,8 @@ client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	} catch (e) {
 		log.debug(`User is not a member of this guild: ${e}`);
 	}
-	let isStaff = isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)
-	await messageEvents(isStaff, message, oldMessage);
+	let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
+	await messageEvents(isStaffBool, message, oldMessage);
 	if (guilds[message.guild.id].logs.messageUpdate) await editLog(message, oldMessage);
 });
 
@@ -374,27 +383,52 @@ client.on(Events.MessageCreate, async message => {
 			await modMailServer(message);
 		}
 	}
+
 	await modMailDM(message);
 	if (!message.guild) return;
 	let guildMember = false;
+
 	try {
 		guildMember = await message.guild.members.fetch(message.author.id);
 	} catch (e) {
 		log.debug(`User is not a member of this guild: ${e}`);
 	}
-	let isStaff = isStaff(message, guildMember, PermissionFlagsBits.ManageMessages)
+
+	let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
+
 	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
+
 	if (guilds[message.guild.id].features.antiSpam && !isStaff) await antiSpam(message);
-	await messageEvents(isStaff, message);
+
+	await messageEvents(isStaffBool, message, guildMember);
 	await checkHighlights(message);
-	if (guilds[message.guild.id].features.aiModeration.enabled) await aiModeration(message);
+
+	if (guilds[message.guild.id].features.sentimentAnalysis.enabled) await sentimentAnalysis(message);
+
+	if (!guildMemberCache[message.guild.id] || !guildMemberCache[message.guild.id][message.author.id]) {
+		guildMemberCache[message.guild.id][message.author.id] = { xp: 0, level: 1, changed: false };
+	}
 	if (guilds[message.guild.id].features.levels.enabled) {
 		let compositeKey = `${message.guild.id}:${message.author.id}`;
+		let totalMessages = guildMemberCache[message.guild.id][message.author.id].totalMessages || false;
+		if (!totalMessages) {
+			guildMemberCache[message.guild.id][message.author.id].totalMessages = 1;
+		} else {
+			guildMemberCache[message.guild.id][message.author.id].totalMessages += 1;
+		}
 		if (!recentChatter.has(compositeKey)) {
 			await addXP(message.guild.id, message.author.id, message);
 			recentChatter.add(compositeKey);
 			setTimeout(() => recentChatter.delete(compositeKey), 60_000);
 		}
+	} else {
+		let totalMessages = guildMemberCache[message.guild.id][message.author.id].totalMessages || false;
+		if (!totalMessages) {
+			guildMemberCache[message.guild.id][message.author.id].totalMessages = 1;
+		} else {
+			guildMemberCache[message.guild.id][message.author.id].totalMessages += 1;
+		}
+		if (!guildMemberCache[message.guild.id][message.author.id].changed) guildMemberCache[message.guild.id][message.author.id].changed = true;
 	}
 });
 
@@ -404,13 +438,13 @@ client.on(Events.MessageDelete, async message => {
 	if (guilds[message.guild.id].logs.messageDelete) await deleteLog(message);
 });
 
-async function messageEvents(isStaff, message, oldMessage) {
+async function messageEvents(isStaffBool, message, guildMember) {
 	if (!message.guild) return;
 	let content = message.content || 'N/A';
 	if (guilds[message.guild.id].features.fileTypeChecker) await fileTypeChecker(message);
 	await turtleCheck(message, guildMember);
 	//Ignoring staff
-	if (!isStaff) {
+	if (!isStaffBool) {
 		if (guilds[message.guild.id].features.gifDetector.enabled) await gifDetector(message);
 	}
 	//Not ignoring staff
@@ -463,19 +497,12 @@ if (server.enabled) {
 	});
 }
 
-const fg = {
-	red: '\x1b[31m',
-};
-const bg = {
-	red: '\x1b[41m',
-};
-const endColor = '\x1b[0m';
-const beginningArrow = `${fg.red}  |> ${endColor}`;
 process.on('unhandledRejection', async err => {
-	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${err.stack}${endColor}`);
+	log.error(err.stack);
 });
+
 process.on('uncaughtException', async err => {
-	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${err.stack}${endColor}`);
+	log.error(err.stack);
 });
 
 process.on('SIGINT', async () => {
@@ -483,18 +510,9 @@ process.on('SIGINT', async () => {
 	await syncMemberCache();
 	process.exit(0);
 });
+
 process.on('SIGTERM', async () => {
 	log.verbose('Caught SIGTERM... Exiting');
 	await syncMemberCache();
 	process.exit(0);
 });
-
-function timestamp() {
-	const time = new Date();
-	return time.toLocaleString('en-US', {
-		hour: 'numeric',
-		minute: 'numeric',
-		second: 'numeric',
-		hour12: true,
-	});
-}

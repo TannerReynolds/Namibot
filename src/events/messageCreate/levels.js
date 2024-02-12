@@ -15,34 +15,20 @@ function calculateLevel(xp) {
 	return Math.floor(Math.sqrt(xp / a));
 }
 
-function addMemberToCache(guildId, userId) {
-	if (!guildMemberCache[guildId] || !guildMemberCache[guildId][userId]) {
-		guildMemberCache[guildId][userId] = { xp: 0, level: 1, changed: false };
-	}
-}
-
 function addXP(guildId, userId, message) {
-	if (!guildMemberCache[guildId] || !guildMemberCache[guildId][userId]) {
-		addMemberToCache(guildId, userId);
-	}
+	guildMemberCache[guildId][userId].xp += 10;
+	if (!guildMemberCache[guildId][userId].changed) guildMemberCache[guildId][userId].changed = true;
 
-	let member = guildMemberCache[guildId][userId];
-	member.xp += 10;
-	member.changed = true;
+	let newLevel = calculateLevel(guildMemberCache[guildId][userId].xp);
 
-	let newLevel = calculateLevel(member.xp);
-
-	if (newLevel !== member.level) {
-		member.level = newLevel;
-		member.changed = true;
+	if (newLevel !== guildMemberCache[guildId][userId].level) {
+		guildMemberCache[guildId][userId].level = newLevel;
+		guildMemberCache[guildId][userId].changed = true;
 		if (newLevel > 0) {
-			sendLevelUp(message, member.level);
+			if (!guilds[message.guild.id].features.levels.levelUpMessage) return;
+			message.reply(guilds[message.guild.id].features.levels.levelUpMessage.replace(/\{\{level\}\}/gi, guildMemberCache[guildId][userId].level));
 		}
 	}
-}
-
-function sendLevelUp(message, level) {
-	message.reply(guilds[message.guild.id].features.levels.levelUpMessage.replace(/\{\{level\}\}/gi, level));
 }
 
 module.exports = { addXP };

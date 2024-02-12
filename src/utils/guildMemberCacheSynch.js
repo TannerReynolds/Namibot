@@ -18,6 +18,8 @@ async function initGuildMemberCache() {
 			guild.members.forEach(member => {
 				guildMemberCache[guild.id][member.userID] = {
 					xp: member.xp,
+					totalMessages: member.totalMessages,
+					negativeMesssages: member.negativeMessages,
 					level: member.level,
 					changed: false,
 				};
@@ -43,12 +45,16 @@ async function syncMemberCache() {
 						},
 						update: {
 							xp: member.xp,
+							totalMessages: member.totalMessages,
+							negativeMessages: member.negativeMessages,
 							level: member.level,
 						},
 						create: {
 							userID: userId,
 							guildId: guildId,
 							xp: member.xp,
+							totalMessages: member.totalMessages,
+							negativeMessages: member.negativeMessages,
 							level: member.level,
 						},
 					});

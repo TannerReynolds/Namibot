@@ -12,11 +12,15 @@ async function syncCacheWithDatabase() {
 				where: { id: userId },
 				update: {
 					xp: userData.xp,
+					totalMessages: userData.totalMessages,
+					negativeMessages: userData.negativeMessages,
 					level: userData.level,
 				},
 				create: {
 					id: userId,
 					xp: userData.xp,
+					totalMessages: userData.totalMessages,
+					negativeMessages: userData.negativeMessages,
 					level: userData.level,
 				},
 			})

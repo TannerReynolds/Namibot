@@ -1,19 +1,17 @@
-//const { isStaff } = require('../../utils/isStaff');
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-//const prisma = require('../../utils/prismaClient');
-const { guilds, colors, emojis, openAIToken } = require('../../config');
-//const { getModChannels } = require('../../utils/getModChannels');
+const { EmbedBuilder } = require('discord.js');
+const guildMemberCache = require('../../utils/guildMemberCache');
+const { guilds, colors } = require('../../config');
+const { getModChannels } = require('../../utils/getModChannels');
 const log = require('../../utils/log');
-const testChannel = '1205426225389109308';
 
-async function aiModeration(message) {
+async function sentimentAnalysis(message) {
 	if (message.author.bot) return;
 	if (!message.guild) return;
 	if (!message.content || message.content.length < 1) return;
 	if (message.content.length > 1999) return;
-	//if (isStaff(message, message.member, PermissionFlagsBits.ManageMessages)) return;
 
 	const url = 'https://api.openai.com/v1/moderations';
+	const openAIToken = guilds[message.guild.id].features.sentimentAnalysis.openAIToken;
 
 	try {
 		const response = await fetch(url, {
@@ -51,7 +49,7 @@ async function aiModeration(message) {
 				}
 				logEmbed
 					.setColor(colors.main)
-					.setTitle('Message Flagged By OpenAI')
+					.setTitle('Negative Sentiment Detected')
 					.setDescription(`**Message Content**:\n${message.content}\n\n`)
 					.addFields({ name: 'User', value: `${message.author.username} (${message.author.id})` })
 					.setTimestamp();
@@ -59,11 +57,19 @@ async function aiModeration(message) {
 				log.error(`Error forming the log embed: ${e}`);
 			}
 
-			if (scores.some(score => score > 0.9)) {
-				message.client.guilds.cache
-					.get('438650836512669699')
-					.channels.cache.get(testChannel)
-					.send({ embeds: [logEmbed] });
+			if (scores.some(score => score > guilds[message.guild.id].features.sentimentAnalysis.sensitivity)) {
+				let negativeMessages = guildMemberCache[message.guild.id][message.author.id].negativeMessages || false;
+				if (!negativeMessages) {
+					guildMemberCache[message.guild.id][message.author.id].negativeMessages = 1;
+				} else {
+					guildMemberCache[message.guild.id][message.author.id].negativeMessages += 1;
+				}
+				if (!guildMemberCache[message.guild.id][message.author.id].changed) guildMemberCache[message.guild.id][message.author.id].changed = true;
+				getModChannels(message.client, message.guild.id)
+					.main.send({ embeds: [logEmbed], content: `<@${message.author.id}> | ${message.url}` })
+					.catch(e => {
+						log.error(`Error sending log to guild main log channel: ${e}`);
+					});
 			}
 		}
 	} catch (error) {
@@ -71,4 +77,4 @@ async function aiModeration(message) {
 	}
 }
 
-module.exports = { aiModeration };
+module.exports = { sentimentAnalysis };

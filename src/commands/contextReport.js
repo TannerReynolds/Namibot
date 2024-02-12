@@ -8,7 +8,7 @@ module.exports = {
 	data: new ContextMenuCommandBuilder().setName('Report Message').setDMPermission(false).setType(ApplicationCommandType.Message),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
-		if(!guilds[interaction.guild.id].features.modMail) {
+		if (!guilds[interaction.guild.id].features.modMail) {
 			return sendReply(interaction, 'error', `${emojis.error}  This server does not have mod mail enabled`);
 		}
 		log.debug(`Getting Target...`);
@@ -17,7 +17,6 @@ module.exports = {
 			log.debug(`Target undefined`);
 			return sendReply(interaction, 'error', `${emojis.error}  This message does not exist`);
 		}
-
 
 		let message = targetMessage;
 		let guild = interaction.guild;
@@ -32,19 +31,19 @@ module.exports = {
 			return sendReply(interaction, 'error', `${emojis.error}  You already have an active mod mail. Please wait for a response before creating another.`);
 		}
 
-
 		log.debug(`Getting debug channel...`);
-		let mailChannel = await guild.channels.cache.get(guilds[guildChoice].mailChannelID);
+		let mailChannel = await guild.channels.cache.get(guilds[interaction.guild.id].mailChannelID);
 
 		log.debug(`Getting avatar URL...`);
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 
 		let DMd;
 		try {
-			await interaction.user.send(`You have reported message: \`${message.content}\`\nThis DM channel will now act as a link between you and the server staff for 7 days so that we can collect more information and process your report. All messages sent here will be sent to your report.`)
+			await interaction.user.send(
+				`You have reported message: \`${message.content}\`\nThis DM channel will now act as a link between you and the server staff for 7 days so that we can collect more information and process your report. All messages sent here will be sent to your report.`
+			);
 			DMd = true;
-		}
-		catch(e) {
+		} catch (e) {
 			DMd = false;
 		}
 
@@ -57,11 +56,10 @@ module.exports = {
 			.setTitle(`Message Report From ${interaction.user.username} (${interaction.user.id})`)
 			.setColor(colors.main)
 			.setDescription(`Message from <@${message.author.id}> reported`)
-			.addFields({ name: "Message Content", value: `\`${content}\`` })
+			.addFields({ name: 'Message Content', value: `\`${content}\`` })
 			.setAuthor({ name: interaction.user.username, iconURL: aviURL });
 
-
-			mailChannel.threads
+		mailChannel.threads
 			.create({
 				name: `Message Report From ${interaction.user.username}`,
 				reason: `Message Report From ${interaction.user.username} (${interaction.user.id})`,
@@ -74,18 +72,14 @@ module.exports = {
 					.create({
 						data: {
 							userID: interaction.user.id,
-							guildId: guildChoice,
+							guildId: interaction.guild.id,
 							postID: forumPost.id,
 							date: wipeDate,
 						},
 					})
 					.then(() => {
-						if(DMd) {
-							return sendReply(
-								interaction,
-								'main',
-								`${emojis.success}  Report Sent! See your DMs for more information!`
-							);
+						if (DMd) {
+							return sendReply(interaction, 'main', `${emojis.success}  Report Sent! See your DMs for more information!`);
 						} else {
 							return sendReply(
 								interaction,
