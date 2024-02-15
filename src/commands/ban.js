@@ -18,7 +18,8 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for banning this user').setRequired(true))
 		.addStringOption(option => option.setName('duration').setDescription('The amount of time to ban this user for ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		log.debug(`Getting staff status...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
@@ -114,7 +115,8 @@ module.exports = {
 				.setTimestamp()
 				.setAuthor({ name: name, iconURL: aviURL });
 
-			interaction.editReply({ embeds: [banEmbed] });
+			await interaction.channel.send({ embeds: [banEmbed] });
+			sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 
 			log.debug(`Sending log embed`);
 			if (reason.length > 1024) {

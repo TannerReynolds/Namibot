@@ -16,7 +16,8 @@ module.exports = {
 		.addStringOption(option => option.setName('includes').setDescription('Filter messages that include specific content'))
 		.addBooleanOption(option => option.setName('bots').setDescription('Filter messages sent by bots')),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 

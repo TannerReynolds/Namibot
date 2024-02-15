@@ -7,7 +7,8 @@ const { sendReply } = require('../utils/sendReply');
 module.exports = {
 	data: new SlashCommandBuilder().setName('tags').setDMPermission(false).setDescription("See the server's tags"),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;

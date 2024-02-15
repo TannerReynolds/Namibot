@@ -8,7 +8,8 @@ const { sendReply } = require('../utils/sendReply');
 module.exports = {
 	data: new SlashCommandBuilder().setName('getlogpassword').setDMPermission(false).setDescription('Get the current log password'),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		log.debug('Constructing banned words embed');

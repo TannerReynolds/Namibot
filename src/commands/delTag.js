@@ -11,7 +11,8 @@ module.exports = {
 		.setDescription('Delete a tag')
 		.addStringOption(option => option.setName('tag-id').setDescription('The ID of the tag to delete').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
@@ -40,7 +41,8 @@ module.exports = {
 					.setTimestamp()
 					.setAuthor({ name: name, iconURL: aviURL });
 
-				interaction.editReply({ embeds: [tagEmbed] });
+				interaction.channel.send({ embeds: [tagEmbed] });
+				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				sendReply(interaction, 'error', `${emojis.error}  Could not delete tag...\n${e}`);

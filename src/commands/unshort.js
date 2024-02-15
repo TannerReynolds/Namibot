@@ -11,7 +11,8 @@ module.exports = {
 		.setDescription('Unshorten a URL')
 		.addStringOption(option => option.setName('url').setDescription('The URL to unshorten').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== guilds[interaction.guild.id].commandChannel)
 			return sendReply(interaction, 'main', `${emojis.error}  You have to go to the <#${guilds[interaction.guild.id].commandChannel}> channel to use this command`);
 

@@ -8,7 +8,8 @@ const { emojis, botOwnerID } = require('../config');
 module.exports = {
 	data: new SlashCommandBuilder().setName('reload').setDescription('Reloads all command files.'),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (interaction.user.id !== botOwnerID) {
 			return sendReply(interaction, 'main', `${emojis.error}  Only the bot owner can run this command!`);
 		}

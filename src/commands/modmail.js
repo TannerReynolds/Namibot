@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ChannelType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient');
 const { guilds, colors, emojis } = require('../config');
 const log = require('../utils/log');
@@ -18,12 +18,8 @@ module.exports = {
 		})
 		.addStringOption(option => option.setName('message').setDescription('What you would like to talk to staff members about').setMaxLength(1_900).setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
-
-		if (message.channel.type !== ChannelType.DM) {
-			return sendReply(interaction, 'error', `${emojis.error}  You can only use this command in DMs`);
-		}
-
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let guildChoice = await interaction.options.getString('server');
 		let message = await interaction.options.getString('message');
 		let guild = interaction.client.guilds.cache.get(guildChoice);
@@ -73,7 +69,7 @@ module.exports = {
 						return sendReply(
 							interaction,
 							'main',
-							`${emojis.success}  Mod Mail Sent! This channel connection will be deleted in 7 days, or when a staff member locks/closes the thread. No need to run any commands to respond. All messages sent in this DM will be sent to the staff of the server until the connection is closed.`
+							`${emojis.success}  Mod Mail Sent! The channel connection will be deleted in 7 days, or when a staff member locks/closes the thread. No need to run any commands to respond. All messages sent in your DMs with the bot will be sent to the staff of the server until the connection is closed.`
 						);
 					})
 					.catch(e => {

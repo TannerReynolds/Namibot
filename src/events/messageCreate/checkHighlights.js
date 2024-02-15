@@ -1,6 +1,6 @@
 const log = require('../../utils/log');
 const { colors } = require('../../config');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const state = require('../../utils/sharedState');
 const highlightsCache = require('../../utils/highlightsCache');
 
@@ -24,6 +24,19 @@ async function checkHighlights(message) {
 		if (regPhrase.test(message.content.toLowerCase()) && message.author.id !== h.userID) {
 			const isCooldown = await state.getHLCoolDown();
 			if (!isCooldown.has(h.userID)) {
+				let recipient;
+				try {
+					recipient = await message.guild.members.cache.get(h.userID);
+				} catch (e) {
+					return;
+				}
+
+				let permissions = message.channel.permissionsFor(recipient);
+
+				if (!permissions.has(PermissionFlagsBits.ViewChannel)) {
+					return;
+				}
+
 				await state.addHLCoolDown(h.userID);
 
 				const aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL;
@@ -40,8 +53,7 @@ async function checkHighlights(message) {
 					.setTimestamp();
 
 				dmPromises.push(
-					message.client.users.cache
-						.get(h.userID)
+					recipient
 						?.send({
 							embeds: [hEmbed],
 							content: `Jump to Message: ${message.url}`,

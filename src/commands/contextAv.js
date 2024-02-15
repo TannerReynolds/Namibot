@@ -1,5 +1,5 @@
 const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { guilds, colors } = require('../config');
+const { guilds, colors, emojis } = require('../config');
 const { isStaff } = require('../utils/isStaff.js');
 const log = require('../utils/log.js');
 const { sendReply } = require('../utils/sendReply');
@@ -7,7 +7,8 @@ const { sendReply } = require('../utils/sendReply');
 module.exports = {
 	data: new ContextMenuCommandBuilder().setName('Get Avatar').setDMPermission(false).setType(ApplicationCommandType.User),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 
 		log.debug('Getting command channel');
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
@@ -35,8 +36,11 @@ module.exports = {
 		log.debug(`Getting pfpURL...`);
 
 		let pfpURL = targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : targetUser.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
+		let name = interaction.user.username;
+		// .setAuthor({ name: name, iconURL: aviURL });
 
-		let avEmbed = new EmbedBuilder().setColor(colors.main).setImage(pfpURL);
+		let avEmbed = new EmbedBuilder().setColor(colors.main).setImage(pfpURL).setAuthor({ name: name, iconURL: aviURL });
 		interaction.editReply({
 			embeds: [avEmbed],
 			fetchReply: false,

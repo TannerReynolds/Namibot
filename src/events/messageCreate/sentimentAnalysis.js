@@ -79,6 +79,18 @@ async function sentimentAnalysis(message) {
 					.catch(e => {
 						log.error(`Error sending log to guild main log channel: ${e}`);
 					});
+				try {
+					message.author.send(
+						`Your message in ${
+							message.guild.name
+						} has been flagged for negative sentiment. Please be mindful of the content you post in the future, as repeated toxic behavior may result in moderation action. This message has been logged and sent to the moderation team for review.\n\n**Message Content**:\n\`\`\`${message.content.substring(
+							0,
+							1400
+						)}\`\`\`\n`
+					);
+				} catch (e) {
+					log.debug(`couldn't DM user for sentiment analysis: ${e}`);
+				}
 			}
 		}
 	} catch (error) {

@@ -9,7 +9,7 @@ const { colors } = require('../config');
 const log = require('../utils/log');
 const prisma = require('../utils/prismaClient');
 const { sendReply } = require('../utils/sendReply');
-const { emojis } = require('../config');
+const { emojis, guilds } = require('../config');
 
 module.exports = {
 	/**
@@ -27,9 +27,13 @@ module.exports = {
 	 * @param {Object} interaction - The interaction object
 	 */
 	async execute(interaction) {
-		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error}   You dont have the necessary permissions to complete this action`);
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
+		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+			return interaction.editReply({
+				content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
+			});
 
 		let phrase = interaction.options.getString('phrase').toLowerCase();
 
@@ -52,9 +56,10 @@ module.exports = {
 				},
 			})
 			.then(() => {
-				interaction.editReply({ embeds: [msgEmbed] }).catch(e => {
-					interaction.editReply(`${emojis.error}  Message failed to send:\n${e}`);
+				interaction.channel.send({ embeds: [msgEmbed] }).catch(e => {
+					interaction.channel.send(`${emojis.error}  Message failed to send:\n${e}`);
 				});
+				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				log.error(`Could not create highlight: ${e}`);

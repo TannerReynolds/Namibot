@@ -20,7 +20,7 @@ async function interactionLog(interaction) {
 	}
 
 	return getModChannels(interaction.client, interaction.guild.id)
-		.secondary.send({ embeds: [logEmbed], content: `<@${interaction.user.id}>` })
+		.secondary.send({ embeds: [logEmbed], content: `${interaction.user.username} (${interaction.user.id})` })
 		.catch(e => {
 			log.error(`Error sending interaction log to guild secondary log channel: ${e}`);
 		});

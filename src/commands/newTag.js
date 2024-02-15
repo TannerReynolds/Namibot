@@ -15,7 +15,8 @@ module.exports = {
 		.addStringOption(option => option.setName('content').setDescription('The content of the tag').setMaxLength(1_900))
 		.addAttachmentOption(option => option.setName('attachment').setDescription('Any attachments you want to be added to the tag')),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
@@ -88,7 +89,8 @@ module.exports = {
 				},
 			})
 			.then(() => {
-				interaction.editReply({ embeds: [tagEmbed] });
+				interaction.channel.send({ embeds: [tagEmbed] });
+				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				log.error(e);

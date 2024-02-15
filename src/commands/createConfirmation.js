@@ -15,7 +15,7 @@ module.exports = {
 		.addStringOption(option => option.setName('message').setDescription('Message to send along with the confirmation').setMaxLength(2048))
 		.addStringOption(option => option.setName('button_text').setDescription('The text that will appear on the button').setMaxLength(128)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Creating Confirmation Message...`);
 		log.debug(`Getting staff status...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles))

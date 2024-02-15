@@ -14,7 +14,8 @@ module.exports = {
 		.setDescription("Take away somebody's turtlemode")
 		.addStringOption(option => option.setName('user').setDescription('The user to remove the slowdown from').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
@@ -45,7 +46,8 @@ module.exports = {
 
 		let turtleEmbed = new EmbedBuilder().setDescription(`${emojis.success}  Successfully disabled turtle mode!`).setColor(colors.success).setTimestamp().setAuthor({ name: name, iconURL: aviURL });
 
-		interaction.editReply({ embeds: [turtleEmbed] });
+		interaction.channel.send({ embeds: [turtleEmbed] });
+		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 
 		let logEmbed = new EmbedBuilder()
 			.setColor(colors.main)

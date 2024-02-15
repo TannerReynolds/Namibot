@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const prisma = require('../utils/prismaClient');
-const { guilds, colors } = require('../config');
+const { guilds, colors, emojis } = require('../config');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
@@ -19,6 +19,7 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason why you should be unbanned').setMaxLength(1_900).setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let guildChoice = await interaction.options.getString('server');
 		let reason = await interaction.options.getString('reason');
 		let guild = interaction.client.guilds.cache.get(guildChoice);

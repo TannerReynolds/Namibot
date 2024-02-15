@@ -12,10 +12,18 @@ module.exports = {
 		.setDescription("Get a member's Avatar")
 		.addStringOption(option => option.setName('user').setDescription('The user to get the AV from').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
+		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+			return interaction
+				.editReply({
+					content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
+					ephemeral: true,
+				})
+				.then(m => setTimeout(() => m.delete(), 4000));
 
 		log.debug('Getting command channel');
-		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
 		log.debug(`Command channel: ${commandChannel}`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
 			return interaction.editReply({
@@ -43,12 +51,16 @@ module.exports = {
 		log.debug(`Getting pfpURL...`);
 
 		let pfpURL = targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : targetUser.defaultAvatarURL;
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
+		let name = interaction.user.username;
+		// .setAuthor({ name: name, iconURL: aviURL });
 
-		let avEmbed = new EmbedBuilder().setColor(colors.main).setImage(pfpURL);
+		let avEmbed = new EmbedBuilder().setColor(colors.main).setImage(pfpURL).setAuthor({ name: name, iconURL: aviURL });
 
-		interaction.editReply({
+		await interaction.channel.send({
 			embeds: [avEmbed],
 			fetchReply: false,
 		});
+		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 	},
 };

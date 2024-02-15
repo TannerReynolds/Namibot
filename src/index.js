@@ -298,22 +298,22 @@ client.on(Events.InteractionCreate, async interaction => {
 let channelDeletesRapid = new Set();
 let channelDeletesSlow = new Map();
 client.on(Events.ChannelDelete, async channel => {
-	if(guilds[channel.guild.id].features.antiNuke.enabled) {
+	if (guilds[channel.guild.id].features.antiNuke.enabled) {
 		let deletor = await channelDeletor(channel);
 		if (channelDeletesRapid.has(deletor.id)) {
-			return antiChannelNuke(channel, deletor)
+			return antiChannelNuke(channel, deletor);
 		}
 		channelDeletesRapid.add(deletor.id);
 		setTimeout(() => channelDeletesRapid.delete(deletor.id), 1_500);
 
 		let slowCount = channelDeletesSlow.get(deletor.id) || 0;
 		if (slowCount === 4) {
-			return antiChannelNuke(channel, deletor)
+			return antiChannelNuke(channel, deletor);
 		}
 		channelDeletesSlow.set(deletor.id, slowCount + 1);
 		setTimeout(() => channelDeletesSlow.set(deletor.id, 0), 30_000);
 	}
-})
+});
 
 client.on(Events.GuildMemberAdd, async member => {
 	if (guilds[member.guild.id].features.checkAccountAge.enabled) checkAccountAge(member);
@@ -327,11 +327,11 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 let banTracker = new Map();
 client.on(Events.GuildBanAdd, async ban => {
 	if (guilds[ban.guild.id].logs.guildBanAdd) guildBanLog(ban);
-	if(guilds[ban.guild.id].features.antiNuke.enabled) {
+	if (guilds[ban.guild.id].features.antiNuke.enabled) {
 		let banner = await getBanner(ban);
 		let slowCount = banTracker.get(banner.id) || 0;
 		if (slowCount === 10) {
-			return antiBanNuke(ban, banner)
+			return antiBanNuke(ban, banner);
 		}
 		banTracker.set(banner.id, slowCount + 1);
 		setTimeout(() => banTracker.set(banner.id, 0), 60_000);
@@ -442,9 +442,6 @@ client.on(Events.MessageCreate, async message => {
 	log.debug('Checking for message events');
 	await messageEvents(isStaffBool, message, guildMember);
 
-	log.debug('Checking for highlights');
-	await checkHighlights(message);
-
 	log.debug('Checking for sentimentAnalysis');
 	if (guilds[message.guild.id].features.sentimentAnalysis.enabled) await sentimentAnalysis(message);
 
@@ -477,6 +474,9 @@ client.on(Events.MessageCreate, async message => {
 		}
 		if (!guildMemberCache[message.guild.id][message.author.id].changed) guildMemberCache[message.guild.id][message.author.id].changed = true;
 	}
+
+	log.debug('Checking for highlights');
+	await checkHighlights(message);
 });
 
 client.on(Events.MessageDelete, async message => {
@@ -556,6 +556,7 @@ process.on('SIGINT', async () => {
 	log.verbose('Caught SIGINT... Exiting');
 	await syncMemberCache();
 	await log.writeDebugLogs();
+	await prisma.$disconnect();
 	process.exit(0);
 });
 
@@ -563,5 +564,6 @@ process.on('SIGTERM', async () => {
 	log.verbose('Caught SIGTERM... Exiting');
 	await syncMemberCache();
 	await log.writeDebugLogs();
+	await prisma.$disconnect();
 	process.exit(0);
 });

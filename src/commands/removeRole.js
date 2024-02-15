@@ -13,7 +13,8 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to remove the role from').setRequired(true))
 		.addRoleOption(option => option.setName('role').setDescription('The role to remove').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
@@ -72,7 +73,8 @@ module.exports = {
 					.setTimestamp()
 					.setAuthor({ name: name, iconURL: aviURL });
 
-				interaction.editReply({ embeds: [roleEmbed] });
+				interaction.channel.send({ embeds: [roleEmbed] });
+				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				let roleEmbed = new EmbedBuilder()

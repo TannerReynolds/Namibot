@@ -10,7 +10,7 @@ const { sendReply } = require('../utils/sendReply');
 module.exports = {
 	data: new SlashCommandBuilder().setName('update').setDMPermission(false).setDescription('Update and restart the bot').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
 		if (interaction.user.id !== botOwnerID) {
 			return interaction.editReply('Only the bot owner can run this command');
 		}

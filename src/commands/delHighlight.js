@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
-const { colors, emojis } = require('../config');
+const { colors, emojis, guilds } = require('../config');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -11,9 +11,13 @@ module.exports = {
 		.setDescription('Delete a highlight!')
 		.addStringOption(option => option.setName('id').setDescription('The ID of the highlight to delete').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
+		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+			return interaction.editReply({
+				content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
+			});
 
 		if (!interaction.options.getString('id')) {
 			return sendReply(interaction, 'error', `${emojis.error}  No highlight ID provided!`);
@@ -50,7 +54,8 @@ module.exports = {
 					.setTimestamp()
 					.setAuthor({ name: name, iconURL: aviURL });
 
-				interaction.editReply({ embeds: [highlightEmbed] });
+				interaction.channel.send({ embeds: [highlightEmbed] });
+				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				sendReply(interaction, 'error', `${emojis.error}  Could not delete highlight...\n${e}`);

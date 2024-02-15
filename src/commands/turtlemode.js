@@ -19,7 +19,8 @@ module.exports = {
 		.addStringOption(option => option.setName('interval').setDescription('How often this user is allowed to send a message (Minimum 30s)').setRequired(true))
 		.addStringOption(option => option.setName('duration').setDescription('How long should this slowmode last ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
@@ -82,7 +83,8 @@ module.exports = {
 			.setTimestamp()
 			.setAuthor({ name: name, iconURL: aviURL });
 
-		interaction.editReply({ embeds: [turtleEmbed] });
+		interaction.channel.send({ embeds: [turtleEmbed] });
+		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 		if (reason.length > 1024) {
 			reason = `${reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
 		}

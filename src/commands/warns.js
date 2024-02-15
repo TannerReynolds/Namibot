@@ -13,7 +13,8 @@ module.exports = {
 		.setDescription("View a user's warnings")
 		.addStringOption(option => option.setName('user').setDescription('The user to view warns for').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');

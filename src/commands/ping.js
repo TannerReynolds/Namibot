@@ -6,7 +6,8 @@ const log = require('../utils/log');
 module.exports = {
 	data: new SlashCommandBuilder().setName('ping').setDMPermission(false).setDescription('Pong'),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+
 		log.debug('upserting guild to database');
 		await prisma.guild.upsert({
 			where: { id: interaction.guild.id },

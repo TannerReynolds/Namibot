@@ -6,7 +6,8 @@ const { sendReply } = require('../utils/sendReply');
 module.exports = {
 	data: new SlashCommandBuilder().setName('bannedwords').setDMPermission(false).setDescription("See our server's banned words"),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		log.debug('Getting data from AutoMod');
 		let autoMod = await interaction.guild.autoModerationRules;
 		if (autoMod) {

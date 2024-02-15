@@ -1,16 +1,20 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
-const { colors, emojis } = require('../config');
+const { colors, emojis, guilds } = require('../config');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('highlights').setDMPermission(false).setDescription('View your highlights'),
 	async execute(interaction) {
-		await interaction.deferReply();
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
+		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+			return interaction.editReply({
+				content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
+			});
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;

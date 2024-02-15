@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { isStaff } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
-const { colors, emojis } = require('../config');
+const { colors, emojis, guilds } = require('../config');
 const prisma = require('../utils/prismaClient');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
@@ -14,12 +14,17 @@ module.exports = {
 		.setDMPermission(false)
 		.addStringOption(option => option.setName('user').setDescription('The user to get information for').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
+		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
 		log.debug(`Getting staff status...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
-
-		sendReply(interaction, 'main', `${emojis.loading}  Getting User Information...`);
+		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+			return interaction
+				.editReply({
+					content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
+					ephemeral: true,
+				})
+				.then(m => setTimeout(() => m.delete(), 4000));
 
 		log.debug('User is staff');
 		log.debug('Getting Target...');
@@ -116,6 +121,7 @@ module.exports = {
 
 		logEmbed.setTimestamp();
 
-		interaction.editReply({ embeds: [logEmbed] });
+		interaction.channel.send({ embeds: [logEmbed] });
+		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 	},
 };

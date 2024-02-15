@@ -17,7 +17,8 @@ module.exports = {
 		.addStringOption(option => option.setName('duration').setDescription('The amount of time to mute this user for').setRequired(true))
 		.addStringOption(option => option.setName('reason').setDescription('The reason for muting this user').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
@@ -68,7 +69,8 @@ module.exports = {
 					.setTimestamp()
 					.setAuthor({ name: name, iconURL: aviURL });
 
-				interaction.editReply({ embeds: [muteEmbed] });
+				interaction.channel.send({ embeds: [muteEmbed] });
+				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 				if (reason.length > 1024) {
 					reason = `${reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
 				}

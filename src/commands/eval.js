@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { botOwnerID, colors } = require('../config');
+const { botOwnerID, colors, emojis } = require('../config');
 const log = require('../utils/log');
 const prisma = require('../utils/prismaClient');
 const { sendReply } = require('../utils/sendReply');
@@ -13,7 +13,8 @@ module.exports = {
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 		.addStringOption(option => option.setName('code').setDescription('Code to execute').setRequired(true)),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (interaction.user.id !== botOwnerID) {
 			return interaction.editReply('Only the bot owner can run this command');
 		}
@@ -35,7 +36,7 @@ module.exports = {
 				.setAuthor({ name: name, iconURL: aviURL })
 				.addFields(
 					{ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` },
-					{ name: 'Result', value: `\`\`\`xl\n${evaled.length > 1000 ? `${evaled.match(/^.{0,1000}/s)[0]}...` : evaled.match(/^.{0,1000}/s)[0]}\n\`\`\`` }
+					{ name: 'Result', value: `\`\`\`xl\n${evaled.length > 1000 ? `${evaled.substring(0, 1000)}...` : evaled.substring(0, 1000)}\n\`\`\`` }
 				);
 
 			interaction.editReply({ embeds: [responseEmbed] });
@@ -46,9 +47,10 @@ module.exports = {
 				.setAuthor({ name: name, iconURL: aviURL })
 				.addFields(
 					{ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` },
-					{ name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err.length > 1000 ? `${err.match(/^.{0,1000}/s)[0]}...` : err.match(/^.{0,1000}/s)[0]}\n\`\`\`` }
+					{ name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err.length > 1000 ? `${err.substring(0, 1000)}...` : err.substring(0, 1000)}\n\`\`\`` }
 				);
-			interaction.editReply({ embeds: [responseEmbed] });
+			interaction.channel.send({ embeds: [responseEmbed] });
+			sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 		}
 	},
 };

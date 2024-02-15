@@ -10,6 +10,7 @@ module.exports = {
 		.setDescription('Find danger roles in your server (Does not include managed roles)'),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
+		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		const roles = await interaction.guild.roles.fetch();
 		const dangerRoles = findDangerRoles(roles);
 

@@ -25,7 +25,11 @@ module.exports = {
 			return sendReply(interaction, 'error', `${emojis.error}  That tag does not exist`);
 		}
 
-		let tagEmbed = new EmbedBuilder().setColor(colors.main);
+		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
+		let name = interaction.user.username;
+		// .setAuthor({ name: name, iconURL: aviURL });
+
+		let tagEmbed = new EmbedBuilder().setColor(colors.main).setAuthor({ name: name, iconURL: aviURL });
 
 		let attachmentData = null;
 
