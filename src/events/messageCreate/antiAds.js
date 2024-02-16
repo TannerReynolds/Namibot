@@ -4,38 +4,38 @@ const prisma = require('../../utils/prismaClient');
 const { guilds, colors } = require('../../config');
 const { getModChannels } = require('../../utils/getModChannels');
 const log = require('../../utils/log');
+const { Worker } = require('worker_threads');
 
 /**
  * Checks if a message contains advertisements and takes appropriate actions.
  * @param {Message} message - The message object.
  */
-function antiAds(message) {
+async function antiAds(message) {
 	if (!message.channel.guild) return;
 	if (message.author.bot) return;
 	log.debug(`Checking message content for advertisements: ${message.content}`);
 	if (!message.content.toLowerCase().includes('discord')) {
 		return log.debug("Didn't include word Discord");
 	}
-	let regex = /discord\.gg\/[a-zA-Z0-9]+|discord\.com\/invite\/[a-zA-Z0-9]+/gim;
-	let sentInvite = message.content.match(regex);
-	if (!sentInvite) {
-		return log.debug(`didn't have an invite`);
-	}
+
+	let sentAd = await checkAds(guilds, message.content, message.guild.id)
+
+	if(!sentAd || typeof sentAd !== 'string') return;
+
 	if (isStaff(message, message.member, PermissionFlagsBits.ManageMessages)) {
 		return log.debug(`invite detected, but staff sent it`);
 	}
 
-	let currentInvite = guilds[message.guild.id].invite.match(regex)[0];
-	log.debug(`current invite: ${currentInvite}`);
-
-	if (currentInvite === sentInvite[0] && !sentInvite[1]) {
-		return log.debug(`No other invites and only invite sent was this server's`);
-	}
-
-	let allowed = guilds[message.guild.id].features.antiAds.allowedInvites;
-
-	if (allowed.some(allowedInvite => sentInvite[0] === allowedInvite) && !sentInvite[1]) {
-		return log.debug('allowed invite sent');
+	async function checkAds(guilds, content, guildID) {
+		return new Promise((resolve, reject) => {
+			const worker = new Worker(`${__dirname}/workerThreads/antiAdsWorker.js`);
+			worker.postMessage({ guilds, content, guildID });
+			worker.on('message', resolve);
+			worker.on('error', reject);
+			worker.on('exit', code => {
+				if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
+			});
+		});
 	}
 
 	message.delete().catch(e => {
@@ -48,7 +48,7 @@ function antiAds(message) {
 			log.debug(`Couldn't send message to author`);
 		});
 
-	message.member.timeout(60000 * 10, 'Invite Link Sent').catch(e => {
+	message.member.timeout(60_000 * 10, 'Invite Link Sent').catch(e => {
 		log.error(`Couldn't time out member: ${e}`);
 	});
 
@@ -58,7 +58,7 @@ function antiAds(message) {
 		.addFields(
 			{ name: 'User', value: `<@${message.author.id}> (${message.author.id})` },
 			{ name: 'Reason', value: 'Discord invite link sent' },
-			{ name: 'Invite Link', value: sentInvite[0] },
+			{ name: 'Invite Link', value: sentAd },
 			{ name: 'Moderator', value: `System` }
 		)
 		.setTimestamp();
@@ -66,7 +66,7 @@ function antiAds(message) {
 	getModChannels(message.client, message.guild.id)
 		.main.send({
 			embeds: [logEmbed],
-			content: `<@${message.author.id}> :: https://${sentInvite[0]}`,
+			content: `<@${message.author.id}> :: https://${sentAd}`,
 		})
 		.catch(e => {
 			log.error(`Couldn't log warning: ${e}`);

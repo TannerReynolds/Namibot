@@ -1,35 +1,86 @@
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
+const os = require('os');
 
 const fg = {
-	red: '\x1b[31m',
-	green: '\x1b[32m',
-	blue: '\x1b[44m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    blue: '\x1b[34m',
 };
 const endColor = '\x1b[0m';
 
-console.log(`${fg.blue}CREATING PROPER CONFIG FILES${endColor}`);
+const psChocoInstall = `@"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\\chocolatey\\bin"`;
+const chocoPSQLInstall = `choco install postgresql --version 16.1.0 -y`;
 
-function copyAndDelete(originalFile, newFile) {
-	if (!fs.existsSync(originalFile)) {
-		console.log(`${fg.red}ERROR: FILE ${originalFile} DOES NOT EXIST... CONTINUING WITHOUT CREATING THIS FILE${endColor}`);
-		return;
-	}
+function copyAndReplaceConfigFiles() {
+    console.log(`${fg.blue}CREATING PROPER CONFIG FILES${endColor}`);
 
-	fs.copyFileSync(originalFile, newFile);
-	fs.unlinkSync(originalFile);
-	console.log(`${fg.green}SUCCESSFULLY REPLACED ${originalFile} WITH ${newFile}${endColor}`);
+    const configFiles = [
+        { src: '../example.env', dest: '../.env' },
+        { src: './example.config.js', dest: './config.js' },
+    ];
+
+    configFiles.forEach(({ src, dest }) => {
+        const originalFile = path.join(__dirname, src);
+        const newFile = path.join(__dirname, dest);
+
+        if (!fs.existsSync(originalFile)) {
+            console.log(`${fg.red}ERROR: FILE ${originalFile} DOES NOT EXIST... CONTINUING WITHOUT CREATING THIS FILE${endColor}`);
+            return;
+        }
+
+        fs.copyFileSync(originalFile, newFile);
+        fs.unlinkSync(originalFile);
+        console.log(`${fg.green}SUCCESSFULLY REPLACED ${originalFile} WITH ${newFile}${endColor}`);
+    });
+
+    console.log(`${fg.green}SUCCESSFULLY CREATED CONFIG FILES${endColor}`);
 }
 
-const exampleEnvPath = path.join('../', 'example.env');
-const envPath = path.join('../', '.env');
+function checkChocolateyInstalled(callback) {
+    exec('choco --version', (error, stdout, stderr) => {
+        if (error) {
+            console.log(`${fg.red}Chocolatey is not installed. Installing Chocolatey...${endColor}`);
+            exec(psChocoInstall, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`${fg.red}Failed to install Chocolatey: ${stderr}${endColor}`);
+                    process.exit(1);
+                } else {
+                    console.log(`${fg.green}Chocolatey installed successfully.${endColor}`);
+                    callback();
+                }
+            });
+        } else {
+            console.log(`${fg.green}Chocolatey is already installed.${endColor}`);
+            callback();
+        }
+    });
+}
 
-const exampleConfigPath = path.join('./', 'example.config.js');
-const configPath = path.join('./', 'config.js');
+function checkAndInstallPostgreSQL() {
+    const dbPath = {
+        win32: path.join('C:', 'Program Files', 'PostgreSQL'),
+        linux: '/usr/local/pgsql',
+    }[os.platform()];
 
-console.log(`${fg.blue}REPLACING EXAMPLE.ENV WITH .ENV${endColor}`);
-copyAndDelete(exampleEnvPath, envPath);
-console.log(`${fg.blue}REPLACING EXAMPLE.config.js WITH config.js${endColor}`);
-copyAndDelete(exampleConfigPath, configPath);
+    if (!dbPath || !fs.existsSync(dbPath)) {
+        console.log(`${fg.blue}PostgreSQL is not installed. Installing PostgreSQL...${endColor}`);
+        exec(chocoPSQLInstall, (error, stdout, stderr) => {
+            if (error) {
+                console.log(`${fg.red}ERROR WHILE RUNNING INSTALL SCRIPT FOR POSTGRESQL: ${stderr}${endColor}`);
+            } else {
+                console.log(`${fg.green}PostgreSQL installed successfully.${endColor}`);
+            }
+        });
+    } else {
+        console.log(`${fg.green}PostgreSQL is already installed.${endColor}`);
+    }
+}
 
-console.log(`${fg.green}SUCCESSFULLY CREATED CONFIG FILES${endColor}`);
+function main() {
+    copyAndReplaceConfigFiles();
+    checkChocolateyInstalled(checkAndInstallPostgreSQL);
+}
+
+main();

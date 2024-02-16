@@ -2,6 +2,20 @@ const prisma = require('./prismaClient');
 const guildMemberCache = require('./guildMemberCache');
 const log = require('./log');
 
+/*
+model Member {
+    userID           String
+    xp               Int    @default(0)
+    level            Int    @default(1)
+    negativeMessages Int    @default(0)
+    totalMessages    Int    @default(0)
+    Guild            Guild  @relation(fields: [guildId], references: [id])
+    guildId          String
+
+    @@id([userID, guildId])
+}
+*/
+
 async function initGuildMemberCache() {
 	try {
 		const guilds = await prisma.guild.findMany({
@@ -19,13 +33,14 @@ async function initGuildMemberCache() {
 				guildMemberCache[guild.id][member.userID] = {
 					xp: member.xp,
 					totalMessages: member.totalMessages,
-					negativeMesssages: member.negativeMessages,
+					negativeMessages: member.negativeMessages,
 					level: member.level,
 					changed: false,
 				};
 			});
 		});
 
+		log.debug(guildMemberCache)
 		log.verbose('Guild Members cache initialized with database guilds and members.');
 	} catch (error) {
 		log.error(`Failed to initialize guilds cache: ${error}`);
