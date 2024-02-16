@@ -47,7 +47,7 @@ module.exports = {
 			.setTimestamp()
 			.setAuthor({ name: name, iconURL: aviURL });
 
-		await prisma.highlight
+		return prisma.highlight
 			.create({
 				data: {
 					phrase: phrase,
@@ -59,10 +59,10 @@ module.exports = {
 				interaction.channel.send({ embeds: [msgEmbed] }).catch(e => {
 					interaction.channel.send(`${emojis.error}  Message failed to send:\n${e}`);
 				});
-				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+				return sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
-				log.error(`Could not create highlight: ${e}`);
+				return log.error(`Could not create highlight: ${e}`);
 			});
 	},
 };

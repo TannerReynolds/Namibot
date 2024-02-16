@@ -511,8 +511,11 @@ if (server.enabled) {
 		})
 	);
 
+	app.get('/heartbeat', (req, res) => {
+		res.status(200).send('OK');
+	});
+
 	app.use((req, res, next) => {
-		log.verbose(req.path);
 		if (req.path.startsWith('/bdl')) {
 			const originalUrl = encodeURIComponent(req.originalUrl);
 			res.redirect(`${server.url}/auth?bdl=${originalUrl}`);
@@ -539,8 +542,12 @@ if (server.enabled) {
 		})
 	);
 
-	app.listen(server.port, '0.0.0.0', () => {
-		log.success(`Local server listening on port ${server.port} at ${server.url}`);
+	app.listen(server.PORT, '0.0.0.0', () => {
+		log.success(`Local server listening on port ${server.PORT} at ${server.url}`);
+		axios
+			.post('http://localhost:3661/register', { pid: process.pid })
+			.then(response => log.success(response.data.message))
+			.catch(error => log.error('Failed to register with monitor app:', error.message));
 	});
 }
 

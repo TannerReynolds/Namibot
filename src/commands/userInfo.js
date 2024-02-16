@@ -16,15 +16,13 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
-		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
 		log.debug(`Getting staff status...`);
+		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
-			return interaction
-				.editReply({
-					content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
-					ephemeral: true,
-				})
-				.then(m => setTimeout(() => m.delete(), 4000));
+			return interaction.editReply({
+				content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
+				ephemeral: true,
+			});
 
 		log.debug('User is staff');
 		log.debug('Getting Target...');

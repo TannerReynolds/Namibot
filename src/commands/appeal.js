@@ -97,7 +97,7 @@ module.exports = {
 				.setTimestamp();
 		}
 
-		mailChannel.threads
+		return mailChannel.threads
 			.create({
 				name: `Ban Appeal From ${interaction.user.username}`,
 				reason: `Ban Appeal From ${interaction.user.username} (${interaction.user.id})`,

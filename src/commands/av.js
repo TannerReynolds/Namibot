@@ -59,8 +59,7 @@ module.exports = {
 
 		await interaction.channel.send({
 			embeds: [avEmbed],
-			fetchReply: false,
 		});
-		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+		return sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
 	},
 };
