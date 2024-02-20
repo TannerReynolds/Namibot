@@ -1,6 +1,5 @@
-const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder } = require('discord.js');
 const { guilds, colors, emojis } = require('../config');
-const { isStaff } = require('../utils/isStaff.js');
 const log = require('../utils/log.js');
 const { sendReply } = require('../utils/sendReply');
 
@@ -13,11 +12,6 @@ module.exports = {
 		log.debug('Getting command channel');
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
 		log.debug(`Command channel: ${commandChannel}`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
-			return interaction.editReply({
-				content: `You have to go to the <#${commandChannel}> channel to use this command`,
-				ephemeral: true,
-			});
 
 		log.debug(`Getting Target...`);
 		let targetUser = interaction.targetUser;

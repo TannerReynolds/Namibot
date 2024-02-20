@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff, hasHigherPerms } = require('../utils/isStaff');
+const { isStaffCommand, hasHigherPerms } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const { colors, emojis } = require('../config');
 const log = require('../utils/log');
@@ -14,7 +14,7 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for subjecting this user to fate').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {

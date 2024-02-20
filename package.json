@@ -5,9 +5,9 @@
   "scripts": {
     "test": "jest",
     "deploy": "cd src && node globalDeploy.js",
-    "dev": "cd src && node index.js",
-    "production": "cd src && pm2 start index.js --name modbot && pm2 start appMonitor.js --name botmonitor",
-    "restart": "cd src && pm2 restart index.js --name modbot && pm2 restart appMonitor.js --name botmonitor",
+    "dev": "cd src && node --no-deprecation index.js --dev",
+    "production": "cd src && pm2 start appMonitor.js --name botmonitor && pm2 start index.js --name modbot",
+    "restart": "cd src && pm2 restart botmonitor && pm2 restart modbot",
     "validate": "cd src && node verifyInstall.js",
     "prisma": "npx prisma generate && npx prisma migrate dev --name modBot",
     "setup": "cd src && npm i && npm i -g prisma pm2 && node setupConfs.js && node verifyInstall.js && cd.. && npx prisma generate && npx prisma migrate dev --name modBot && cd src && node globalDeploy.js && node verifyInstall.js --complete"

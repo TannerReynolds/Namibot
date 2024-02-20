@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { colors, emojis } = require('../config');
 const log = require('../utils/log');
 const { getLogPassword } = require('../utils/sharedState');
-const { isStaff } = require('../utils/isStaff');
+const { isStaffCommand } = require('../utils/isStaff');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		log.debug('Constructing banned words embed');
 

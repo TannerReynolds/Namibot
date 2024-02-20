@@ -18,9 +18,9 @@ async function antiAds(message) {
 		return log.debug("Didn't include word Discord");
 	}
 
-	let sentAd = await checkAds(guilds, message.content, message.guild.id)
+	let sentAd = await checkAds(guilds, message.content, message.guild.id);
 
-	if(!sentAd || typeof sentAd !== 'string') return;
+	if (!sentAd || typeof sentAd !== 'string') return;
 
 	if (isStaff(message, message.member, PermissionFlagsBits.ManageMessages)) {
 		return log.debug(`invite detected, but staff sent it`);

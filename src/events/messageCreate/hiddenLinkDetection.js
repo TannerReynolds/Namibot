@@ -11,10 +11,13 @@ const urlRegex = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[
  * @param {function} getModChannels - A function to get the moderation channels.
  * @returns {Promise<void>} - A promise that resolves once the check is complete.
  */
-async function checkForInlineURLs(client, content, message) {
+async function checkForInlineURLs(client, content, message, oldMessage) {
 	if (!message.channel.guild) return;
 	if (message.author.bot) return;
 	log.debug('searching for inline links');
+	if (oldMessage) {
+		if (message.content === oldMessage.content) return;
+	}
 	if (content.match(inLineRegex)) {
 		log.debug(`found inline links: ${content.match(urlRegex).join(', ')}`);
 		message.reply(`Inline/hidden URL detected. URLs found in message: ${content.match(urlRegex).join(', ')}`);

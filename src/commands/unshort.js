@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { guilds, emojis } = require('../config');
-const { isStaff } = require('../utils/isStaff');
+const { isStaffCommand } = require('../utils/isStaff');
 const { unshortenURL } = require('../utils/unshortenURL');
 const { sendReply } = require('../utils/sendReply');
 
@@ -13,7 +13,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== guilds[interaction.guild.id].commandChannel)
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== guilds[interaction.guild.id].commandChannel)
 			return sendReply(interaction, 'main', `${emojis.error}  You have to go to the <#${guilds[interaction.guild.id].commandChannel}> channel to use this command`);
 
 		let url = interaction.options.getString('url');

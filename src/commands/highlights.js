@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff } = require('../utils/isStaff.js');
+const { isStaffCommand } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
 const { colors, emojis, guilds } = require('../config');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
@@ -11,7 +11,7 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
 			return interaction.editReply({
 				content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
 			});

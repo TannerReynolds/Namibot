@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html data-theme="night">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.tailwindcss.com; img-src 'self' data: https://cdn.discordapp.com https://images-ext-1.discordapp.net;">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Moderation Bot Config Editor</title>
+  <style>
+    .note {
+      font-size: 11px;
+      color: #a3a3a3;
+      font-style: italic;
+    }
+
+    .bubble {
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div class="navbar bg-base-300">
+    <div class="flex-1">
+      <a class="btn btn-ghost text-xl" href="https://github.com/TannerReynolds/Discord-Moderation-Bot">Bot Configuration</a>
+    </div>
+  </div>
+  </div>
+
+  <div class="grid grid-cols-2">
+    <div id="mainConf" class="bubble">
+      <%- include('partials/mainConf', { config: config }) %>
+    </div>
+    <div id="guildConf" class="bubble">
+      <%- include('partials/guildConf', { config: config }) %>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

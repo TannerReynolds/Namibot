@@ -30,10 +30,11 @@ const config = {
 		no: '<:x_:1203191562084032594>', // Emoji used for polls
 		success: '<:check:1203191199251300402>', // Emoji used for success
 		error: '<:x_:1203191562084032594>', // Emoji used for errors
+		loading: '<a:loading:1206460809623113758>', // Emoji used for loading
 	},
 	server: {
 		enabled: true, // Do not enable this unless you know what you're doing. The log functionality still works without using a server.
-		port: 1746, // Number of the port for the server to listen on
+		PORT: 1746, // Number of the port for the server to listen on
 		url: 'https://learn.tokyo.jp/fern', // URL this bot is pointing to
 	},
 	guilds: {
@@ -48,6 +49,8 @@ const config = {
 			mailChannelID: '1202038197698449450', // The FORUM channel that you have for incoming mod mails and appeals
 			staffRoleID: '499564155884535808', // The role of your staff. This is used as an override for when people need to run moderation commands
 			// but dont have dangerous permissions like BanMembers and KickMembers
+			voiceModRoleID: '1199444014785634325', // The role of your voice-only mods. This is used as an override for when people need to run moderation commands.
+			// We use this to let voice mods mute people, which also stops them from joining VC
 			muteRoleID: '819300268628770837', // The ID of your muted role. Only necessary if you have the mute command enabled
 			logs: {
 				// Enable specific types of logs for your server
@@ -56,6 +59,7 @@ const config = {
 				messageDeleteBulk: true, // This event fires when members are banned or their messages are purged
 				guildBanAdd: true,
 				guildBanRemove: true,
+				interactionCreate: true, // This event fires when a user uses a slash command
 			},
 			features: {
 				// Enable and configure bot features for your server
@@ -83,8 +87,8 @@ const config = {
 				},
 				levels: {
 					// Levelling system for the bot
-					enabled: false,
-					levelUpMessage: 'You have leveled up to level {{level}}!', // Level up message, use {{level}} as a placeholder for the member's level.
+					enabled: true,
+					levelUpMessage: false, // Level up message, use {{level}} as a placeholder for the member's level.
 					generateLevelImage: true, // Whether or not to generate an image with the level up message
 					levelRoles: {
 						// Object of your levels. the key should be a string of the level,
@@ -109,53 +113,243 @@ const config = {
 						{ emoji: '', id: '' }, // Array of objects. Key is the emoji (Same as the emoji codes above), value is the role ID.
 					],
 				},
-				aiModeration: {
-					enabled: true, // Enable AI moderation. This will use OpenAI's GPT-3 to moderate messages. YOU NEED AN API KEY TO USE THIS
+				sentimentAnalysis: {
+					enabled: true, // Enable SENTIMENT ANALYSIS. This will use OpenAI's Moderation Endpoint to moderate messages. YOU NEED AN API KEY TO USE THIS
+					dmUsers: false, // DM users when their message is flagged for negative sentiment (they will complain a lot about this if true)
+					openAIToken: '.', // OPTIONAL, ONLY NEEDED IF YOU ENABLE SENTIMENT ANALYSIS. OpenAI API token. You can get this from https://platform.openai.com/account/api-keys
+					sensitivity: 0.95, // Number. The bot will only take action on messages that have a score higher than this number (0.0 - 1.0). Lower is more sensitive, higher is less sensitive.
+				},
+				antiNuke: {
+					enabled: false,
 				},
 			},
 			commands: {
 				// Full list of commands allowing you to enable them or disable them.
-				reload: true,
-				sendembed: true,
-				dangerroles: true,
-				unshort: true,
-				purge: true,
-				modmail: true,
-				addhighlight: true,
-				appeal: true,
-				av: true,
-				bam: true,
-				ban: true,
-				bannedwords: true,
-				colorme: true,
-				'Get Avatar': true,
-				debugmode: true,
-				delhighlight: true,
-				delwarn: true,
-				eval: true,
-				gay: true,
-				getlogpassword: true,
-				giverole: true,
-				highlights: true,
-				id: true,
-				kick: true,
-				managenitrocolor: true,
-				mute: true,
-				newtag: true,
-				t: true,
-				deltag: true,
-				tags: true,
-				ping: true,
-				realverification: true,
-				removerole: true,
-				rng: true,
-				senddm: true,
-				turtlemode: true,
-				unban: true,
-				unmute: true,
-				unturtle: true,
-				warn: true,
-				warns: true,
+				createconfirmation: {
+					enabled: true,
+					staffRoleCanUse: true, // Whether or not the staff role can ovveride permissions checking to use this command
+					voiceModRoleCanUse: false, // Whether or not the voice mod role can ovveride permissions checking to use this command
+				},
+				userinfo: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				addreactrole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				'Report Message': {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				reload: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				sendembed: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				dangerroles: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unshort: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				purge: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				modmail: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				addhighlight: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				appeal: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				av: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				bam: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				ban: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				bannedwords: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				colorme: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				'Get Avatar': {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				debugmode: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				delhighlight: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				delwarn: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				eval: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				gay: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				getlogpassword: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				giverole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				highlights: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				id: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				kick: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				managenitrocolor: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				mute: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: true,
+				},
+				newtag: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				t: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				deltag: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				tags: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				ping: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				realverification: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				removerole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				rng: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				senddm: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				turtlemode: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unban: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unmute: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: true,
+				},
+				unturtle: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				warn: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				warns: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
 			},
 		},
 		'1061175459112550490': {
@@ -168,6 +362,7 @@ const config = {
 			botCommandsChannelID: '1075661557247246357',
 			mailChannelID: '1061182094266609724',
 			staffRoleID: '1061181030813413468',
+			voiceModRoleID: '1061181030813413468',
 			muteRoleID: '1174259360541708299',
 			logs: {
 				messageDelete: true,
@@ -175,6 +370,7 @@ const config = {
 				messageDeleteBulk: true,
 				guildBanAdd: true,
 				guildBanRemove: true,
+				interactionCreate: true,
 			},
 			features: {
 				checkAccountAge: {
@@ -218,52 +414,242 @@ const config = {
 					enabled: false,
 					roles: [{ emoji: '', id: '' }],
 				},
-				aiModeration: {
-					enabled: true, // Enable AI moderation. This will use OpenAI's GPT-3 to moderate messages. YOU NEED AN API KEY TO USE THIS
+				sentimentAnalysis: {
+					enabled: true, // Enable SENTIMENT ANALYSIS. This will use OpenAI's Moderation Endpoint to moderate messages. YOU NEED AN API KEY TO USE THIS
+					dmUsers: false,
+					openAIToken: '.', // OPTIONAL, ONLY NEEDED IF YOU ENABLE SENTIMENT ANALYSIS. OpenAI API token. You can get this from https://platform.openai.com/account/api-keys
+					sensitivity: 0.95, // Number. The bot will only take action on messages that have a score higher than this number (0.0 - 1.0). Lower is more sensitive, higher is less sensitive.
+				},
+				antiNuke: {
+					enabled: false,
 				},
 			},
 			commands: {
-				reload: true,
-				sendembed: true,
-				dangerroles: true,
-				unshort: true,
-				purge: true,
-				modmail: true,
-				addhighlight: true,
-				appeal: true,
-				av: true,
-				bam: true,
-				ban: true,
-				bannedwords: true,
-				colorme: true,
-				'Get Avatar': true,
-				debugmode: true,
-				delhighlight: true,
-				delwarn: true,
-				eval: true,
-				gay: true,
-				getlogpassword: true,
-				giverole: true,
-				highlights: true,
-				id: true,
-				kick: true,
-				managenitrocolor: true,
-				mute: true,
-				newtag: true,
-				t: true,
-				deltag: true,
-				tags: true,
-				ping: true,
-				realverification: true,
-				removerole: true,
-				rng: true,
-				senddm: true,
-				turtlemode: true,
-				unban: true,
-				unmute: true,
-				unturtle: true,
-				warn: true,
-				warns: true,
+				createconfirmation: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				userinfo: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				addreactrole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				'Report Message': {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				reload: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				sendembed: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				dangerroles: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unshort: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				purge: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				modmail: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				addhighlight: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				appeal: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				av: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				bam: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				ban: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				bannedwords: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				colorme: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				'Get Avatar': {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				debugmode: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				delhighlight: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				delwarn: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				eval: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				gay: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				getlogpassword: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				giverole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				highlights: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				id: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				kick: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				managenitrocolor: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				mute: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				newtag: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				t: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				deltag: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				tags: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				ping: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				realverification: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				removerole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				rng: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				senddm: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				turtlemode: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unban: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unmute: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unturtle: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				warn: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				warns: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
 			},
 		},
 		'1190156169961029774': {
@@ -275,6 +661,7 @@ const config = {
 			botCommandsChannelID: '1190156171114446930',
 			mailChannelID: '1190156171114446930',
 			staffRoleID: '1193379997881217074',
+			voiceModRoleID: '1193379997881217074',
 			muteRoleID: '1193380020001964093',
 			logs: {
 				messageDelete: true,
@@ -282,6 +669,7 @@ const config = {
 				messageDeleteBulk: true,
 				guildBanAdd: true,
 				guildBanRemove: true,
+				interactionCreate: true,
 			},
 			features: {
 				checkAccountAge: {
@@ -325,52 +713,242 @@ const config = {
 					enabled: false,
 					roles: [{ emoji: '', id: '' }],
 				},
-				aiModeration: {
-					enabled: true, // Enable AI moderation. This will use OpenAI's GPT-3 to moderate messages. YOU NEED AN API KEY TO USE THIS
+				sentimentAnalysis: {
+					enabled: true, // Enable SENTIMENT ANALYSIS. This will use OpenAI's Moderation Endpoint to moderate messages. YOU NEED AN API KEY TO USE THIS
+					dmUsers: false,
+					openAIToken: '.', // OPTIONAL, ONLY NEEDED IF YOU ENABLE SENTIMENT ANALYSIS. OpenAI API token. You can get this from https://platform.openai.com/account/api-keys
+					sensitivity: 0.95, // Number. The bot will only take action on messages that have a score higher than this number (0.0 - 1.0). Lower is more sensitive, higher is less sensitive.
+				},
+				antiNuke: {
+					enabled: false,
 				},
 			},
 			commands: {
-				reload: true,
-				sendembed: true,
-				dangerroles: true,
-				unshort: true,
-				purge: true,
-				modmail: true,
-				addhighlight: true,
-				appeal: true,
-				av: true,
-				bam: false,
-				ban: true,
-				bannedwords: true,
-				colorme: true,
-				'Get Avatar': true,
-				debugmode: true,
-				delhighlight: true,
-				delwarn: true,
-				eval: true,
-				gay: true,
-				getlogpassword: true,
-				giverole: true,
-				highlights: true,
-				id: true,
-				kick: true,
-				managenitrocolor: true,
-				mute: true,
-				newtag: true,
-				t: true,
-				deltag: true,
-				tags: true,
-				ping: true,
-				realverification: true,
-				removerole: true,
-				rng: true,
-				senddm: true,
-				turtlemode: true,
-				unban: true,
-				unmute: true,
-				unturtle: true,
-				warn: true,
-				warns: true,
+				createconfirmation: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				userinfo: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				addreactrole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				'Report Message': {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				reload: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				sendembed: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				dangerroles: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unshort: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				purge: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				modmail: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				addhighlight: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				appeal: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				av: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				bam: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				ban: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				bannedwords: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				colorme: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				'Get Avatar': {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				debugmode: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				delhighlight: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				delwarn: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				eval: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				gay: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				getlogpassword: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				giverole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				highlights: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				id: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				kick: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				managenitrocolor: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				mute: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				newtag: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				t: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				deltag: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				tags: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				ping: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				realverification: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				removerole: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				rng: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				senddm: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				turtlemode: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unban: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unmute: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				unturtle: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				warn: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
+				warns: {
+					enabled: true,
+					staffRoleCanUse: true,
+					voiceModRoleCanUse: false,
+				},
 			},
 		},
 	},

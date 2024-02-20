@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { defineTarget } = require('../utils/defineTarget');
 const { guilds, colors, emojis } = require('../config');
-const { isStaff } = require('../utils/isStaff');
+const { isStaffCommand } = require('../utils/isStaff');
 const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
@@ -15,17 +15,7 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
-			return interaction
-				.editReply({
-					content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
-					ephemeral: true,
-				})
-				.then(m => setTimeout(() => m.delete(), 4000));
-
-		log.debug('Getting command channel');
-		log.debug(`Command channel: ${commandChannel}`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
 			return interaction.editReply({
 				content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
 				ephemeral: true,

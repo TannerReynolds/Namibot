@@ -40,7 +40,7 @@ async function initGuildMemberCache() {
 			});
 		});
 
-		log.debug(guildMemberCache)
+		log.debug(guildMemberCache);
 		log.verbose('Guild Members cache initialized with database guilds and members.');
 	} catch (error) {
 		log.error(`Failed to initialize guilds cache: ${error}`);

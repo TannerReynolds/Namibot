@@ -1,0 +1,21 @@
+<div class="card bg-neutral text-neutral-content">
+  <div class="card-body items-left text-left">
+    <h2 class="card-title">Guild-Specific Settings</h2>
+    <div role="tablist" class="tabs tabs-lifted">
+      <% let iterationCount = 0; %>
+      <% for(const guild in config.guilds) { %>
+      <% if (iterationCount === 0)  { %>
+      <input type="radio" name="guildTab" id="<%= guild %>" role="tab" class="tab" aria-label="<%= config.guilds[guild].name %>" checked />
+      <%- include(`./guildBuilder`, { guild: config.guilds[guild], guildID: guild }) %>
+      <% iterationCount++; %>
+      <% } else { %>
+      <input type="radio" name="guildTab" role="tab" class="tab" aria-label="<%= config.guilds[guild].name %>" />
+      <%- include(`./guildBuilder`, { guild: config.guilds[guild], guildID: guild }) %>
+      <% iterationCount++; %>
+      <% } %>
+      <% } %>
+      <input type="radio" id="addNewGuild" name="guildTab" role="tab" class="tab" aria-label="+" />
+      <%- include(`./guildBuilder`, { guild: false, guildID: false }) %>
+    </div>
+  </div>
+</div>

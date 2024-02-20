@@ -75,11 +75,11 @@ async function sentimentAnalysis(message) {
 				}
 				if (!guildMemberCache[message.guild.id][message.author.id].changed) guildMemberCache[message.guild.id][message.author.id].changed = true;
 				getModChannels(message.client, message.guild.id)
-					.main.send({ embeds: [logEmbed], content: `<@${message.author.id}> | ${message.url}` })
+					.secondary.send({ embeds: [logEmbed], content: `<@${message.author.id}> | ${message.url}` })
 					.catch(e => {
 						log.error(`Error sending log to guild main log channel: ${e}`);
 					});
-				if(guilds[message.guild.id].features.sentimentAnalysis.dmUsers) {
+				if (guilds[message.guild.id].features.sentimentAnalysis.dmUsers) {
 					try {
 						message.author.send(
 							`Your message in ${

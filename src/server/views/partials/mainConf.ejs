@@ -1,0 +1,86 @@
+<div class="card bg-neutral text-neutral-content">
+  <div class="card-body items-left text-left">
+    <h2 class="card-title">Main Settings</h2>
+    <div class="card-actions flex flex-col">
+      <p><b>Bot Token</b></p>
+      <p class="note mt">This is the token for your bot. It is required for the bot to function.</p>
+      <input id="token" type="text" value="<%= config.token %>" class="input input-bordered w-full max-w-xs mt-2" />
+    </div>
+    <div class="card-actions flex flex-col">
+      <p><b>Bot ID</b></p>
+      <p class="note mt">The ID of your bot, you can get this from your bot's application page</p>
+      <input id="clientId" type="text" value="<%= config.clientId %>" class="input input-bordered w-full max-w-xs mt-2" />
+    </div>
+    <div class="card-actions flex flex-col">
+      <p><b>Main Guild ID</b></p>
+      <p class="note mt">Main guild ID the bot will be used in, this is used in the devDeploy command, which deploys commands specifically to the developer server ONLY.</p>
+      <input id="guildId" type="text" value="<%= config.guildId %>" class="input input-bordered w-full max-w-xs mt-2" />
+    </div>
+    <div class="card-actions flex flex-col">
+      <p><b>Bot Owner ID</b></p>
+      <p class="note mt">Your user ID.</p>
+      <input id="botOwnerID" type="text" value="<%= config.botOwnerID %>" class="input input-bordered w-full max-w-xs mt-2" />
+    </div>
+    <%# Begin Property %>
+    <div class="card-actions flex flex-col">
+      <p><b>Appeal Server URL</b></p>
+      <p class="note mt">A full invite link to the server that your bot will use for appeals. This is required for the appeal command to work bc your bot cannot recieve commands unless it shares at least one server with the person running the command.</p>
+      <input id="appealServer" type="text" value="<%= config.appealServer %>" class="input input-bordered w-full max-w-xs mt-2" />
+    </div>
+    <%# End Property %>
+    <div class="card-actions flex flex-col">
+      <p><b>Bot's Status</b></p>
+      <p class="note mt">The bot's activity message. Types: 0 = Playing, 1 = Streaming, 2 = Listening, 3 = Watching, 4 = Custom, 5 = Competing. The type must be one of these numbers, while the content can be whatever you want</p>
+      <div class="card bg-base-300 text-neutral-content">
+        <div class="card-body items-left text-left">
+          <div class="card-actions flex flex-col">
+            <p>Type</p>
+            <input id="status.type" type="text" value="<%= config.status.type %>" class="input input-bordered w-full max-w-xs mt" />
+            <p>Content</p>
+            <input id="status.content" type="text" value="<%= config.status.content %>" class="input input-bordered w-full max-w-xs mt" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-actions flex flex-col">
+      <p><b>Bot Colors</b></p>
+      <p class="note mt">These are the colors that the bot will use for it's embeds. These should all be hex color codes preceded by a #</p>
+      <div class="card bg-base-300 text-neutral-content">
+        <div class="card-body items-left text-left">
+          <div class="card-actions flex flex-col">
+            <p>Success</p>
+            <input id="colors.success" type="text" value="<%= config.colors.success %>" class="input input-bordered w-full max-w-xs mt" />
+            <p>Error</p>
+            <input id="colors.error" type="text" value="<%= config.colors.error %>" class="input input-bordered w-full max-w-xs mt" />
+            <p>Main</p>
+            <input id="colors.main" type="text" value="<%= config.colors.main %>" class="input input-bordered w-full max-w-xs mt" />
+            <p>Waring</p>
+            <input id="colors.warning" type="text" value="<%= config.colors.warning %>" class="input input-bordered w-full max-w-xs mt" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <%# Begin Branch %>
+    <div class="card-actions flex flex-col">
+      <p><b>Server</b></p>
+      <p class="note mt">This needs to be enabled for the production environment to properly monitor your bot and restart it when it stops responding.
+        Enabled should just be true or false. Port should be a number, and the URL should be the URL of your server. If you don't want to serve bulk delete logs through your website and would rather it send a file to your logs channel
+        then you can leave the URL blank, or put "false"
+      </p>
+      <div class="card bg-base-300 text-neutral-content">
+        <div class="card-body items-left text-left">
+          <div class="card-actions flex flex-col">
+            <p>Enabled</p>
+            <input id="server.enabled" type="text" value="<%= config.server.enabled %>" class="input input-bordered w-full max-w-xs mt" />
+            <p>Port</p>
+            <input id="server.PORT" type="text" value="<%= config.server.PORT %>" class="input input-bordered w-full max-w-xs mt" />
+            <p>Server URL</p>
+            <input id="server.url" type="text" value="<%= config.server.url %>" class="input input-bordered w-full max-w-xs mt" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <%# End Branch %>
+
+  </div>
+</div>

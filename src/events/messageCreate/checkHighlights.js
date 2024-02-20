@@ -28,28 +28,29 @@ async function checkHighlights(message) {
 				try {
 					recipient = await message.guild.members.cache.get(h.userID);
 				} catch (e) {
-					return;
+					continue;
 				}
 
 				let permissions = message.channel.permissionsFor(recipient);
 
 				if (!permissions.has(PermissionFlagsBits.ViewChannel)) {
-					return;
+					continue;
 				}
 
 				await state.addHLCoolDown(h.userID);
 
 				const aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL;
 				const name = message.author.username;
+				let postedContent = message.content;
 				if (message.content.length > 1024) {
-					message.content = `${message.content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+					postedContent = `${message.content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
 				}
 				const hEmbed = new EmbedBuilder()
 					.setAuthor({ name: name, iconURL: aviURL })
 					.setColor(colors.main)
 					.setTitle('Highlighter Alert')
 					.setDescription(`Found message containing phrase: \`${h.phrase}\`!`)
-					.addFields({ name: 'Message', value: message.content }, { name: 'Channel', value: `<#${message.channel.id}>` })
+					.addFields({ name: 'Message', value: postedContent }, { name: 'Channel', value: `<#${message.channel.id}>` })
 					.setTimestamp();
 
 				dmPromises.push(

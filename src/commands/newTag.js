@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff } = require('../utils/isStaff.js');
+const { isStaffCommand } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient.js');
 const { colors, emojis } = require('../config');
 const log = require('../utils/log.js');
@@ -17,7 +17,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
 		let tagName = interaction.options.getString('tag-name') ? interaction.options.getString('tag-name').toLowerCase() : false;

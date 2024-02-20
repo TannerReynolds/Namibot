@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, PermissionFlagsBits, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { isStaff } = require('../utils/isStaff');
+const { isStaffCommand } = require('../utils/isStaff');
 const prisma = require('../utils/prismaClient');
 const { colors, emojis, guilds } = require('../config');
 const log = require('../utils/log');
@@ -18,7 +18,7 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Creating Confirmation Message...`);
 		log.debug(`Getting staff status...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles))
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageRoles))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
 		let selectedRole = await interaction.options.getRole('role');

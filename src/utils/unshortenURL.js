@@ -28,6 +28,7 @@ async function unshortenURL(originalUrl) {
 			const response = await axios.get(url, {
 				maxRedirects: 0,
 				validateStatus: null,
+				timeout: 5000,
 			});
 
 			const metaRefresh = /<meta http-equiv="refresh" content="\d+;\s*url=(.*?)"/i;

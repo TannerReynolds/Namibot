@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff } = require('../utils/isStaff');
+const { isStaffCommand } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const prisma = require('../utils/prismaClient');
 const { getModChannels } = require('../utils/getModChannels');
@@ -17,7 +17,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers))
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.BanMembers))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {

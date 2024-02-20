@@ -3,7 +3,19 @@
  * It initializes the necessary libraries, sets up event handlers, and handles interactions and commands.
  */
 
-require('longjohn');
+let prod = false;
+if (process.argv[0]) {
+	if (process.argv.some(arg => arg === '--dev')) {
+		require('longjohn');
+		console.log('running in developer mode');
+	} else {
+		prod = true;
+		console.log('running in production mode');
+	}
+} else {
+	prod = true;
+	console.log('running in production mode');
+}
 
 //////////////////////////////////////
 // external lib requires
@@ -263,7 +275,7 @@ client.on(Events.InteractionCreate, async interaction => {
 	const command = interaction.client.commands.get(interaction.commandName);
 
 	if (interaction.guild) {
-		if (!guilds[interaction.guild.id].commands[interaction.commandName]) {
+		if (!guilds[interaction.guild.id].commands[interaction.commandName].enabled) {
 			log.debug(`Command ${interaction.commandName} is disabled in this server`);
 			return interaction.reply({ content: 'This command is disabled in this server', ephemeral: true });
 		}
@@ -485,7 +497,7 @@ client.on(Events.MessageDelete, async message => {
 	if (guilds[message.guild.id].logs.messageDelete) await deleteLog(message);
 });
 
-async function messageEvents(isStaffBool, message, guildMember) {
+async function messageEvents(isStaffBool, message, guildMember, oldMessage) {
 	if (!message.guild) return;
 	let content = message.content || 'N/A';
 	if (guilds[message.guild.id].features.fileTypeChecker) await fileTypeChecker(message);
@@ -494,8 +506,9 @@ async function messageEvents(isStaffBool, message, guildMember) {
 	if (!isStaffBool) {
 		if (guilds[message.guild.id].features.gifDetector.enabled) await gifDetector(message);
 	}
+	if (!oldMessage) oldMessage = false;
 	//Not ignoring staff
-	if (guilds[message.guild.id].features.hiddenLinkDetection) await checkForInlineURLs(client, content, message, getModChannels);
+	if (guilds[message.guild.id].features.hiddenLinkDetection) await checkForInlineURLs(client, content, message, oldMessage);
 }
 
 client.login(token);
@@ -544,10 +557,14 @@ if (server.enabled) {
 
 	app.listen(server.PORT, '0.0.0.0', () => {
 		log.success(`Local server listening on port ${server.PORT} at ${server.url}`);
-		axios
-			.post('http://localhost:3661/register', { pid: process.pid })
-			.then(response => log.success(response.data.message))
-			.catch(error => log.error('Failed to register with monitor app:', error.message));
+		if (prod) {
+			setTimeout(() => {
+				axios
+					.post('http://localhost:3661/register', { pid: process.pid })
+					.then(response => log.success(response.data.message))
+					.catch(error => log.error('Failed to register with monitor app:', error.message));
+			}, 3000);
+		}
 	});
 }
 

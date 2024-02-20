@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { colors, emojis } = require('../config');
-const { isStaff } = require('../utils/isStaff.js');
+const { isStaffCommand } = require('../utils/isStaff.js');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
 		.addStringOption(option => option.setName('field7-content').setDescription('Embed Field Content').setMaxLength(1_023)),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageMessages))
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let craftedEmbed = new EmbedBuilder();
 

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { isStaff } = require('../utils/isStaff');
+const { isStaffCommand } = require('../utils/isStaff');
 const { defineTarget } = require('../utils/defineTarget');
 const { colors, emojis, guilds } = require('../config');
 const prisma = require('../utils/prismaClient');
@@ -18,7 +18,7 @@ module.exports = {
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		log.debug(`Getting staff status...`);
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
-		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
+		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.BanMembers) && interaction.channel.id !== commandChannel)
 			return interaction.editReply({
 				content: `${emojis.error}  You have to go to the <#${commandChannel}> channel to use this command`,
 				ephemeral: true,
