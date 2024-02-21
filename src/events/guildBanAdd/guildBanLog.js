@@ -4,6 +4,7 @@ const log = require('../../utils/log');
 const { getModChannels } = require('../../utils/getModChannels');
 
 async function guildBanLog(ban) {
+	log.debug('begin');
 	const fetchedLogs = await ban.guild.fetchAuditLogs({
 		limit: 1,
 		type: AuditLogEvent.MemberBanAdd,
@@ -37,6 +38,7 @@ async function guildBanLog(ban) {
 		log.error(`Error forming the ban embed: ${e}`);
 	}
 
+	log.debug('end');
 	return getModChannels(ban.client, ban.guild.id)
 		.main.send({ embeds: [banEmbed], content: `<@${target.id}>` })
 		.catch(e => {

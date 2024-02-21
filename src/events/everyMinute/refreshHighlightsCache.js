@@ -12,7 +12,6 @@ async function refreshHighlightsCache(client) {
 		for (const guild of client.guilds.cache.values()) {
 			const highlights = await prisma.highlight.findMany({ where: { guildId: guild.id } });
 			highlightsCache.set(guild.id, highlights);
-			log.debug(`Refreshed highlights cache for guild: ${guild.id}`);
 		}
 	} catch (e) {
 		log.error(`Error refreshing highlights cache: ${e}`);

@@ -2,6 +2,7 @@ const prisma = require('../../utils/prismaClient');
 const log = require('../../utils/log');
 
 async function deleteModMail(client) {
+	log.debug('begin');
 	try {
 		let now = new Date();
 
@@ -17,10 +18,9 @@ async function deleteModMail(client) {
 				log.error(`Couldn't get expiredMail`);
 			});
 
-		if (!expiredMail) return log.debug(`no expired mail`);
+		if (!expiredMail) return;
 
 		for (let m of expiredMail) {
-			log.debug(`found mail`);
 			await prisma.mail
 				.delete({
 					where: {
@@ -29,7 +29,7 @@ async function deleteModMail(client) {
 				})
 				.then(() => {
 					let user = client.users.cache.get(m.userID);
-					if (!user) return log.debug(`couldn't get user`);
+					if (!user) return;
 					user.send(`Your mod mail connection in ${client.guilds.cache.get(m.guildId).name} has been deleted due to inactivity.`).catch(e => {
 						log.error(e);
 					});
@@ -41,6 +41,7 @@ async function deleteModMail(client) {
 	} catch (error) {
 		return log.error(`Failed to delete mod mails: ${error}`);
 	}
+	log.debug('end');
 }
 
 module.exports = { deleteModMail };

@@ -257,7 +257,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			return interaction.reply({ embeds: [cooldownEmbed] });
 		}
 	} catch (e) {
-		log.debug('interaction not sent in guild');
+		('not sent in guild');
 	}
 
 	ratelimited.add(interaction.user.id);
@@ -269,14 +269,13 @@ client.on(Events.InteractionCreate, async interaction => {
 			setTimeout(() => pingStaffRatelimited.delete(interaction.guild.id), 900000);
 		}
 	} catch (e) {
-		log.debug('interaction not sent in guild');
+		('not sent in guild');
 	}
 
 	const command = interaction.client.commands.get(interaction.commandName);
 
-	if (interaction.guild) {
+	if (interaction.guild.id && guilds[interaction.guild.id].commands[interaction.commandName]) {
 		if (!guilds[interaction.guild.id].commands[interaction.commandName].enabled) {
-			log.debug(`Command ${interaction.commandName} is disabled in this server`);
 			return interaction.reply({ content: 'This command is disabled in this server', ephemeral: true });
 		}
 	}
@@ -412,7 +411,7 @@ client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	try {
 		guildMember = await message.guild.members.fetch(message.author.id);
 	} catch (e) {
-		log.debug(`User is not a member of this guild: ${e}`);
+		// do nothing
 	}
 	let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
 	await messageEvents(isStaffBool, message, oldMessage);
@@ -423,51 +422,40 @@ const recentChatter = new Set();
 
 client.on(Events.MessageCreate, async message => {
 	if (message.author.bot) return;
-	log.debug('Message received');
+
 	if (message.channel.type !== ChannelType.DM) {
 		if (guilds[message.guild.id].features.modMail) {
 			await modMailServer(message);
 		}
 	}
 
-	log.debug('modMailDM');
 	await modMailDM(message);
 	if (!message.guild) return;
 	let guildMember = false;
 
 	try {
-		log.debug('Fetching guild member');
 		guildMember = await message.guild.members.fetch(message.author.id);
 	} catch (e) {
-		log.debug(`User is not a member of this guild: ${e}`);
+		// do nothing
 	}
 
-	log.debug('Checking staff status');
 	let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
 
-	log.debug('Checking for antiAds');
 	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
 
-	log.debug('Checking for antiSpam');
 	if (guilds[message.guild.id].features.antiSpam && !isStaff) await antiSpam(message);
 
-	log.debug('Checking for message events');
 	await messageEvents(isStaffBool, message, guildMember);
 
-	log.debug('Checking for sentimentAnalysis');
 	if (guilds[message.guild.id].features.sentimentAnalysis.enabled) await sentimentAnalysis(message);
 
-	log.debug('Getting guild member cache');
 	if (!guildMemberCache[message.guild.id] || !guildMemberCache[message.guild.id][message.author.id]) {
-		log.debug("didn't find guild member cache for member");
 		guildMemberCache[message.guild.id][message.author.id] = { xp: 0, level: 1, changed: false };
 	}
 	if (guilds[message.guild.id].features.levels.enabled) {
-		log.debug('guild has levelling enabled');
 		let compositeKey = `${message.guild.id}:${message.author.id}`;
 		let totalMessages = guildMemberCache[message.guild.id][message.author.id].totalMessages || false;
 		if (!totalMessages) {
-			log.debug('totalMessages not found');
 			guildMemberCache[message.guild.id][message.author.id].totalMessages = 1;
 		} else {
 			guildMemberCache[message.guild.id][message.author.id].totalMessages += 1;
@@ -487,7 +475,6 @@ client.on(Events.MessageCreate, async message => {
 		if (!guildMemberCache[message.guild.id][message.author.id].changed) guildMemberCache[message.guild.id][message.author.id].changed = true;
 	}
 
-	log.debug('Checking for highlights');
 	await checkHighlights(message);
 });
 
@@ -568,12 +555,17 @@ if (server.enabled) {
 	});
 }
 
+/*
 process.on('unhandledRejection', async err => {
 	log.error(err.stack);
 });
-
+*/
 process.on('uncaughtException', async err => {
 	log.error(err.stack);
+	await syncMemberCache();
+	await log.writeDebugLogs();
+	await prisma.$disconnect();
+	process.exit(0);
 });
 
 process.on('SIGINT', async () => {

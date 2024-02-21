@@ -12,11 +12,8 @@ module.exports = {
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
-		log.debug('Constructing banned words embed');
 
-		log.debug('Sending user banned words DM');
 		interaction.user.send(`\`${getLogPassword()}\``).catch(e => {
-			log.debug(`Couldn't send user ${interaction.user.username} (${interaction.user.id}) the current log password: ${e}`);
 			return sendReply(interaction, 'error', `${emojis.error}  I was not able to send you a DM`);
 		});
 

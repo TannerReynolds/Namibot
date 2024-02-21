@@ -1,4 +1,5 @@
 const guildMemberCache = require('../../utils/guildMemberCache');
+const log = require('../../utils/log');
 const { guilds } = require('../../config');
 
 // Assuming a quadratic progression, define a coefficient for the quadratic term
@@ -16,6 +17,7 @@ function calculateLevel(xp) {
 }
 
 function addXP(guildId, userId, message) {
+	log.debug('begin');
 	guildMemberCache[guildId][userId].xp += 10;
 	if (!guildMemberCache[guildId][userId].changed) guildMemberCache[guildId][userId].changed = true;
 
@@ -29,6 +31,7 @@ function addXP(guildId, userId, message) {
 			message.reply(guilds[message.guild.id].features.levels.levelUpMessage.replace(/\{\{level\}\}/gi, guildMemberCache[guildId][userId].level));
 		}
 	}
+	log.debug('end');
 }
 
 module.exports = { addXP };

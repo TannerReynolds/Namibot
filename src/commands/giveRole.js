@@ -31,7 +31,6 @@ module.exports = {
 				targetMember = false;
 			} else {
 				targetMember = false;
-				log.debug(`failed to fetch member`);
 			}
 		}
 		if (!targetMember) return sendReply(interaction, 'error', 'This user is not a guild member');

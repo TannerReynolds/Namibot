@@ -11,10 +11,9 @@ module.exports = {
 		if (!guilds[interaction.guild.id].features.modMail) {
 			return sendReply(interaction, 'error', `${emojis.error}  This server does not have mod mail enabled`);
 		}
-		log.debug(`Getting Target...`);
+
 		let targetMessage = interaction.targetMessage || false;
 		if (targetMessage === undefined || !targetMessage) {
-			log.debug(`Target undefined`);
 			return sendReply(interaction, 'error', `${emojis.error}  This message does not exist`);
 		}
 
@@ -31,10 +30,8 @@ module.exports = {
 			return sendReply(interaction, 'error', `${emojis.error}  You already have an active mod mail. Please wait for a response before creating another.`);
 		}
 
-		log.debug(`Getting debug channel...`);
 		let mailChannel = await guild.channels.cache.get(guilds[interaction.guild.id].mailChannelID);
 
-		log.debug(`Getting avatar URL...`);
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 
 		let DMd;

@@ -5,6 +5,7 @@ const prisma = require('../../utils/prismaClient');
 const { getModChannels } = require('../../utils/getModChannels');
 
 async function antiBanNuke(ban, user) {
+	log.debug('begin');
 	if (!ban.guild) return;
 	if (user.id === ban.client.user.id) return;
 	let targetMember = ban.guild.members.fetch(user.id);
@@ -49,6 +50,7 @@ async function antiBanNuke(ban, user) {
 			type: 'KICK',
 		},
 	});
+	log.debug('end');
 }
 
 async function getBanner(ban) {

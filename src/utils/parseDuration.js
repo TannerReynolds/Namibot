@@ -19,12 +19,10 @@ const regexes = {
  * @returns {Date} The parsed date.
  */
 async function parseNewDate(duration) {
-	log.debug('Checking to see if date is Japanese');
 	if (isJP(duration)) duration = await toENTime(duration);
-	log.debug('Converting "m" to "mi" in parseNewDate');
+
 	duration = await mToMi(duration);
 	const parsedValues = {};
-	log.debug(`Parsed values: ${parsedValues}`);
 
 	for (const key in regexes) {
 		const match = duration.match(regexes[key]);
@@ -37,16 +35,13 @@ async function parseNewDate(duration) {
 	let now = DateTime.local();
 	let nowJS = new Date();
 	let nwd = now.plus(parsedDuration).toJSDate();
-	log.debug('checking nwd');
 
 	if (!nwd) return new Date(2100, 0, 1);
-	log.debug('nwd exists');
+
 	if (nowJS.setFullYear(nowJS.getFullYear() + 10) < nwd) {
-		log.debug(`nwd longer than 10 years: ${nwd}`);
 		return new Date(2100, 0, 1);
 	}
 
-	log.debug(`Returning nwd: ${nwd}`);
 	return nwd;
 }
 

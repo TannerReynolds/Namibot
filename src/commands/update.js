@@ -53,8 +53,6 @@ module.exports = {
 					sendReply(interaction, 'error', `Error occurred: ${error}`);
 					return;
 				}
-				log.debug(`stdout: ${stdout}`);
-				log.debug(`stderr: ${stderr}`);
 
 				sendReply(interaction, 'main', `Application updated to version \`${latestVersion}\`. Exiting...`);
 				process.exit();

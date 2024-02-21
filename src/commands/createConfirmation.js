@@ -17,7 +17,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Creating Confirmation Message...`);
-		log.debug(`Getting staff status...`);
+
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageRoles))
 			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 

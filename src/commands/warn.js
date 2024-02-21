@@ -33,7 +33,6 @@ module.exports = {
 				targetMember = false;
 			} else {
 				targetMember = false;
-				log.debug(`failed to fetch member`);
 			}
 		}
 		if (!targetMember) return sendReply(interaction, 'error', `${emojis.error}  This user is not a guild member`);
@@ -45,9 +44,7 @@ module.exports = {
 		let reason = interaction.options.getString('reason') ? interaction.options.getString('reason') : 'no reason provided';
 
 		if (targetMember) {
-			await targetMember.send(`You have been warned in ${interaction.guild.name} for \`${reason}\`.`).catch(() => {
-				log.debug("Couldn't send user WARN message");
-			});
+			await targetMember.send(`You have been warned in ${interaction.guild.name} for \`${reason}\`.`).catch(() => {});
 		}
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;

@@ -6,6 +6,7 @@ const { getModChannels } = require('../../utils/getModChannels');
 const log = require('../../utils/log');
 
 async function sentimentAnalysis(message) {
+	log.debug('begin');
 	if (message.author.bot) return;
 	if (!message.guild) return;
 	if (!message.content || message.content.length < 1) return;
@@ -90,7 +91,7 @@ async function sentimentAnalysis(message) {
 							)}\`\`\`\n`
 						);
 					} catch (e) {
-						log.debug(`couldn't DM user for sentiment analysis: ${e}`);
+						// do nothing
 					}
 				}
 			}
@@ -99,10 +100,10 @@ async function sentimentAnalysis(message) {
 		clearTimeout(timeoutId); // Clear the timeout if an error occurs
 
 		if (error.name === 'AbortError') {
-			log.debug('Fetch aborted due to timeout');
-		} else {
-			log.debug(`Failed to check message for moderation: ${error}`);
+			// do nothing
 		}
+
+		log.debug('end');
 	}
 }
 

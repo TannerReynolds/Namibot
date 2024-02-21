@@ -10,6 +10,7 @@ const log = require('../../utils/log');
  * @returns {Promise<void>}
  */
 async function editLog(message, oldMessage) {
+	log.debug('begin');
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	let newContent = 'N/A';
@@ -18,7 +19,7 @@ async function editLog(message, oldMessage) {
 		newContent = message.cleanContent || message.content;
 		oldContent = oldMessage.cleanContent || message.content;
 	} catch (e) {
-		log.debug('No message content');
+		// do nothing
 	}
 	if (newContent.length > 1024) {
 		newContent = `${newContent.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
@@ -51,6 +52,7 @@ async function editLog(message, oldMessage) {
 		embeds: [newEmbed],
 		content: `UserID: ${message.author.id}`,
 	});
+	log.debug('end');
 }
 
 module.exports = { editLog };

@@ -5,6 +5,7 @@ const prisma = require('../../utils/prismaClient');
 const { getModChannels } = require('../../utils/getModChannels');
 
 async function antiChannelNuke(channel, user) {
+	log.debug('begin');
 	if (!channel.guild) return;
 	let targetMember = channel.guild.members.fetch(user.id);
 
@@ -48,6 +49,7 @@ async function antiChannelNuke(channel, user) {
 			type: 'KICK',
 		},
 	});
+	log.debug('end');
 }
 
 async function channelDeletor(channel) {

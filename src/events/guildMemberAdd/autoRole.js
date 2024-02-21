@@ -12,7 +12,7 @@ async function autoRole(member) {
 		try {
 			await member.roles.add(role);
 		} catch (e) {
-			return log.debug(`Failed to add role to member ${member.user.username} | Role:${role} | ${e}`);
+			return;
 		}
 	}
 }

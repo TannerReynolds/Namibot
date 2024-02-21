@@ -35,7 +35,6 @@ module.exports = {
 				targetMember = false;
 			} else {
 				targetMember = false;
-				log.debug(`failed to fetch member`);
 			}
 		}
 		if (!targetMember) return sendReply(interaction, 'error', `${emojis.error}  This user is not a guild member`);
@@ -54,9 +53,7 @@ module.exports = {
 		let name = interaction.user.username;
 
 		if (targetMember) {
-			await targetMember.send(`You have been muted in ${interaction.guild.name} for \`${reason}\`. The length of your mute is ${durationString}.`).catch(() => {
-				log.debug("Couldn't send user MUTE message");
-			});
+			await targetMember.send(`You have been muted in ${interaction.guild.name} for \`${reason}\`. The length of your mute is ${durationString}.`).catch(() => {});
 		}
 
 		await targetMember.roles

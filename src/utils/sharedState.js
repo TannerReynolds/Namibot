@@ -1,4 +1,4 @@
-let debugMode = false;
+let debugMode = true;
 let highlightCoolDown = new Set();
 let logPassword = randomToken(32, true);
 let messageTimestamps = new Map();

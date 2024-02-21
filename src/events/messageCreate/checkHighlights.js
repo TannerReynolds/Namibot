@@ -10,9 +10,8 @@ const highlightsCache = require('../../utils/highlightsCache');
  * @returns {Promise<void>}
  */
 async function checkHighlights(message) {
+	log.debug('begin');
 	if (message.author.bot || !message.guild.id) return;
-
-	log.debug(`Checking highlights for message`);
 
 	const highlights = highlightsCache.get(message.guild.id);
 	if (!highlights || highlights.length === 0) return;
@@ -66,6 +65,7 @@ async function checkHighlights(message) {
 	}
 
 	await Promise.allSettled(dmPromises);
+	log.debug('end');
 }
 
 module.exports = { checkHighlights };

@@ -8,7 +8,6 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 
-		log.debug('upserting guild to database');
 		await prisma.guild.upsert({
 			where: { id: interaction.guild.id },
 			update: {},

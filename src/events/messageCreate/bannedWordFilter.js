@@ -73,7 +73,7 @@ async function wordFilter(content, message, modChannels) {
 
 		for (let bannedWord of bannedWords) {
 			if (word.toLowerCase().includes(bannedWord.toLowerCase())) {
-				log.debug(`Banned word detected: ${bannedWord} in ${word}`);
+				
 				message.reply('Banned word detected, please read and follow our rules regarding allowed language.').then(r => {
 					modChannels[message.guild.id].send(`<@${message.author.id}>(${message.author.id}) sent banned word: \`${word}\``);
 					message.delete();

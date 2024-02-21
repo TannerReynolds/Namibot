@@ -23,7 +23,6 @@ module.exports = {
 		let guildChoice = await interaction.options.getString('server');
 		let message = await interaction.options.getString('message');
 		let guild = interaction.client.guilds.cache.get(guildChoice);
-		log.debug(`Getting guild name: ${guild.name}`);
 
 		const existingMail = await prisma.mail.findFirst({
 			where: {
@@ -35,10 +34,8 @@ module.exports = {
 			return sendReply(interaction, 'error', `${emojis.error}  You already have an active mod mail. Please wait for a response before creating another.`);
 		}
 
-		log.debug(`Getting debug channel...`);
 		let mailChannel = await guild.channels.cache.get(guilds[guildChoice].mailChannelID);
 
-		log.debug(`Getting avatar URL...`);
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 
 		let mailEmbed = new EmbedBuilder()

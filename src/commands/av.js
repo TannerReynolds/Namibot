@@ -21,24 +21,16 @@ module.exports = {
 				ephemeral: true,
 			});
 
-		log.debug(`Getting Target...`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
-			log.debug(`Target undefined`);
 			return sendReply(interaction, 'error', 'This user does not exist');
 		}
-		log.debug(`Target: ${target}`);
 
-		log.debug(`Getting Target User`);
 		let targetUser = await interaction.client.users.cache.get(target);
 
 		if (!targetUser) {
-			log.debug(`Could not get target user`);
 			return interaction.editReply("Bot cannot access this user's data");
 		}
-
-		log.debug(`Target user username: ${targetUser.username}`);
-		log.debug(`Getting pfpURL...`);
 
 		let pfpURL = targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) ? targetUser.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) : targetUser.defaultAvatarURL;
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;

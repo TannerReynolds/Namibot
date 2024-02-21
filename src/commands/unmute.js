@@ -33,7 +33,6 @@ module.exports = {
 				targetMember = false;
 			} else {
 				targetMember = false;
-				log.debug(`failed to fetch member`);
 			}
 		}
 		if (!targetMember) return sendReply(interaction, 'error', `${emojis.error}  This user is not a guild member`);
@@ -60,7 +59,7 @@ module.exports = {
 			} catch (dbE) {
 				return log.error(`Could not remove mute from guild after member leave`);
 			}
-			log.debug(`User is not a member of this guild`);
+
 			return sendReply(interaction, 'error', `${emojis.error}  User is not a member of this guild`);
 		}
 

@@ -1,8 +1,10 @@
 const { unshortenURL } = require('../../utils/unshortenURL');
+const log = require('../../utils/log');
 const { EmbedBuilder } = require('discord.js');
 const { colors } = require('../../config');
 
 async function unshortenMessageURLs(message) {
+	log.debug('begin');
 	if (!message.guild) return;
 	if (message.author.bot) return;
 
@@ -22,6 +24,7 @@ async function unshortenMessageURLs(message) {
 			//let blockedDomainsMessage = { guild: message.guild, bot: false, content: urlString, client: message.client };
 		});
 	}
+	log.debug('end');
 }
 
 async function detectURL(string) {

@@ -30,7 +30,6 @@ module.exports = {
 				targetMember = false;
 			} else {
 				targetMember = false;
-				log.debug(`failed to fetch member`);
 			}
 		}
 		let canDoAction = await hasHigherPerms(interaction.member, targetMember);

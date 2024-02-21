@@ -4,6 +4,7 @@ const prisma = require('../../utils/prismaClient');
 const log = require('../../utils/log');
 
 async function confirmationButton(interaction) {
+	log.debug('begin');
 	await interaction.deferReply({ ephemeral: true });
 	if (!interaction.message) return;
 	if (!interaction.message.id) return;
@@ -34,13 +35,14 @@ async function confirmationButton(interaction) {
 			return;
 		} else {
 			targetMember = false;
-			return log.debug(`failed to fetch member`);
+			return;
 		}
 	}
 
 	targetMember.roles
 		.add(confirmation.roleID)
 		.then(() => {
+			log.debug('end');
 			return sendReply(interaction, 'main', `${emojis.success}  Role added!`);
 		})
 		.catch(e => {

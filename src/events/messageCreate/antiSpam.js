@@ -11,6 +11,7 @@ const prisma = require('../../utils/prismaClient');
  * @returns {Promise<void>} - A promise that resolves once the anti-spam measures are handled.
  */
 async function antiSpam(message) {
+	log.debug('begin');
 	const MAX_MENTIONS = 8;
 	const MAX_NEWLINES = 65;
 
@@ -39,7 +40,6 @@ async function antiSpam(message) {
 			.setDescription(`Reason: hitting the spam filter by ${reasons.join(', ')}`);
 		message.reply({ embeds: [replyEmbed] }).then(r => {
 			setTimeout(() => {
-				log.debug(`deleting response`);
 				return r.delete();
 			}, 5000);
 		});
@@ -84,6 +84,7 @@ async function antiSpam(message) {
 				log.error(`Could not send log message: ${e}`);
 			});
 	}
+	log.debug('end');
 }
 
 /**

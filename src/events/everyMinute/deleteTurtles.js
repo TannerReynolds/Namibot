@@ -21,10 +21,9 @@ async function deleteTurtles() {
 				log.error(`Couldn't get expiredTurts`);
 			});
 
-		if (!expiredTurts) return log.debug(`no expired turts`);
+		if (!expiredTurts) return;
 
 		for (let turt of expiredTurts) {
-			log.debug(`found turt`);
 			await prisma.turtleMode
 				.delete({
 					where: {

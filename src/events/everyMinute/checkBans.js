@@ -10,6 +10,7 @@ const log = require('../../utils/log');
  * @returns {Promise<void>} - A promise that resolves once the check and unbanning process is complete.
  */
 async function checkAndUnbanUsers(client, getModChannels) {
+	log.debug('begin');
 	try {
 		let now = new Date();
 
@@ -25,7 +26,7 @@ async function checkAndUnbanUsers(client, getModChannels) {
 				return log.error(`Couldn't get ban records`);
 			});
 
-		if (!expiredBans) return log.debug(`No expired bans`);
+		if (!expiredBans) return;
 
 		for (let ban of expiredBans) {
 			let guild = client.guilds.cache.get(ban.guildId);
@@ -38,7 +39,7 @@ async function checkAndUnbanUsers(client, getModChannels) {
 			try {
 				isBanned = await guild.bans.fetch(ban.userID);
 			} catch (e) {
-				return log.debug(`User is not banned`);
+				return;
 			}
 
 			if (!isBanned) {
@@ -100,6 +101,7 @@ async function checkAndUnbanUsers(client, getModChannels) {
 	} catch (error) {
 		return log.error('Failed to check and unban users:', error);
 	}
+	log.debug('end');
 }
 
 module.exports = { checkAndUnbanUsers };

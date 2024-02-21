@@ -1,6 +1,7 @@
 const ejs = require('ejs');
 const fs = require('fs-extra');
 const { getModChannels } = require('../../utils/getModChannels');
+const log = require('../../utils/log');
 const { EmbedBuilder, MessageAttachment } = require('discord.js');
 const { colors, server } = require('../../config');
 
@@ -12,6 +13,7 @@ const { colors, server } = require('../../config');
  * @returns {Promise<void>}
  */
 async function bulkDeleteLog(messages, channel, client) {
+	log.debug('begin');
 	let fileName = `bdl${randomToken(8)}`;
 	const stream = fs.createWriteStream(`./server/public/${fileName}.html`);
 	stream.once('open', () => {
@@ -52,6 +54,7 @@ async function bulkDeleteLog(messages, channel, client) {
 				});
 		}
 	});
+	log.debug('end');
 }
 
 module.exports = { bulkDeleteLog };

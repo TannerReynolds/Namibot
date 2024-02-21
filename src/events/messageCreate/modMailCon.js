@@ -1,5 +1,6 @@
 const { EmbedBuilder, ChannelType } = require('discord.js');
 const prisma = require('../../utils/prismaClient.js');
+const log = require('../../utils/log');
 const { colors, emojis } = require('../../config');
 
 /**
@@ -9,6 +10,7 @@ const { colors, emojis } = require('../../config');
  * @returns {Promise<void>} - A promise that resolves once the mod mail response is sent.
  */
 async function modMailServer(message) {
+	log.debug('begin server');
 	if (message.channel.type !== ChannelType.PublicThread) return;
 	if (message.author.bot) return;
 
@@ -38,6 +40,7 @@ async function modMailServer(message) {
 		.catch(e => {
 			message.reply(`${emojis.error}  Error sending message: ${e}`);
 		});
+	log.debug('end server');
 }
 
 /**
@@ -46,6 +49,7 @@ async function modMailServer(message) {
  * @returns {Promise<void>} - A promise that resolves once the response is sent.
  */
 async function modMailDM(message) {
+	log.debug('begin DM');
 	if (message.channel.type !== ChannelType.DM) return;
 	if (message.author.bot) return;
 
@@ -73,6 +77,7 @@ async function modMailDM(message) {
 				});
 		}
 	});
+	log.debug('end DM');
 }
 
 module.exports = { modMailServer, modMailDM };

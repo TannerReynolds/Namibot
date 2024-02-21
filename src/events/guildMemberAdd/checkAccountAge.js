@@ -10,6 +10,7 @@ const log = require('../../utils/log');
  * @returns {Promise<void>} - A promise that resolves once the account age check is complete.
  */
 async function checkAccountAge(member) {
+	log.debug('begin');
 	let age = member.user.createdAt;
 	let daysReq = c.guilds[member.guild.id].features.checkAccountAge.days;
 	let today = new Date();
@@ -60,8 +61,8 @@ async function checkAccountAge(member) {
 				.send(
 					`You have been banned from ${member.guild.name} for \`Suspected bot account\`. The length of your ban is Eternity. If you want to appeal this ban, run the /appeal command and fill out the information! To run the /appeal command here in our DMs, you need to join the bot's server:\n${c.appealServer}`
 				)
-				.catch(e => {
-					log.debug(`Error sending user message: ${e}`);
+				.catch(() => {
+					// do nothing
 				});
 			member.guild.bans
 				.create(member.user.id, {
@@ -87,6 +88,7 @@ async function checkAccountAge(member) {
 				});
 		}
 	}
+	log.debug('end');
 }
 
 module.exports = { checkAccountAge };

@@ -21,9 +21,7 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 					},
 				},
 			})
-			.catch(() => {
-				log.debug(`Couldn't get expired mutes`);
-			});
+			.catch(() => {});
 
 		if (!expiredMutes) return;
 
@@ -50,7 +48,7 @@ async function checkAndUnmuteUsers(client, getModChannels) {
 			try {
 				guildMember = await guild.members.fetch(mute.userID);
 			} catch (e) {
-				return log.debug(`couldn't get guildMember object for muted member`);
+				return;
 			}
 
 			guildMember.roles.remove(guilds[mute.guildId].muteRoleID).then(() => {

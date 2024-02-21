@@ -62,7 +62,7 @@ module.exports = {
 				});
 				sendReply(interaction, interaction, 'success', 'Deleted role from list!');
 			} catch (err) {
-				log.debug(err);
+				log.error(err);
 				sendReply(interaction, interaction, 'error', 'Could not delete role');
 			}
 		}

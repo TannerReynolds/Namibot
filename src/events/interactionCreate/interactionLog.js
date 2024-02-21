@@ -4,6 +4,7 @@ const log = require('../../utils/log');
 const { getModChannels } = require('../../utils/getModChannels');
 
 async function interactionLog(interaction) {
+	log.debug('begin');
 	let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 	let name = interaction.user.username;
 
@@ -19,6 +20,7 @@ async function interactionLog(interaction) {
 		log.error(`Error forming the interaction log embed: ${e}`);
 	}
 
+	log.debug('end');
 	return getModChannels(interaction.client, interaction.guild.id)
 		.secondary.send({ embeds: [logEmbed], content: `${interaction.user.username} (${interaction.user.id})` })
 		.catch(e => {

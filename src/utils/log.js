@@ -68,16 +68,11 @@ function debug(log) {
 		// Create a new error so that we can extract the file name and line number
 		const err = new Error();
 		if (err === null) return;
-		// @ts-ignore | Thinks that "err" has a possibility of not being defined.
 		const stackLines = err.stack.split('\n');
 
 		const lineInfo = stackLines[2].trim();
 
-		//console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.yellow} | //////////////// DEBUG LOG ////////////////${endColor}`);
-		//console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.yellow} | Location: ${lineInfo}${endColor}`);
-		//console.log(`${beginningArrow}${bg.cyan}[${timestamp()}]${endColor}${fg.black}${bg.yellow} | ${log}${endColor}${endColor}`);
-
-		let logText = `//////////////// DEBUG LOG ////////////////\nLocation: ${lineInfo}\n[${timestamp()}] | ${log}\n`;
+		let logText = `//////////////// Begin\nLocation: ${lineInfo}\n[${timestamp()}] | ${log}\n//////////////// End\n`;
 		debugLogs.push(logText);
 	}
 }
@@ -85,7 +80,7 @@ function debug(log) {
 function writeDebugLogs() {
 	if (debugLogs.length === 0) return;
 	verbose('Writing debug logs to debug.log');
-	fs.writeFileSync('debug.log', debugLogs.join('\n'), 'utf8');
+	fs.writeFileSync(`${randomToken(5, false)}debug.log`, debugLogs.join('\n'), 'utf8');
 	success('Debug logs written to debug.log');
 }
 
@@ -97,3 +92,18 @@ module.exports = {
 	debug,
 	writeDebugLogs,
 };
+
+function randomToken(number, symbols) {
+	number = parseInt(number, 10);
+	let text = '';
+	let possible;
+	if (symbols !== true) {
+		possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	} else {
+		possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()-_=+[]{}|;:/?><,.';
+	}
+	for (let i = 0; i < number; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
+}

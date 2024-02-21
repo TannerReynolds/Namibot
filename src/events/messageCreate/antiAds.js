@@ -11,11 +11,12 @@ const { Worker } = require('worker_threads');
  * @param {Message} message - The message object.
  */
 async function antiAds(message) {
+	log.debug('begin');
 	if (!message.channel.guild) return;
 	if (message.author.bot) return;
-	log.debug(`Checking message content for advertisements: ${message.content}`);
+
 	if (!message.content.toLowerCase().includes('discord')) {
-		return log.debug("Didn't include word Discord");
+		return;
 	}
 
 	let sentAd = await checkAds(guilds, message.content, message.guild.id);
@@ -23,7 +24,7 @@ async function antiAds(message) {
 	if (!sentAd || typeof sentAd !== 'string') return;
 
 	if (isStaff(message, message.member, PermissionFlagsBits.ManageMessages)) {
-		return log.debug(`invite detected, but staff sent it`);
+		return;
 	}
 
 	async function checkAds(guilds, content, guildID) {
@@ -44,9 +45,7 @@ async function antiAds(message) {
 
 	message.author
 		.send('You have been warned for sending a Discord invite link. Please do not send them before clearing it with staff. If you wish to partner with us, please DM the owners of the server')
-		.catch(() => {
-			log.debug(`Couldn't send message to author`);
-		});
+		.catch(() => {});
 
 	message.member.timeout(60_000 * 10, 'Invite Link Sent').catch(e => {
 		log.error(`Couldn't time out member: ${e}`);
@@ -86,6 +85,7 @@ async function antiAds(message) {
 		.catch(e => {
 			log.error(`couldn't add warning to database: ${e}`);
 		});
+	log.debug('end');
 }
 
 module.exports = { antiAds };

@@ -23,22 +23,18 @@ module.exports = {
 		let guildChoice = await interaction.options.getString('server');
 		let reason = await interaction.options.getString('reason');
 		let guild = interaction.client.guilds.cache.get(guildChoice);
-		log.debug(`Getting guild name: ${guild.name}`);
 
-		log.debug(`Looking for guild ban...`);
 		let ban = false;
 		try {
 			ban = await guild.bans.fetch(interaction.user.id);
 		} catch (e) {
-			log.debug(`User is not banned from guild: ${e}`);
+			ban = false;
 		}
 
 		if (!ban) {
-			log.debug(`Did not find ban in ${guild.name} for ${interaction.user.username}`);
 			return interaction.editReply(`You are not banned from ${guild.name}`);
 		}
 
-		log.debug(`Getting debug channel...`);
 		let mailChannel = await guild.channels.cache.get(guilds[guildChoice].mailChannelID);
 
 		let dbBan = await prisma.ban
@@ -64,14 +60,12 @@ module.exports = {
 			return sendReply(interaction, 'error', 'You already have an active mod mail. Please wait for a response before creating another.');
 		}
 
-		log.debug(`Getting avatar URL...`);
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		if (ban.reason.length > 1024) {
 			ban.reason = `${ban.reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
 		}
 		let logEmbed;
 		if (!dbBan) {
-			log.debug('No ban found...');
 			logEmbed = new EmbedBuilder()
 				.setColor(colors.main)
 				.setTitle('New Ban Appeal')
@@ -80,7 +74,6 @@ module.exports = {
 				.setAuthor({ name: interaction.user.username, iconURL: aviURL })
 				.setTimestamp();
 		} else {
-			log.debug('Ban found');
 			if (dbBan.endDate === new Date(2100, 0, 1)) dbBan.duration = 'Eternity';
 
 			logEmbed = new EmbedBuilder()

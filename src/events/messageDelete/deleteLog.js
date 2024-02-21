@@ -1,8 +1,10 @@
 const { getModChannels } = require('../../utils/getModChannels');
+const log = require('../../utils/log');
 const { EmbedBuilder } = require('discord.js');
 const { colors } = require('../../config');
 
 async function deleteLog(message) {
+	log.debug('begin');
 	if (!message.guild) return;
 	if (message.author.bot) return;
 	let content = message.cleanContent || message.content;
@@ -32,6 +34,7 @@ async function deleteLog(message) {
 			content: `UserID: ${message.author.id}`,
 		});
 	}
+	log.debug('end');
 }
 
 module.exports = { deleteLog };

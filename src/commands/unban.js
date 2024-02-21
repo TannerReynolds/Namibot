@@ -59,7 +59,6 @@ module.exports = {
 				});
 			})
 			.catch(e => {
-				log.debug(`Error on unbanning user: ${target}\n\n${e}`);
 				return sendReply(interaction, 'error', `${emojis.error}  Error unbanning member: ${e}`);
 			});
 
