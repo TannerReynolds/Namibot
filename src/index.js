@@ -555,13 +555,10 @@ if (server.enabled) {
 	});
 }
 
-/*
-process.on('unhandledRejection', async err => {
-	log.error(err.stack);
-});
-*/
 process.on('uncaughtException', async err => {
 	log.error(err.stack);
+	log.debug(`Err: ${err}`)
+	log.debug(`Err Stack: ${err.stack}`)
 	await syncMemberCache();
 	await log.writeDebugLogs();
 	await prisma.$disconnect();
@@ -570,6 +567,7 @@ process.on('uncaughtException', async err => {
 
 process.on('SIGINT', async () => {
 	log.verbose('Caught SIGINT... Exiting');
+	log.debug('Caught SIGINT... Exiting');
 	await syncMemberCache();
 	await log.writeDebugLogs();
 	await prisma.$disconnect();
@@ -578,6 +576,7 @@ process.on('SIGINT', async () => {
 
 process.on('SIGTERM', async () => {
 	log.verbose('Caught SIGTERM... Exiting');
+	log.debug('Caught SIGTERM... Exiting');
 	await syncMemberCache();
 	await log.writeDebugLogs();
 	await prisma.$disconnect();
