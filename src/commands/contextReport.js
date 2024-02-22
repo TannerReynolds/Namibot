@@ -1,8 +1,9 @@
-const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder } = require('discord.js');
+const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
 const { guilds, colors, emojis } = require('../config');
 const log = require('../utils/log.js');
 const { sendReply } = require('../utils/sendReply');
 const prisma = require('../utils/prismaClient');
+const { randomToken } = require('../utils/randomToken');
 
 module.exports = {
 	data: new ContextMenuCommandBuilder().setName('Report Message').setDMPermission(false).setType(ApplicationCommandType.Message),
@@ -26,73 +27,26 @@ module.exports = {
 			},
 		});
 
+		let mailStatus = 1;
 		if (existingMail) {
-			return sendReply(interaction, 'error', `${emojis.error}  You already have an active mod mail. Please wait for a response before creating another.`);
+			mailStatus = 0;
 		}
 
-		let mailChannel = await guild.channels.cache.get(guilds[interaction.guild.id].mailChannelID);
+            // Create a modal
+            const modal = new ModalBuilder()
+                .setCustomId(`report_${randomToken(16, false)}_${message.id}_${mailStatus}`)
+                .setTitle('Report Message');
+            const textInput = new TextInputBuilder()
+                .setCustomId('reason')
+                .setLabel('Why are you reporting this message, and is there any additional information you want to include?')
+                .setStyle(TextInputStyle.Paragraph);
 
-		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
+            // Add components to modal
+            const firstActionRow = new ActionRowBuilder().addComponents(textInput);
+            modal.addComponents(firstActionRow);
 
-		let DMd;
-		try {
-			await interaction.user.send(
-				`You have reported message: \`${message.content}\`\nThis DM channel will now act as a link between you and the server staff for 7 days so that we can collect more information and process your report. All messages sent here will be sent to your report.`
-			);
-			DMd = true;
-		} catch (e) {
-			DMd = false;
-		}
-
-		let content = message.cleanContent || message.content;
-		if (content.length > 1024) {
-			content = `${content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
-		}
-
-		let mailEmbed = new EmbedBuilder()
-			.setTitle(`Message Report From ${interaction.user.username} (${interaction.user.id})`)
-			.setColor(colors.main)
-			.setDescription(`Message from <@${message.author.id}> reported`)
-			.addFields({ name: 'Message Content', value: `\`${content}\`` })
-			.setAuthor({ name: interaction.user.username, iconURL: aviURL });
-
-		mailChannel.threads
-			.create({
-				name: `Message Report From ${interaction.user.username}`,
-				reason: `Message Report From ${interaction.user.username} (${interaction.user.id})`,
-				message: { embeds: [mailEmbed], content: `Creator: <@${interaction.user.id}> | Member Reported: <@${message.author.id}>` },
-			})
-			.then(forumPost => {
-				let wipeDate = new Date();
-				wipeDate.setDate(wipeDate.getDate() + 7);
-				prisma.mail
-					.create({
-						data: {
-							userID: interaction.user.id,
-							guildId: interaction.guild.id,
-							postID: forumPost.id,
-							date: wipeDate,
-						},
-					})
-					.then(() => {
-						if (DMd) {
-							return sendReply(interaction, 'main', `${emojis.success}  Report Sent! See your DMs for more information!`);
-						} else {
-							return sendReply(
-								interaction,
-								'main',
-								`${emojis.success}  Report Sent! Your DMs are closed, so the staff members cannot start a communication line with your in your report channel. Please look out for friend requests from staff members.`
-							);
-						}
-					})
-					.catch(e => {
-						log.error(`Error creating mod mail: ${e}`);
-						return sendReply(interaction, 'error', `${emojis.error}  Error creating mod mail: ${e}`);
-					});
-			})
-			.catch(e => {
-				log.error(`Error creating thread: ${e}`);
-				return sendReply(interaction, 'error', `${emojis.error}  Error creating thread: ${e}`);
-			});
+            // Show the modal to the user
+			sendReply(interaction, 'success', 'Showing report menu')
+            await interaction.showModal(modal);
 	},
 };

@@ -247,6 +247,16 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
 	}
 
+	if (interaction.type === InteractionType.ModalSubmit) {
+        // Modal Types
+		// * report
+		let args = interaction.customId.split('_');
+		let modalType = args[0]
+		if(modalType === 'report') reportSubmission(interaction, args)
+
+        await interaction.reply({ content: 'Report received.', ephemeral: true });
+    }
+
 	if (ratelimited.has(interaction.user.id)) {
 		let cooldownEmbed = new EmbedBuilder().setTitle(`Please wait a few seconds before running another command!`).setColor(colors.main).setTimestamp();
 		return interaction.reply({ embeds: [cooldownEmbed] });
