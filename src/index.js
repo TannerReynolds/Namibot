@@ -94,6 +94,7 @@ const { addXP } = require(`${mCreate}levels`);
 const { sentimentAnalysis } = require(`${mCreate}sentimentAnalysis`);
 const { antiChannelNuke, channelDeletor } = require(`${cDelete}antiChannelNuke`);
 const { antiBanNuke, getBanner } = require(`${gBanAdd}antiBanNuke`);
+const { reportSubmission } = require(`${interactionCreate}reportSubmission`);
 const prisma = require(`${utils}prismaClient`);
 const guildMemberCache = require(`${utils}guildMemberCache`);
 

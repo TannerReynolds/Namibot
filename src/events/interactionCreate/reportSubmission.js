@@ -47,6 +47,14 @@ async function reportSubmission(interaction, args) {
 		content = `${content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
 	}
 
+	let typedComments = false;
+	try {
+		typedComments = interaction.fields.getTextInputValue('reason');
+	}
+	catch(e) {
+		// do nothing
+	}
+
 	let connectionMade = true;
 	if (DMd === false) connectionMade = false;
 	if (DMd === true && mailStatus === '0') connectionMade = false;
@@ -58,6 +66,10 @@ async function reportSubmission(interaction, args) {
 		.addFields({ name: 'Message Content', value: `\`${content}\`` })
 		.addFields({ name: 'Message Connection Opened With Reporter', value: `${connectionMade}` })
 		.setAuthor({ name: interaction.user.username, iconURL: aviURL });
+
+		if(typedComments) {
+			mailEmbed.addFields({ name: 'Additional Comments From Reporter', value: typedComments})
+		}
 
 	mailChannel.threads
 		.create({
