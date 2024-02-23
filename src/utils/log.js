@@ -72,7 +72,7 @@ function debug(log) {
 
 		const lineInfo = stackLines[2].trim();
 
-		let logText = `//////////////// Begin\nLocation: ${lineInfo}\n[${timestamp()}] | ${log}\n//////////////// End\n`;
+		let logText = `////////////////\nLocation: ${lineInfo}\n[${timestamp()}] | ${log}\n////////////////\n`;
 		debugLogs.push(logText);
 	}
 }
