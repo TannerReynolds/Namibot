@@ -32,7 +32,7 @@ function timestamp() {
 	});
 }
 
-const debugLogs = [];
+let debugLogs = [];
 function debugMode() {
 	return sharedState.getDebugMode();
 }
@@ -80,8 +80,9 @@ function debug(log) {
 function writeDebugLogs() {
 	if (debugLogs.length === 0) return;
 	verbose('Writing debug logs to debug.log');
-	fs.writeFileSync(`${randomToken(5, false)}debug.log`, debugLogs.join('\n'), 'utf8');
+	fs.writeFileSync(`${randomToken(7, false)}debug.log`, debugLogs.join('\n'), 'utf8');
 	success('Debug logs written to debug.log');
+	debugLogs = [];
 }
 
 module.exports = {

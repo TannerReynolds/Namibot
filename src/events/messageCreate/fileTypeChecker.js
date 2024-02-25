@@ -8,76 +8,81 @@ const log = require('../../utils/log');
  */
 async function fileTypeChecker(message) {
 	log.debug('begin');
-	if (!message.channel.guild) return;
-	if (message.author.bot) return;
+	if (!message.channel.guild) return log.debug('end');
+	if (message.author.bot) return log.debug('end');
 
-	let hasFile = false;
+	try {
+		let hasFile = false;
 
-	let bannedFileTypes = [
-		'.exe',
-		'.js',
-		'.bat',
-		'.cmd',
-		'.vbs',
-		'.ps1',
-		'.msi',
-		'.dll',
-		'.jar',
-		'.reg',
-		'.lnk',
-		'.scr',
-		'.pdf',
-		'.doc',
-		'.docx',
-		'.xls',
-		'.xlsx',
-		'.ppt',
-		'.pptx',
-		'.zip',
-		'.7z',
-		'.rar',
-		'.tar',
-		'.gz',
-		'.bz2',
-		'.xz',
-		'.lz',
-		'.lzma',
-		'.lz4',
-		'.z',
-		'.zipx',
-		'.iso',
-	];
+		let bannedFileTypes = [
+			'.exe',
+			'.js',
+			'.bat',
+			'.cmd',
+			'.vbs',
+			'.ps1',
+			'.msi',
+			'.dll',
+			'.jar',
+			'.reg',
+			'.lnk',
+			'.scr',
+			'.pdf',
+			'.doc',
+			'.docx',
+			'.xls',
+			'.xlsx',
+			'.ppt',
+			'.pptx',
+			'.zip',
+			'.7z',
+			'.rar',
+			'.tar',
+			'.gz',
+			'.bz2',
+			'.xz',
+			'.lz',
+			'.lzma',
+			'.lz4',
+			'.z',
+			'.zipx',
+			'.iso',
+		];
 
-	let urls = (await detectURL(message.content)) || false;
+		let urls = (await detectURL(message.content)) || false;
 
-	if (urls && urls.length > 0) {
-		urls.some(u => {
-			let paramRemoval = u.split('?')[0].split('#')[0];
-			let extension = `.${paramRemoval.split('.').pop().toLowerCase()}`;
+		if (urls && urls.length > 0) {
+			urls.some(u => {
+				let paramRemoval = u.split('?')[0].split('#')[0];
+				let extension = `.${paramRemoval.split('.').pop().toLowerCase()}`;
 
-			if (bannedFileTypes.some(type => extension.endsWith(type))) {
-				hasFile = true;
-				return true;
-			}
-			return false;
-		});
+				if (bannedFileTypes.some(type => extension.endsWith(type))) {
+					hasFile = true;
+					return true;
+				}
+				return false;
+			});
+		}
+
+		if (message.attachments.size > 0) {
+			hasFile = message.attachments.some(a => a.name && bannedFileTypes.some(type => a.name.includes(`.${type}`)));
+		}
+
+		if (hasFile) {
+			message.reply('Potentially malicious file type detected.').then(r => {
+				message.delete();
+				setTimeout(() => {
+					r.delete();
+				}, 4000);
+			});
+		} else {
+			return log.debug('end');
+		}
+
+		log.debug('end');
+	} catch (e) {
+		log.error(`Error in fileTypeChecker: ${e}`);
 	}
-
-	if (message.attachments.size > 0) {
-		hasFile = message.attachments.some(a => a.name && bannedFileTypes.some(type => a.name.includes(`.${type}`)));
-	}
-
-	if (hasFile) {
-		message.reply('Potentially malicious file type detected.').then(r => {
-			message.delete();
-			setTimeout(() => {
-				r.delete();
-			}, 4000);
-		});
-	} else {
-		return;
-	}
-
 	/**
 	 * Detects URLs in a string.
 	 * @param {string} string - The string to be checked for URLs.
@@ -87,7 +92,6 @@ async function fileTypeChecker(message) {
 		const urlReg = /https?:\/\/(www\.)?[a-zA-Z0-9\-.]+[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]*/g;
 		return string.match(urlReg);
 	}
-	log.debug('end');
 }
 
 module.exports = { fileTypeChecker };

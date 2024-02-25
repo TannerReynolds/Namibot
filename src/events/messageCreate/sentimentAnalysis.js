@@ -7,13 +7,14 @@ const log = require('../../utils/log');
 
 async function sentimentAnalysis(message) {
 	log.debug('begin');
-	if (message.author.bot) return;
-	if (!message.guild) return;
-	if (!message.content || message.content.length < 1) return;
-	if (message.content.length > 1999) return;
+	if (message.author.bot) return log.debug('end');
+	if (!message.guild) return log.debug('end');
+	const guildID = message.guild?.id;
+	if (!message.content || message.content.length < 1) return log.debug('end');
+	if (message.content.length > 1999) return log.debug('end');
 
 	const url = 'https://api.openai.com/v1/moderations';
-	const openAIToken = guilds[message.guild.id].features.sentimentAnalysis.openAIToken;
+	const openAIToken = guilds[guildID].features.sentimentAnalysis.openAIToken;
 
 	const controller = new AbortController();
 	const signal = controller.signal;
@@ -67,20 +68,20 @@ async function sentimentAnalysis(message) {
 				log.error(`Error forming the log embed: ${e}`);
 			}
 
-			if (scores.some(score => score > guilds[message.guild.id].features.sentimentAnalysis.sensitivity)) {
-				let negativeMessages = guildMemberCache[message.guild.id][message.author.id].negativeMessages || false;
+			if (scores.some(score => score > guilds[guildID].features.sentimentAnalysis.sensitivity)) {
+				let negativeMessages = guildMemberCache[guildID][message.author.id].negativeMessages || false;
 				if (!negativeMessages || negativeMessages < 1) {
-					guildMemberCache[message.guild.id][message.author.id].negativeMessages = 1;
+					guildMemberCache[guildID][message.author.id].negativeMessages = 1;
 				} else {
-					guildMemberCache[message.guild.id][message.author.id].negativeMessages += 1;
+					guildMemberCache[guildID][message.author.id].negativeMessages += 1;
 				}
-				if (!guildMemberCache[message.guild.id][message.author.id].changed) guildMemberCache[message.guild.id][message.author.id].changed = true;
-				getModChannels(message.client, message.guild.id)
+				if (!guildMemberCache[guildID][message.author.id].changed) guildMemberCache[guildID][message.author.id].changed = true;
+				getModChannels(message.client, guildID)
 					.secondary.send({ embeds: [logEmbed], content: `<@${message.author.id}> | ${message.url}` })
 					.catch(e => {
 						log.error(`Error sending log to guild main log channel: ${e}`);
 					});
-				if (guilds[message.guild.id].features.sentimentAnalysis.dmUsers) {
+				if (guilds[guildID].features.sentimentAnalysis.dmUsers) {
 					try {
 						message.author.send(
 							`Your message in ${

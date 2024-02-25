@@ -20,7 +20,7 @@ if (process.argv[0]) {
 //////////////////////////////////////
 // external lib requires
 
-const { Client, Events, Collection, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder, ChannelType } = require('discord.js');
+const { Client, Events, Collection, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder, ChannelType, InteractionType } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
 const express = require('express');
@@ -240,22 +240,28 @@ const ratelimited = new Set();
 const pingStaffRatelimited = new Set();
 
 client.on(Events.InteractionCreate, async interaction => {
-	if (interaction.isButton()) {
-		let id = interaction.component.customId;
-		if (id === 'confirmation') {
-			await confirmationButton(interaction);
-			return;
+	try {
+		if (interaction.isButton()) {
+			let id = interaction.component.customId;
+			if (id === 'confirmation') {
+				await confirmationButton(interaction);
+				return;
+			}
 		}
+	} catch (e) {
+		log.error(`Error in interactionCreate (button processing): ${e}`);
 	}
 
-	if (interaction.type === InteractionType.ModalSubmit) {
-		// Modal Types
-		// * report
-		let args = interaction.customId.split('_');
-		let modalType = args[0];
-		if (modalType === 'report') reportSubmission(interaction, args);
-
-		await interaction.reply({ content: 'Report received.', ephemeral: true });
+	try {
+		if (interaction.type === InteractionType.ModalSubmit) {
+			// Modal Types
+			// * report
+			let args = interaction.customId.split('_');
+			let modalType = args[0];
+			if (modalType === 'report') return reportSubmission(interaction, args);
+		}
+	} catch (e) {
+		log.error(`Error in interactionCreate (modal processing): ${e}`);
 	}
 
 	if (ratelimited.has(interaction.user.id)) {
@@ -285,9 +291,11 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	const command = interaction.client.commands.get(interaction.commandName);
 
-	if (interaction.guild.id && guilds[interaction.guild.id].commands[interaction.commandName]) {
-		if (!guilds[interaction.guild.id].commands[interaction.commandName].enabled) {
-			return interaction.reply({ content: 'This command is disabled in this server', ephemeral: true });
+	if (interaction.guild) {
+		if (guilds[interaction.guild.id].commands[interaction.commandName]) {
+			if (!guilds[interaction.guild.id].commands[interaction.commandName].enabled) {
+				return interaction.reply({ content: 'This command is disabled in this server', ephemeral: true });
+			}
 		}
 	}
 
@@ -417,16 +425,20 @@ client.on(Events.MessageBulkDelete, async (messages, channel) => {
 client.on(Events.MessageUpdate, async (oldMessage, message) => {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
-	let guildMember = false;
 	try {
-		guildMember = await message.guild.members.fetch(message.author.id);
+		if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
+		let guildMember = false;
+		try {
+			guildMember = await message.guild.members.fetch(message.author.id);
+		} catch (e) {
+			// do nothing
+		}
+		let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
+		await messageEvents(isStaffBool, message, oldMessage);
+		if (guilds[message.guild.id].logs.messageUpdate) await editLog(message, oldMessage);
 	} catch (e) {
-		// do nothing
+		log.error(`Error in messageUpdate event: ${e}`);
 	}
-	let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
-	await messageEvents(isStaffBool, message, oldMessage);
-	if (guilds[message.guild.id].logs.messageUpdate) await editLog(message, oldMessage);
 });
 
 const recentChatter = new Set();
@@ -443,6 +455,7 @@ client.on(Events.MessageCreate, async message => {
 	await modMailDM(message);
 	if (!message.guild) return;
 	let guildMember = false;
+	const guildID = message.guild?.id;
 
 	try {
 		guildMember = await message.guild.members.fetch(message.author.id);
@@ -452,61 +465,74 @@ client.on(Events.MessageCreate, async message => {
 
 	let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
 
-	if (guilds[message.guild.id].features.antiAds.enabled) await antiAds(message);
+	if (guilds[guildID].features.antiAds.enabled) await antiAds(message);
 
-	if (guilds[message.guild.id].features.antiSpam && !isStaff) await antiSpam(message);
+	if (guilds[guildID].features.antiSpam && !isStaff) await antiSpam(message);
 
 	await messageEvents(isStaffBool, message, guildMember);
 
-	if (guilds[message.guild.id].features.sentimentAnalysis.enabled) await sentimentAnalysis(message);
-
-	if (!guildMemberCache[message.guild.id] || !guildMemberCache[message.guild.id][message.author.id]) {
-		guildMemberCache[message.guild.id][message.author.id] = { xp: 0, level: 1, changed: false };
-	}
-	if (guilds[message.guild.id].features.levels.enabled) {
-		let compositeKey = `${message.guild.id}:${message.author.id}`;
-		let totalMessages = guildMemberCache[message.guild.id][message.author.id].totalMessages || false;
-		if (!totalMessages) {
-			guildMemberCache[message.guild.id][message.author.id].totalMessages = 1;
+	try {
+		if (!guildMemberCache[guildID] || !guildMemberCache[guildID][message.author.id]) {
+			guildMemberCache[guildID][message.author.id] = { xp: 0, level: 1, changed: false };
+		}
+		if (guilds[guildID].features.levels.enabled) {
+			let compositeKey = `${guildID}:${message.author.id}`;
+			let totalMessages = guildMemberCache[guildID][message.author.id].totalMessages || false;
+			if (!totalMessages) {
+				guildMemberCache[guildID][message.author.id].totalMessages = 1;
+			} else {
+				guildMemberCache[guildID][message.author.id].totalMessages += 1;
+			}
+			if (!recentChatter.has(compositeKey)) {
+				await addXP(guildID, message.author.id, message);
+				recentChatter.add(compositeKey);
+				setTimeout(() => recentChatter.delete(compositeKey), 60_000);
+			}
 		} else {
-			guildMemberCache[message.guild.id][message.author.id].totalMessages += 1;
+			let totalMessages = guildMemberCache[guildID][message.author.id].totalMessages || false;
+			if (!totalMessages) {
+				guildMemberCache[guildID][message.author.id].totalMessages = 1;
+			} else {
+				guildMemberCache[guildID][message.author.id].totalMessages += 1;
+			}
+			if (!guildMemberCache[guildID][message.author.id].changed) guildMemberCache[guildID][message.author.id].changed = true;
 		}
-		if (!recentChatter.has(compositeKey)) {
-			await addXP(message.guild.id, message.author.id, message);
-			recentChatter.add(compositeKey);
-			setTimeout(() => recentChatter.delete(compositeKey), 60_000);
-		}
-	} else {
-		let totalMessages = guildMemberCache[message.guild.id][message.author.id].totalMessages || false;
-		if (!totalMessages) {
-			guildMemberCache[message.guild.id][message.author.id].totalMessages = 1;
-		} else {
-			guildMemberCache[message.guild.id][message.author.id].totalMessages += 1;
-		}
-		if (!guildMemberCache[message.guild.id][message.author.id].changed) guildMemberCache[message.guild.id][message.author.id].changed = true;
+	} catch (e) {
+		log.error(`Error in messageCreate (levels): ${e}`);
 	}
 
 	await checkHighlights(message);
+
+	if (guilds[guildID].features.sentimentAnalysis.enabled) await sentimentAnalysis(message);
 });
 
 client.on(Events.MessageDelete, async message => {
 	if (!message.guild) return;
 	if (message.author.bot) return;
-	if (guilds[message.guild.id].logs.messageDelete) await deleteLog(message);
+	try {
+		if (guilds[message.guild.id].logs.messageDelete) await deleteLog(message);
+	} catch (e) {
+		log.error(`Error in messageDelete event: ${e}`);
+	}
 });
 
 async function messageEvents(isStaffBool, message, guildMember, oldMessage) {
 	if (!message.guild) return;
-	let content = message.content || 'N/A';
-	if (guilds[message.guild.id].features.fileTypeChecker) await fileTypeChecker(message);
-	await turtleCheck(message, guildMember);
-	//Ignoring staff
-	if (!isStaffBool) {
-		if (guilds[message.guild.id].features.gifDetector.enabled) await gifDetector(message);
+	try {
+		const guildID = message.guild?.id;
+		let content = message.content || 'N/A';
+		if (guilds[guildID].features.fileTypeChecker) await fileTypeChecker(message);
+		await turtleCheck(message, guildMember);
+		//Ignoring staff
+		if (!isStaffBool) {
+			if (guilds[guildID].features.gifDetector.enabled) await gifDetector(message);
+		}
+		if (!oldMessage) oldMessage = false;
+		//Not ignoring staff
+		if (guilds[guildID].features.hiddenLinkDetection) await checkForInlineURLs(client, content, message, oldMessage);
+	} catch (e) {
+		log.error(`Error in messageEvents function: ${e}`);
 	}
-	if (!oldMessage) oldMessage = false;
-	//Not ignoring staff
-	if (guilds[message.guild.id].features.hiddenLinkDetection) await checkForInlineURLs(client, content, message, oldMessage);
 }
 
 client.login(token);
@@ -572,8 +598,6 @@ process.on('uncaughtException', async err => {
 	log.debug(`Err Stack: ${err.stack}`);
 	await syncMemberCache();
 	await log.writeDebugLogs();
-	await prisma.$disconnect();
-	process.exit(0);
 });
 
 process.on('SIGINT', async () => {

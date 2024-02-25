@@ -17,21 +17,26 @@ function calculateLevel(xp) {
 }
 
 function addXP(guildId, userId, message) {
-	log.debug('begin');
-	guildMemberCache[guildId][userId].xp += 10;
-	if (!guildMemberCache[guildId][userId].changed) guildMemberCache[guildId][userId].changed = true;
+	if (!message.guild) return log.debug('end');
+	try {
+		log.debug('begin');
+		guildMemberCache[guildId][userId].xp += 10;
+		if (!guildMemberCache[guildId][userId].changed) guildMemberCache[guildId][userId].changed = true;
 
-	let newLevel = calculateLevel(guildMemberCache[guildId][userId].xp);
+		let newLevel = calculateLevel(guildMemberCache[guildId][userId].xp);
 
-	if (newLevel !== guildMemberCache[guildId][userId].level) {
-		guildMemberCache[guildId][userId].level = newLevel;
-		guildMemberCache[guildId][userId].changed = true;
-		if (newLevel > 0) {
-			if (!guilds[message.guild.id].features.levels.levelUpMessage) return;
-			message.reply(guilds[message.guild.id].features.levels.levelUpMessage.replace(/\{\{level\}\}/gi, guildMemberCache[guildId][userId].level));
+		if (newLevel !== guildMemberCache[guildId][userId].level) {
+			guildMemberCache[guildId][userId].level = newLevel;
+			guildMemberCache[guildId][userId].changed = true;
+			if (newLevel > 0) {
+				if (!guilds[message.guild.id].features.levels.levelUpMessage) return log.debug('end');
+				message.reply(guilds[message.guild.id].features.levels.levelUpMessage.replace(/\{\{level\}\}/gi, guildMemberCache[guildId][userId].level));
+			}
 		}
+		log.debug('end');
+	} catch (e) {
+		log.error(`Error in addXP: ${e}`);
 	}
-	log.debug('end');
 }
 
 module.exports = { addXP };

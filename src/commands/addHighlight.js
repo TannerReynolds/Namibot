@@ -27,6 +27,7 @@ module.exports = {
 	 * @param {Object} interaction - The interaction object
 	 */
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
@@ -47,7 +48,7 @@ module.exports = {
 			.setTimestamp()
 			.setAuthor({ name: name, iconURL: aviURL });
 
-		return prisma.highlight
+		prisma.highlight
 			.create({
 				data: {
 					phrase: phrase,
@@ -64,5 +65,6 @@ module.exports = {
 			.catch(e => {
 				return log.error(`Could not create highlight: ${e}`);
 			});
+		log.debug('end');
 	},
 };

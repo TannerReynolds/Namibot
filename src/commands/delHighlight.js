@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 const { isStaffCommand } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
 const { colors, emojis, guilds } = require('../config');
+const log = require('../utils/log');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
@@ -11,6 +12,7 @@ module.exports = {
 		.setDescription('Delete a highlight!')
 		.addStringOption(option => option.setName('id').setDescription('The ID of the highlight to delete').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
@@ -60,5 +62,6 @@ module.exports = {
 			.catch(e => {
 				sendReply(interaction, 'error', `${emojis.error}  Could not delete highlight...\n${e}`);
 			});
+		log.debug('end');
 	},
 };

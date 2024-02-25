@@ -15,6 +15,7 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to unban.').setRequired(true))
 		.addStringOption(option => option.setName('reason').setDescription('The reason for unbanning this user').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.BanMembers))
@@ -62,13 +63,19 @@ module.exports = {
 				return sendReply(interaction, 'error', `${emojis.error}  Error unbanning member: ${e}`);
 			});
 
-		await prisma.ban.delete({
-			where: {
-				userID_guildId: {
-					userID: target,
-					guildId: interaction.guild.id,
+		await prisma.ban
+			.delete({
+				where: {
+					userID_guildId: {
+						userID: target,
+						guildId: interaction.guild.id,
+					},
 				},
-			},
-		});
+			})
+			.catch(() => {
+				// do nothing
+				// Means they were banned not using the bot if this fails
+			});
+		log.debug('end');
 	},
 };

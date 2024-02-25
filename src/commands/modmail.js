@@ -18,6 +18,7 @@ module.exports = {
 		})
 		.addStringOption(option => option.setName('message').setDescription('What you would like to talk to staff members about').setMaxLength(1_900).setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let guildChoice = await interaction.options.getString('server');
@@ -78,5 +79,6 @@ module.exports = {
 				log.error(`Error creating thread: ${e}`);
 				return sendReply(interaction, 'error', `${emojis.error}  Error creating thread: ${e}`);
 			});
+		log.debug('end');
 	},
 };

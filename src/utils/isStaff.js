@@ -1,37 +1,52 @@
 const { guilds } = require('../config');
+const log = require('./log');
 
 function isStaff(message, guildMember, permissionOverride) {
-	let staffRole = guilds[message.guild.id].staffRoleID;
-	let hasVoiceModRole = guilds[message.guild.id].voiceModRoleID;
-	let hasStaffRole = guildMember.roles.cache.has(staffRole);
+	if (!message.guild) return false;
+	try {
+		const guildID = message.guild?.id;
+		let staffRole = guilds[guildID].staffRoleID;
+		let hasVoiceModRole = guilds[guildID].voiceModRoleID;
+		let hasStaffRole = guildMember.roles.cache.has(staffRole);
 
-	if (!guildMember.permissions.has(permissionOverride) && !hasStaffRole && !hasVoiceModRole) {
+		if (!guildMember.permissions.has(permissionOverride) && !hasStaffRole && !hasVoiceModRole) {
+			return false;
+		} else {
+			return true;
+		}
+	} catch (e) {
+		log.error(`Error in isStaff: ${e}`);
 		return false;
-	} else {
-		return true;
 	}
 }
 
 function isStaffCommand(commandName, message, guildMember, permissionOverride) {
-	let staffRole = guilds[message.guild.id].staffRoleID;
-	let command = guilds[message.guild.id].commands[commandName];
-	let voiceModRole = guilds[message.guild.id].voiceModRoleID;
-	let hasStaffRole = guildMember.roles.cache.has(staffRole);
-	let hasVoiceModRole = guildMember.roles.cache.has(voiceModRole);
+	if (!message.guild) return false;
+	try {
+		const guildID = message.guild?.id;
+		let staffRole = guilds[guildID].staffRoleID;
+		let command = guilds[guildID].commands[commandName];
+		let voiceModRole = guilds[guildID].voiceModRoleID;
+		let hasStaffRole = guildMember.roles.cache.has(staffRole);
+		let hasVoiceModRole = guildMember.roles.cache.has(voiceModRole);
 
-	if (guildMember.permissions.has(permissionOverride)) {
-		return true;
+		if (guildMember.permissions.has(permissionOverride)) {
+			return true;
+		}
+
+		if (hasStaffRole && command.staffRoleCanUse) {
+			return true;
+		}
+
+		if (hasVoiceModRole && command.voiceModRoleCanUse) {
+			return true;
+		}
+
+		return false;
+	} catch (e) {
+		log.error(`Error in isStaffCommand: ${e}`);
+		return false;
 	}
-
-	if (hasStaffRole && command.staffRoleCanUse) {
-		return true;
-	}
-
-	if (hasVoiceModRole && command.voiceModRoleCanUse) {
-		return true;
-	}
-
-	return false;
 }
 
 async function hasHigherPerms(author, target) {

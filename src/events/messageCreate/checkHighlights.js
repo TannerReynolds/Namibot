@@ -11,61 +11,65 @@ const highlightsCache = require('../../utils/highlightsCache');
  */
 async function checkHighlights(message) {
 	log.debug('begin');
-	if (message.author.bot || !message.guild.id) return;
+	if (message.author.bot || !message.guild.id) return log.debug('end');
 
-	const highlights = highlightsCache.get(message.guild.id);
-	if (!highlights || highlights.length === 0) return;
+	try {
+		const highlights = highlightsCache.get(message.guild.id);
+		if (!highlights || highlights.length === 0) return log.debug('end');
 
-	const dmPromises = [];
+		const dmPromises = [];
 
-	for (const h of highlights) {
-		let regPhrase = new RegExp(`\\b${h.phrase}\\b`);
-		if (regPhrase.test(message.content.toLowerCase()) && message.author.id !== h.userID) {
-			const isCooldown = await state.getHLCoolDown();
-			if (!isCooldown.has(h.userID)) {
-				let recipient;
-				try {
-					recipient = await message.guild.members.cache.get(h.userID);
-				} catch (e) {
-					continue;
+		for (const h of highlights) {
+			let regPhrase = new RegExp(`\\b${h.phrase}\\b`);
+			if (regPhrase.test(message.content.toLowerCase()) && message.author.id !== h.userID) {
+				const isCooldown = await state.getHLCoolDown();
+				if (!isCooldown.has(h.userID)) {
+					let recipient;
+					try {
+						recipient = await message.guild.members.cache.get(h.userID);
+					} catch (e) {
+						continue;
+					}
+
+					let permissions = message.channel.permissionsFor(recipient);
+
+					if (!permissions.has(PermissionFlagsBits.ViewChannel)) {
+						continue;
+					}
+
+					await state.addHLCoolDown(h.userID);
+
+					const aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL;
+					const name = message.author.username;
+					let postedContent = message.content;
+					if (message.content.length > 1024) {
+						postedContent = `${message.content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
+					}
+					const hEmbed = new EmbedBuilder()
+						.setAuthor({ name: name, iconURL: aviURL })
+						.setColor(colors.main)
+						.setTitle('Highlighter Alert')
+						.setDescription(`Found message containing phrase: \`${h.phrase}\`!`)
+						.addFields({ name: 'Message', value: postedContent }, { name: 'Channel', value: `<#${message.channel.id}>` })
+						.setTimestamp();
+
+					dmPromises.push(
+						recipient
+							?.send({
+								embeds: [hEmbed],
+								content: `Jump to Message: ${message.url}`,
+							})
+							.catch(e => log.error(`Couldn't send highlight DM to ${h.userID}: ${e}`))
+					);
 				}
-
-				let permissions = message.channel.permissionsFor(recipient);
-
-				if (!permissions.has(PermissionFlagsBits.ViewChannel)) {
-					continue;
-				}
-
-				await state.addHLCoolDown(h.userID);
-
-				const aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL;
-				const name = message.author.username;
-				let postedContent = message.content;
-				if (message.content.length > 1024) {
-					postedContent = `${message.content.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
-				}
-				const hEmbed = new EmbedBuilder()
-					.setAuthor({ name: name, iconURL: aviURL })
-					.setColor(colors.main)
-					.setTitle('Highlighter Alert')
-					.setDescription(`Found message containing phrase: \`${h.phrase}\`!`)
-					.addFields({ name: 'Message', value: postedContent }, { name: 'Channel', value: `<#${message.channel.id}>` })
-					.setTimestamp();
-
-				dmPromises.push(
-					recipient
-						?.send({
-							embeds: [hEmbed],
-							content: `Jump to Message: ${message.url}`,
-						})
-						.catch(e => log.error(`Couldn't send highlight DM to ${h.userID}: ${e}`))
-				);
 			}
 		}
-	}
 
-	await Promise.allSettled(dmPromises);
-	log.debug('end');
+		await Promise.allSettled(dmPromises);
+		log.debug('end');
+	} catch (e) {
+		log.error(`Error checking highlights: ${e}`);
+	}
 }
 
 module.exports = { checkHighlights };

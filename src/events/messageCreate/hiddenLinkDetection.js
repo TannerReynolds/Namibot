@@ -12,17 +12,21 @@ const urlRegex = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[
  * @returns {Promise<void>} - A promise that resolves once the check is complete.
  */
 async function checkForInlineURLs(client, content, message, oldMessage) {
-	log.debug('begin');
-	if (!message.channel.guild) return;
-	if (message.author.bot) return;
+	try {
+		log.debug('begin');
+		if (!message.channel.guild) return log.debug('end');
+		if (message.author.bot) return log.debug('end');
 
-	if (oldMessage) {
-		if (message.content === oldMessage.content) return;
+		if (oldMessage) {
+			if (message.content === oldMessage.content) return log.debug('end');
+		}
+		if (content.match(inLineRegex)) {
+			message.reply(`Inline/hidden URL detected. URLs found in message: ${content.match(urlRegex).join(', ')}`);
+		}
+		log.debug('end');
+	} catch (e) {
+		log.error(`Error in hiddenLinkDetection: ${e}`);
 	}
-	if (content.match(inLineRegex)) {
-		message.reply(`Inline/hidden URL detected. URLs found in message: ${content.match(urlRegex).join(', ')}`);
-	}
-	log.debug('end');
 }
 
 module.exports = { checkForInlineURLs };

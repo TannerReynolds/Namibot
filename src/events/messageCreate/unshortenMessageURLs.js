@@ -5,15 +5,23 @@ const { colors } = require('../../config');
 
 async function unshortenMessageURLs(message) {
 	log.debug('begin');
-	if (!message.guild) return;
-	if (message.author.bot) return;
+	if (!message.guild) {
+		return log.debug('end');
+	}
+	if (message.author.bot) {
+		return log.debug('end');
+	}
 
 	let urls = await detectURL(message.content);
-	if (!urls || urls.length === 0) return;
+	if (!urls || urls.length === 0) {
+		return log.debug('end');
+	}
 
 	for (let url of urls) {
 		unshortenURL(url).then(urls => {
-			if (urls.length === 0) return;
+			if (urls.length === 0) {
+				return log.debug('end');
+			}
 			let aviURL = message.author.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || message.author.defaultAvatarURL;
 			let name = message.author.username;
 			let formattedURLs = urls.map(url => `\`${url}\``);

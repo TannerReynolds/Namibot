@@ -14,6 +14,7 @@ module.exports = {
 		.setDescription("Take away somebody's turtlemode")
 		.addStringOption(option => option.setName('user').setDescription('The user to remove the slowdown from').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
@@ -74,5 +75,6 @@ module.exports = {
 				},
 			},
 		});
+		log.debug('end');
 	},
 };

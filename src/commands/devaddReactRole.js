@@ -28,6 +28,7 @@ module.exports = {
 	 * @param {Object} interaction - The interaction object
 	 */
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply();
 		if (!isStaff(interaction, interaction.member, PermissionFlagsBits.ManageRoles))
 			return sendReply(interaction, 'main', `${emojis.error}   You dont have the necessary permissions to complete this action`);
@@ -98,5 +99,6 @@ module.exports = {
 			.catch(e => {
 				log.error(`Could not create react role: ${e}`);
 			});
+		log.debug('end');
 	},
 };

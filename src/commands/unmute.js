@@ -15,6 +15,7 @@ module.exports = {
 		.setDescription('Unmute a user')
 		.addStringOption(option => option.setName('user').setDescription('The user to unmute.').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
@@ -105,5 +106,6 @@ module.exports = {
 			log.error(`Error unmuting user: ${e}`);
 			return sendReply(interaction, 'error', `${emojis.error}  Error unmuting user: ${e}`);
 		}
+		log.debug('end');
 	},
 };

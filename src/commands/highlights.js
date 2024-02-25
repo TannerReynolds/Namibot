@@ -4,10 +4,12 @@ const prisma = require('../utils/prismaClient');
 const { colors, emojis, guilds } = require('../config');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const { sendReply } = require('../utils/sendReply');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('highlights').setDMPermission(false).setDescription('View your highlights'),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
@@ -69,5 +71,6 @@ module.exports = {
 			sendReply(interaction, 'error', `${emojis.error}  Error fetching highlights: ${error}`);
 			throw error;
 		}
+		log.debug('end');
 	},
 };

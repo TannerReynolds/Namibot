@@ -12,6 +12,7 @@ module.exports = {
 		.setDescription("Get a member's Avatar")
 		.addStringOption(option => option.setName('user').setDescription('The user to get the AV from').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
@@ -42,6 +43,7 @@ module.exports = {
 		await interaction.channel.send({
 			embeds: [avEmbed],
 		});
-		return sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+		log.debug('end');
 	},
 };

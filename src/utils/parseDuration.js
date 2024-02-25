@@ -1,6 +1,6 @@
 const { DateTime, Duration } = require('luxon');
 const { toENTime } = require('./toEN');
-const log = require('./log');
+//const log = require('./log');
 
 const regexes = {
 	years: /(\d+y)/i,

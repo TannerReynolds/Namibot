@@ -17,6 +17,7 @@ module.exports = {
 		.addStringOption(option => option.setName('duration').setDescription('The amount of time to mute this user for').setRequired(true))
 		.addStringOption(option => option.setName('reason').setDescription('The reason for muting this user').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
@@ -132,5 +133,6 @@ module.exports = {
 				type: 'MUTE',
 			},
 		});
+		log.debug('end');
 	},
 };

@@ -13,6 +13,7 @@ module.exports = {
 		.addStringOption(option => option.setName('user').setDescription('The user to give the role to').setRequired(true))
 		.addRoleOption(option => option.setName('role').setDescription('The role to give').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageRoles))
@@ -96,5 +97,6 @@ module.exports = {
 
 				interaction.editReply({ embeds: [roleEmbed] });
 			});
+		log.debug('end');
 	},
 };

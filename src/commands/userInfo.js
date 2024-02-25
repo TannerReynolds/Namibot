@@ -14,6 +14,7 @@ module.exports = {
 		.setDMPermission(false)
 		.addStringOption(option => option.setName('user').setDescription('The user to get information for').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 
@@ -112,5 +113,6 @@ module.exports = {
 
 		interaction.channel.send({ embeds: [logEmbed] });
 		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+		log.debug('end');
 	},
 };

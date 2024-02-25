@@ -47,7 +47,7 @@ module.exports = {
 				.setAuthor({ name: name, iconURL: aviURL })
 				.addFields(
 					{ name: 'Executed Code', value: `\`\`\`js\n${code}\n\`\`\`` },
-					{ name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err.length > 1000 ? `${err.substring(0, 1000)}...` : err.substring(0, 1000)}\n\`\`\`` }
+					{ name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err.toString().length > 1000 ? `${err.toString().substring(0, 1000)}...` : err.toString().substring(0, 1000)}\n\`\`\`` }
 				);
 			interaction.channel.send({ embeds: [responseEmbed] });
 			sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);

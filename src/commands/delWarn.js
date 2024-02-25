@@ -3,6 +3,7 @@ const { isStaffCommand } = require('../utils/isStaff.js');
 const prisma = require('../utils/prismaClient');
 const { colors, emojis } = require('../config');
 const { sendReply } = require('../utils/sendReply');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,6 +12,7 @@ module.exports = {
 		.setDescription('Delete a warning for a user')
 		.addStringOption(option => option.setName('warning-id').setDescription('The ID of the warning to delete').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
@@ -47,5 +49,6 @@ module.exports = {
 			.catch(e => {
 				sendReply(interaction, 'error', `${emojis.error}  Could not delete warning...\n${e}`);
 			});
+		log.debug('end');
 	},
 };

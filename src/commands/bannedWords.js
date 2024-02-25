@@ -6,6 +6,7 @@ const { sendReply } = require('../utils/sendReply');
 module.exports = {
 	data: new SlashCommandBuilder().setName('bannedwords').setDMPermission(false).setDescription("See our server's banned words"),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 
@@ -40,6 +41,7 @@ module.exports = {
 
 		let doneEmbed = new EmbedBuilder().setColor(colors.main).setDescription(`${emojis.success}  Sent banned words list to your DMs!`).setTimestamp();
 
-		return interaction.editReply({ embeds: [doneEmbed] });
+		interaction.editReply({ embeds: [doneEmbed] });
+		log.debug('end');
 	},
 };

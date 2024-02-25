@@ -15,6 +15,7 @@ module.exports = {
 		.addStringOption(option => option.setName('message').setDescription('Message to send along with the confirmation').setMaxLength(2048))
 		.addStringOption(option => option.setName('button_text').setDescription('The text that will appear on the button').setMaxLength(128)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Creating Confirmation Message...`);
 
@@ -93,5 +94,6 @@ module.exports = {
 				log.error(`Confirmation could not be created: ${e}`);
 				return sendReply(interaction, 'main', `${emojis.error}  Confirmation could not be created: ${e}`);
 			});
+		log.debug('end');
 	},
 };

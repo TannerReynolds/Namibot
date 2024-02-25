@@ -1,15 +1,14 @@
 const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder } = require('discord.js');
-const { guilds, colors, emojis } = require('../config');
+const { colors, emojis } = require('../config');
 const log = require('../utils/log.js');
 const { sendReply } = require('../utils/sendReply');
 
 module.exports = {
 	data: new ContextMenuCommandBuilder().setName('Get Avatar').setDMPermission(false).setType(ApplicationCommandType.User),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
-
-		let commandChannel = guilds[interaction.guild.id].botCommandsChannelID;
 
 		let targetUser = interaction.targetUser;
 		if (targetUser === undefined) {
@@ -30,5 +29,6 @@ module.exports = {
 			embeds: [avEmbed],
 			fetchReply: false,
 		});
+		log.debug('end');
 	},
 };

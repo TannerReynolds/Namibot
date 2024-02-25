@@ -18,6 +18,7 @@ module.exports = {
 		})
 		.addStringOption(option => option.setName('reason').setDescription('The reason why you should be unbanned').setMaxLength(1_900).setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply();
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		let guildChoice = await interaction.options.getString('server');
@@ -90,7 +91,7 @@ module.exports = {
 				.setTimestamp();
 		}
 
-		return mailChannel.threads
+		mailChannel.threads
 			.create({
 				name: `Ban Appeal From ${interaction.user.username}`,
 				reason: `Ban Appeal From ${interaction.user.username} (${interaction.user.id})`,
@@ -120,5 +121,6 @@ module.exports = {
 				log.error(`Error creating thread: ${e}`);
 				return sendReply(interaction, 'error', `Error creating thread: ${e}`);
 			});
+		log.debug('end');
 	},
 };

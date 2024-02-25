@@ -18,6 +18,7 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for banning this user').setRequired(true))
 		.addStringOption(option => option.setName('duration').setDescription('The amount of time to ban this user for ("forever" for permanent)').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 
@@ -172,5 +173,6 @@ module.exports = {
 			log.error(`Error banning user: ${e}`);
 			return sendReply(interaction, 'error', `${emojis.error}  Error banning user: ${e}`);
 		}
+		log.debug('end');
 	},
 };

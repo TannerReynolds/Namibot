@@ -5,6 +5,7 @@ const prisma = require('../utils/prismaClient');
 const { colors, emojis } = require('../config');
 const { Pagination } = require('@lanred/discordjs-button-embed-pagination');
 const { sendReply } = require('../utils/sendReply');
+const log = require('../utils/log');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,6 +14,7 @@ module.exports = {
 		.setDescription("View a user's warnings")
 		.addStringOption(option => option.setName('user').setDescription('The user to view warns for').setRequired(true)),
 	async execute(interaction) {
+		log.debug('begin');
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
@@ -76,5 +78,6 @@ module.exports = {
 			sendReply(interaction, 'error', `${emojis.error}  Error fetching warnings: ${error}`);
 			throw error;
 		}
+		log.debug('end');
 	},
 };
