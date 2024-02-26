@@ -244,11 +244,16 @@ const pingStaffRatelimited = new Set();
 client.on(Events.InteractionCreate, async interaction => {
 	try {
 		if (interaction.isButton()) {
-			let id = interaction.component.customId;
-			if (id === 'confirmation') {
-				await confirmationButton(interaction);
-				return;
-			}
+			let args = interaction.customId.split('_');
+			let type = args[0];
+			if (type === 'confirmation') await confirmationButton(interaction);
+			//if (type === 'confirmation') return confirmationButton(interaction);
+			//if (type === 'ban') return banButton(interaction);
+			//if (type === 'unbanApprove') return unbanButtonApprove(interaction);
+			//if (type === 'unbanDeny') return unbanButtonDeny(interaction);
+			//if (type === 'warn') return warnButton(interaction);
+			//if (type === 'mute') return muteButton(interaction);
+			//if (type === 'closePost') return closePostButton(interaction);
 		}
 	} catch (e) {
 		log.error(`Error in interactionCreate (button processing): ${e}`);
@@ -455,6 +460,7 @@ client.on(Events.MessageCreate, async message => {
 	}
 
 	await modMailDM(message);
+
 	if (!message.guild) return;
 	let guildMember = false;
 	const guildID = message.guild?.id;
@@ -465,11 +471,16 @@ client.on(Events.MessageCreate, async message => {
 		// do nothing
 	}
 
-	let isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
+	let isStaffBool = false;
+	try {
+		isStaffBool = await isStaff(message, guildMember, PermissionFlagsBits.ManageMessages);
+	} catch (e) {
+		// do nothing
+	}
 
 	if (guilds[guildID].features.antiAds.enabled) await antiAds(message);
 
-	if (guilds[guildID].features.antiSpam && !isStaff) await antiSpam(message);
+	if (guilds[guildID].features.antiSpam && !isStaffBool) await antiSpam(message);
 
 	await messageEvents(isStaffBool, message, guildMember);
 
@@ -520,11 +531,15 @@ client.on(Events.MessageDelete, async message => {
 
 async function messageEvents(isStaffBool, message, guildMember, oldMessage) {
 	if (!message.guild) return;
+
 	try {
 		const guildID = message.guild?.id;
+
 		let content = message.content || 'N/A';
 		if (guilds[guildID].features.fileTypeChecker) await fileTypeChecker(message);
+
 		await turtleCheck(message, guildMember);
+
 		//Ignoring staff
 		if (!isStaffBool) {
 			if (guilds[guildID].features.gifDetector.enabled) await gifDetector(message);

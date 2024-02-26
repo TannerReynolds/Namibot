@@ -17,6 +17,7 @@ app.use(
 	})
 );
 
+/*
 app.use((req, res, next) => {
 	if (req.path.startsWith('/editbotconf')) {
 		const originalUrl = encodeURIComponent(req.originalUrl);
@@ -26,6 +27,12 @@ app.use((req, res, next) => {
 	} else {
 		next();
 	}
+});
+*/
+
+app.get('/editbotconf', (req, res) => {
+	res.setHeader('Content-Type', 'text/html');
+	return auth(req, res, pass);
 });
 
 app.post('/auth', (req, res) => {

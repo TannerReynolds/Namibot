@@ -1,1 +1,21 @@
-<div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">Tab content <%= guildID %></div>
+<div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+  <%# Begin Property %>
+  <div class="card-actions flex flex-col">
+    <p><b>Guild ID</b></p>
+    <p class="note mt">The ID of this server, right click on your guild icon and click "Copy server ID"</p>
+    <input id="guildID" type="text" value="<%= guildID %>" class="input input-bordered bg-neutral w-full max-w-xs mt" />
+  </div>
+  <%# Begin Property %>
+  <div class="card-actions flex flex-col mt-5">
+    <p><b>Guild Name</b></p>
+    <p class="note mt">The name of this server</p>
+    <input id="name" type="text" value="<%= guild.name %>" class="input input-bordered bg-neutral w-full max-w-xs mt" />
+  </div>
+  <%# Begin Property %>
+  <div class="card-actions flex flex-col mt-5">
+    <p><b>Invite URL</b></p>
+    <p class="note mt">Full invite link to this server</p>
+    <input id="invite" type="text" value="<%= guild.invite %>" class="input input-bordered bg-neutral w-full max-w-xs mt" />
+  </div>
+
+</div>

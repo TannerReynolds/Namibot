@@ -50,8 +50,7 @@ async function reportSubmission(interaction, args) {
 	let typedComments = false;
 	try {
 		typedComments = interaction.fields.getTextInputValue('reason');
-	}
-	catch(e) {
+	} catch (e) {
 		// do nothing
 	}
 
@@ -64,12 +63,14 @@ async function reportSubmission(interaction, args) {
 		.setColor(colors.main)
 		.setDescription(`Message from <@${message.author.id}> reported`)
 		.addFields({ name: 'Message Content', value: `\`${content}\`` })
+		.addFields({ name: 'Channel', value: `<#${message.channel.id}>` })
+		.addFields({ name: 'Message', value: `${message.url}` })
 		.addFields({ name: 'Message Connection Opened With Reporter', value: `${connectionMade}` })
 		.setAuthor({ name: interaction.user.username, iconURL: aviURL });
 
-		if(typedComments) {
-			mailEmbed.addFields({ name: 'Additional Comments From Reporter', value: typedComments})
-		}
+	if (typedComments) {
+		mailEmbed.addFields({ name: 'Additional Comments From Reporter', value: typedComments });
+	}
 
 	mailChannel.threads
 		.create({

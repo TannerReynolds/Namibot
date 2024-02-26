@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://cdn.tokyo.jp/ZxqlQ">
+</p>
+
 # Moderation
 ### Custom moderation bot for the Learn Japanese and Car Community Discord servers
 

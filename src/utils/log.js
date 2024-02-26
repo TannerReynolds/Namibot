@@ -40,6 +40,10 @@ const beginningArrow = `${fg.red}  |> ${endColor}`;
 
 function error(log) {
 	console.log(`${beginningArrow}${bg.red}[${timestamp()}]${endColor}${fg.red} | ${log}${endColor}`);
+	if (debugMode()) {
+		debug(log);
+		writeDebugLogs();
+	}
 }
 function success(log) {
 	console.log(`${beginningArrow}${bg.green}[${timestamp()}]${endColor}${fg.green} | ${log}${endColor}`);
@@ -77,12 +81,20 @@ function debug(log) {
 	}
 }
 
+function debugconsole(log) {
+	if (debugMode()) {
+		console.log(`${beginningArrow}${bg.magenta}[${timestamp()}]${endColor}${fg.magenta} | ${log}${endColor}`);
+	}
+}
+
 function writeDebugLogs() {
 	if (debugLogs.length === 0) return;
-	verbose('Writing debug logs to debug.log');
-	fs.writeFileSync(`${randomToken(7, false)}debug.log`, debugLogs.join('\n'), 'utf8');
-	success('Debug logs written to debug.log');
-	debugLogs = [];
+	if (debugMode()) {
+		verbose('Writing debug logs to debug.log');
+		fs.writeFileSync(`${randomToken(7, false)}debug.log`, debugLogs.join('\n'), 'utf8');
+		success('Debug logs written to debug.log');
+		debugLogs = [];
+	}
 }
 
 module.exports = {
@@ -91,6 +103,7 @@ module.exports = {
 	warning,
 	verbose,
 	debug,
+	debugconsole,
 	writeDebugLogs,
 };
 

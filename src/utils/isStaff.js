@@ -6,8 +6,9 @@ function isStaff(message, guildMember, permissionOverride) {
 	try {
 		const guildID = message.guild?.id;
 		let staffRole = guilds[guildID].staffRoleID;
-		let hasVoiceModRole = guilds[guildID].voiceModRoleID;
+		let voiceModRole = guilds[guildID].voiceModRoleID;
 		let hasStaffRole = guildMember.roles.cache.has(staffRole);
+		let hasVoiceModRole = guildMember.roles.cache.has(voiceModRole);
 
 		if (!guildMember.permissions.has(permissionOverride) && !hasStaffRole && !hasVoiceModRole) {
 			return false;
@@ -15,38 +16,32 @@ function isStaff(message, guildMember, permissionOverride) {
 			return true;
 		}
 	} catch (e) {
-		log.error(`Error in isStaff: ${e}`);
-		return false;
+		log.error(e);
 	}
 }
 
 function isStaffCommand(commandName, message, guildMember, permissionOverride) {
 	if (!message.guild) return false;
-	try {
-		const guildID = message.guild?.id;
-		let staffRole = guilds[guildID].staffRoleID;
-		let command = guilds[guildID].commands[commandName];
-		let voiceModRole = guilds[guildID].voiceModRoleID;
-		let hasStaffRole = guildMember.roles.cache.has(staffRole);
-		let hasVoiceModRole = guildMember.roles.cache.has(voiceModRole);
+	const guildID = message.guild?.id;
+	let staffRole = guilds[guildID].staffRoleID;
+	let command = guilds[guildID].commands[commandName];
+	let voiceModRole = guilds[guildID].voiceModRoleID;
+	let hasStaffRole = guildMember.roles.cache.has(staffRole);
+	let hasVoiceModRole = guildMember.roles.cache.has(voiceModRole);
 
-		if (guildMember.permissions.has(permissionOverride)) {
-			return true;
-		}
-
-		if (hasStaffRole && command.staffRoleCanUse) {
-			return true;
-		}
-
-		if (hasVoiceModRole && command.voiceModRoleCanUse) {
-			return true;
-		}
-
-		return false;
-	} catch (e) {
-		log.error(`Error in isStaffCommand: ${e}`);
-		return false;
+	if (guildMember.permissions.has(permissionOverride)) {
+		return true;
 	}
+
+	if (hasStaffRole && command.staffRoleCanUse) {
+		return true;
+	}
+
+	if (hasVoiceModRole && command.voiceModRoleCanUse) {
+		return true;
+	}
+
+	return false;
 }
 
 async function hasHigherPerms(author, target) {
