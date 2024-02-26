@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cdn.tokyo.jp/ZxqlQ">
+  <img src="https://cdn.tokyo.jp/cPch6">
 </p>
 
 # Moderation

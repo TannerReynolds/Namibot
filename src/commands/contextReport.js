@@ -31,15 +31,12 @@ module.exports = {
 			mailStatus = 0;
 		}
 
-		// Create a modal
 		const modal = new ModalBuilder().setCustomId(`report_${randomToken(16, false)}_${message.id}_${mailStatus}`).setTitle('Report Message');
 		const textInput = new TextInputBuilder().setCustomId('reason').setLabel('Additional Information/Reason').setStyle(TextInputStyle.Paragraph);
 
-		// Add components to modal
 		const firstActionRow = new ActionRowBuilder().addComponents(textInput);
 		modal.addComponents(firstActionRow);
 
-		// Show the modal to the user
 		//sendReply(interaction, 'success', 'Showing report menu');
 		await interaction.showModal(modal);
 		log.debug('end');

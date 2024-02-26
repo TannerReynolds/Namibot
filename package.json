@@ -35,6 +35,7 @@
   "homepage": "https://github.com/TannerReynolds/Discord-Moderation-Bot#readme",
   "version": "0.7.0",
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
     "@lanred/discordjs-button-embed-pagination": "^5.0.2",
     "@prisma/client": "^5.9.0",
     "axios": "^1.4.0",
@@ -46,9 +47,11 @@
     "express": "^4.18.2",
     "fs-extra": "^11.2.0",
     "helmet": "^7.1.0",
+    "lodash": "^4.17.21",
     "longjohn": "^0.2.12",
     "luxon": "^3.3.0",
-    "sharp": "^0.33.2"
+    "sharp": "^0.33.2",
+    "toml": "^3.0.0"
   },
   "devDependencies": {
     "body-parser": "^1.20.2",

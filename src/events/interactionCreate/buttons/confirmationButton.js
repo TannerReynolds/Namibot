@@ -1,7 +1,7 @@
-const { sendReply } = require('../../utils/sendReply');
-const { emojis } = require('../../config');
-const prisma = require('../../utils/prismaClient');
-const log = require('../../utils/log');
+const { sendReply } = require('../../../utils/sendReply');
+const { emojis } = require('../../../config');
+const prisma = require('../../../utils/prismaClient');
+const log = require('../../../utils/log');
 
 async function confirmationButton(interaction) {
 	log.debug('begin');

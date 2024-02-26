@@ -31,6 +31,8 @@ const gBanRemove = './events/guildBanRemove/';
 const cDelete = './events/channelDelete/';
 const gMemberUpdate = './events/guildMemberUpdate/';
 const interactionCreate = './events/interactionCreate/';
+const buttons = './events/interactionCreate/buttons/';
+const modals = './events/interactionCreate/modals/';
 const minute = './events/everyMinute/';
 const hour = './events/everyHour/';
 
@@ -75,12 +77,14 @@ const { guildBanLog } = require(`${gBanAdd}guildBanLog`);
 const { guildUnbanLog } = require(`${gBanRemove}guildUnbanLog`);
 const { checkBoosterStatus } = require(`${gMemberUpdate}checkBoosterStatus`);
 const { interactionLog } = require(`${interactionCreate}interactionLog`);
-const { confirmationButton } = require(`${interactionCreate}confirmationButton`);
+const { confirmationButton } = require(`${buttons}confirmationButton`);
+const { unbanButtonApprove } = require(`${buttons}unbanButtonApprove`);
+const { unbanButtonDeny } = require(`${buttons}unbanButtonDeny`);
 const { addXP } = require(`${mCreate}levels`);
 const { sentimentAnalysis } = require(`${mCreate}sentimentAnalysis`);
 const { antiChannelNuke, channelDeletor } = require(`${cDelete}antiChannelNuke`);
 const { antiBanNuke, getBanner } = require(`${gBanAdd}antiBanNuke`);
-const { reportSubmission } = require(`${interactionCreate}reportSubmission`);
+const { reportSubmission } = require(`${modals}reportSubmission`);
 const prisma = require(`${utils}prismaClient`);
 const guildMemberCache = require(`${utils}guildMemberCache`);
 const state = require(`${utils}sharedState`);
@@ -249,8 +253,8 @@ client.on(Events.InteractionCreate, async interaction => {
 			if (type === 'confirmation') await confirmationButton(interaction);
 			//if (type === 'confirmation') return confirmationButton(interaction);
 			//if (type === 'ban') return banButton(interaction);
-			//if (type === 'unbanApprove') return unbanButtonApprove(interaction);
-			//if (type === 'unbanDeny') return unbanButtonDeny(interaction);
+			if (type === 'unbanApprove') return unbanButtonApprove(interaction, args);
+			if (type === 'unbanDeny') return unbanButtonDeny(interaction, args);
 			//if (type === 'warn') return warnButton(interaction);
 			//if (type === 'mute') return muteButton(interaction);
 			//if (type === 'closePost') return closePostButton(interaction);
@@ -281,7 +285,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			return interaction.reply({ embeds: [cooldownEmbed] });
 		}
 	} catch (e) {
-		('not sent in guild');
+		// do nothing
 	}
 
 	ratelimited.add(interaction.user.id);
@@ -293,7 +297,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			setTimeout(() => pingStaffRatelimited.delete(interaction.guild.id), 900000);
 		}
 	} catch (e) {
-		('not sent in guild');
+		// do nothing
 	}
 
 	const command = interaction.client.commands.get(interaction.commandName);
@@ -313,16 +317,18 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	try {
 		await command.execute(interaction);
-		if (guilds[interaction.guild.id].logs.interactionCreate) interactionLog(interaction);
+		if (interaction.guild) {
+			if (guilds[interaction.guild.id].logs.interactionCreate) interactionLog(interaction);
+		}
 	} catch (error) {
 		log.error(error);
 		await interaction
-			.reply({
+			.editReply({
 				content: `There was an error while executing this command: ${error}`,
 				ephemeral: true,
 			})
 			.catch(e => {
-				interaction.editReply({
+				interaction.reply({
 					content: `There was an error while executing this command: ${e}`,
 					ephemeral: true,
 				});
@@ -349,6 +355,30 @@ client.on(Events.ChannelDelete, async channel => {
 		}
 		channelDeletesSlow.set(deletor.id, slowCount + 1);
 		setTimeout(() => channelDeletesSlow.set(deletor.id, 0), 30_000);
+	}
+});
+
+client.on(Events.ThreadDelete, async channel => {
+	if (guilds[channel.guild.id].features.modMail) {
+		let mail = await prisma.mail.findFirst({ where: { postID: channel.id } });
+		if (!mail) return;
+		await prisma.mail
+			.delete({
+				where: {
+					postID: channel.id,
+				},
+			})
+			.then(() => {
+				channel.client.users.cache
+					.get(mail.userID)
+					.send(`Your mod mail connection in ${channel.guild.name} has been closed by a staff member.`)
+					.catch(e => {
+						log.error(e);
+					});
+			})
+			.catch(e => {
+				log.error(`Error deleting mod mail: ${e}`);
+			});
 	}
 });
 

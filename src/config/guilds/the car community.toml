@@ -1,4 +1,3 @@
-[guilds.438650836512669699]
 name = "The Car Community"
 invite = "https://discord.gg/cars"
 guildID = "438650836512669699"
@@ -10,7 +9,7 @@ staffRoleID = "499564155884535808"
 voiceModRoleID = "1199444014785634325"
 muteRoleID = "819300268628770837"
 
-  [guilds.438650836512669699.logs]
+  [logs]
   messageDelete = true
   messageUpdate = true
   messageDeleteBulk = true
@@ -18,25 +17,25 @@ muteRoleID = "819300268628770837"
   guildBanRemove = true
   interactionCreate = true
 
-  [guilds.438650836512669699.features]
+  [features]
   bannedWordFilter = true
   fileTypeChecker = true
   hiddenLinkDetection = true
   antiSpam = true
   modMail = true
 
-    [guilds.438650836512669699.features.checkAccountAge]
+    [features.checkAccountAge]
     enabled = true
     days = 7
 
-    [guilds.438650836512669699.features.antiAds]
+    [features.antiAds]
     enabled = true
     allowedInvites = [
   "https://discord.gg/cars",
   "https://discord.gg/learnjapanese"
 ]
 
-    [guilds.438650836512669699.features.gifDetector]
+    [features.gifDetector]
     enabled = true
     allowedChannels = [
   "438653183464701963",
@@ -44,16 +43,16 @@ muteRoleID = "819300268628770837"
   "1197694320346665140"
 ]
 
-    [guilds.438650836512669699.features.autoRole]
+    [features.autoRole]
     enabled = true
     roles = [ "573167869433610251" ]
 
-    [guilds.438650836512669699.features.levels]
+    [features.levels]
     enabled = true
     levelUpMessage = false
     generateLevelImage = true
 
-      [guilds.438650836512669699.features.levels.levelRoles]
+      [features.levels.levelRoles]
       1 = "1203186738898665533"
       10 = "1203186765289234523"
       20 = "1203186804828930108"
@@ -61,250 +60,250 @@ muteRoleID = "819300268628770837"
       40 = "1203186865398747166"
       50 = "1203186889637629983"
 
-    [guilds.438650836512669699.features.nitroRoles]
+    [features.nitroRoles]
     enabled = true
 
-      [[guilds.438650836512669699.features.nitroRoles.roles]]
+      [[features.nitroRoles.roles]]
       emoji = ""
       id = ""
 
-    [guilds.438650836512669699.features.selfRoles]
+    [features.selfRoles]
     enabled = false
 
-      [[guilds.438650836512669699.features.selfRoles.roles]]
+      [[features.selfRoles.roles]]
       emoji = ""
       id = ""
 
-    [guilds.438650836512669699.features.sentimentAnalysis]
+    [features.sentimentAnalysis]
     enabled = true
     dmUsers = false
     openAIToken = "."
     sensitivity = 0.95
 
-    [guilds.438650836512669699.features.antiNuke]
+    [features.antiNuke]
     enabled = false
 
-[guilds.438650836512669699.commands.createconfirmation]
+[commands.createconfirmation]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.userinfo]
+[commands.userinfo]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.addreactrole]
+[commands.addreactrole]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands."Report Message"]
+[commands."Report Message"]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.reload]
+[commands.reload]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.sendembed]
+[commands.sendembed]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.dangerroles]
+[commands.dangerroles]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.unshort]
+[commands.unshort]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.purge]
+[commands.purge]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.modmail]
+[commands.modmail]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.addhighlight]
+[commands.addhighlight]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.appeal]
+[commands.appeal]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.av]
+[commands.av]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.bam]
+[commands.bam]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.ban]
+[commands.ban]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.bannedwords]
+[commands.bannedwords]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.colorme]
+[commands.colorme]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands."Get Avatar"]
+[commands."Get Avatar"]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.debugmode]
+[commands.debugmode]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.delhighlight]
+[commands.delhighlight]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.delwarn]
+[commands.delwarn]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.eval]
+[commands.eval]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.gay]
+[commands.gay]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.getlogpassword]
+[commands.getlogpassword]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.giverole]
+[commands.giverole]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.highlights]
+[commands.highlights]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.id]
+[commands.id]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.kick]
+[commands.kick]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.managenitrocolor]
+[commands.managenitrocolor]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.mute]
+[commands.mute]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = true
 
-[guilds.438650836512669699.commands.newtag]
+[commands.newtag]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.t]
+[commands.t]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.deltag]
+[commands.deltag]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.tags]
+[commands.tags]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.ping]
+[commands.ping]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.realverification]
+[commands.realverification]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.removerole]
+[commands.removerole]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.rng]
+[commands.rng]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.senddm]
+[commands.senddm]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.turtlemode]
+[commands.turtlemode]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.unban]
+[commands.unban]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.unmute]
+[commands.unmute]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = true
 
-[guilds.438650836512669699.commands.unturtle]
+[commands.unturtle]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.warn]
+[commands.warn]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
-[guilds.438650836512669699.commands.warns]
+[commands.warns]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false

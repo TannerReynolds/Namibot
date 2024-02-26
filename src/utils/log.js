@@ -91,7 +91,7 @@ function writeDebugLogs() {
 	if (debugLogs.length === 0) return;
 	if (debugMode()) {
 		verbose('Writing debug logs to debug.log');
-		fs.writeFileSync(`${randomToken(7, false)}debug.log`, debugLogs.join('\n'), 'utf8');
+		fs.writeFileSync(`./debugLogs/${randomToken(7, false)}debug.log`, debugLogs.join('\n'), 'utf8');
 		success('Debug logs written to debug.log');
 		debugLogs = [];
 	}

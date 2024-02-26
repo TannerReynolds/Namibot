@@ -1,0 +1,309 @@
+name = "Server name"
+invite = "https://discord.gg/cars"
+guildID = "SERVER_ID_GOES_HERE"
+mainLogChannelID = "583434851852746776"
+secondaryLogChannelID = "655047046557859851"
+botCommandsChannelID = "438652906116481025"
+mailChannelID = "1202038197698449450"
+staffRoleID = "499564155884535808"
+voiceModRoleID = "1199444014785634325"
+muteRoleID = "819300268628770837"
+
+  [logs]
+  messageDelete = true
+  messageUpdate = true
+  messageDeleteBulk = true
+  guildBanAdd = true
+  guildBanRemove = true
+  interactionCreate = true
+
+  [features]
+  bannedWordFilter = true
+  fileTypeChecker = true
+  hiddenLinkDetection = true
+  antiSpam = true
+  modMail = true
+
+    [features.checkAccountAge]
+    enabled = true
+    days = 7
+
+    [features.antiAds]
+    enabled = true
+    allowedInvites = [
+  "https://discord.gg/cars",
+  "https://discord.gg/learnjapanese"
+]
+
+    [features.gifDetector]
+    enabled = true
+    allowedChannels = [
+  "438653183464701963",
+  "438652906116481025",
+  "1197694320346665140"
+]
+
+    [features.autoRole]
+    enabled = true
+    roles = [ "573167869433610251" ]
+
+    [features.levels]
+    enabled = true
+    levelUpMessage = false
+    generateLevelImage = true
+
+      [features.levels.levelRoles]
+      1 = "1203186738898665533"
+      10 = "1203186765289234523"
+      20 = "1203186804828930108"
+      30 = "1203186840639905832"
+      40 = "1203186865398747166"
+      50 = "1203186889637629983"
+
+    [features.nitroRoles]
+    enabled = true
+
+      [[features.nitroRoles.roles]]
+      emoji = ""
+      id = ""
+
+    [features.selfRoles]
+    enabled = false
+
+      [[features.selfRoles.roles]]
+      emoji = ""
+      id = ""
+
+    [features.sentimentAnalysis]
+    enabled = true
+    dmUsers = false
+    openAIToken = "."
+    sensitivity = 0.95
+
+    [features.antiNuke]
+    enabled = false
+
+[commands.createconfirmation]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.userinfo]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.addreactrole]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands."Report Message"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.reload]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.sendembed]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.dangerroles]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.unshort]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.purge]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.modmail]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.addhighlight]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.appeal]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.av]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.bam]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.ban]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.bannedwords]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.colorme]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands."Get Avatar"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.debugmode]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.delhighlight]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.delwarn]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.eval]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.gay]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.getlogpassword]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.giverole]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.highlights]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.id]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.kick]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.managenitrocolor]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.mute]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = true
+
+[commands.newtag]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.t]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.deltag]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.tags]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.ping]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.realverification]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.removerole]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.rng]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.senddm]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.turtlemode]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.unban]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.unmute]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = true
+
+[commands.unturtle]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.warn]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands.warns]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false

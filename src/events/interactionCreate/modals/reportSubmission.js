@@ -1,8 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
-const { guilds, colors, emojis } = require('../../config');
-const log = require('../../utils/log.js');
-const { sendReply } = require('../../utils/sendReply');
-const prisma = require('../../utils/prismaClient');
+const { guilds, colors, emojis } = require('../../../config.js');
+const log = require('../../../utils/log.js');
+const { sendReply } = require('../../../utils/sendReply.js');
+const prisma = require('../../../utils/prismaClient.js');
 
 async function reportSubmission(interaction, args) {
 	await interaction.deferReply({ ephemeral: true });
