@@ -3,20 +3,6 @@
  * It initializes the necessary libraries, sets up event handlers, and handles interactions and commands.
  */
 
-let prod = false;
-if (process.argv[0]) {
-	if (process.argv.some(arg => arg === '--dev')) {
-		require('longjohn');
-		console.log('running in developer mode');
-	} else {
-		prod = true;
-		console.log('running in production mode');
-	}
-} else {
-	prod = true;
-	console.log('running in production mode');
-}
-
 //////////////////////////////////////
 // external lib requires
 
@@ -97,6 +83,22 @@ const { antiBanNuke, getBanner } = require(`${gBanAdd}antiBanNuke`);
 const { reportSubmission } = require(`${interactionCreate}reportSubmission`);
 const prisma = require(`${utils}prismaClient`);
 const guildMemberCache = require(`${utils}guildMemberCache`);
+const state = require(`${utils}sharedState`);
+
+let prod = false;
+if (process.argv[0]) {
+	if (process.argv.some(arg => arg === '--dev')) {
+		require('longjohn');
+		state.setDebugMode(true);
+		console.log('running in developer mode');
+	} else {
+		prod = true;
+		console.log('running in production mode');
+	}
+} else {
+	prod = true;
+	console.log('running in production mode');
+}
 
 /**
  * Initial boot files.

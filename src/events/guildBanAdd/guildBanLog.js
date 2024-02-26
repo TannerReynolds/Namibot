@@ -28,7 +28,7 @@ async function guildBanLog(ban) {
 			.setTitle('Member Banned')
 			.addFields(
 				{ name: 'User', value: `${target.username} (${target.id})` },
-				{ name: 'Reason', value: banLog.reason },
+				{ name: 'Reason', value: banLog.reason ? banLog.reason : 'No reason provided' },
 				{ name: 'Ban Duration', value: 'eternity' },
 				{ name: 'Moderator', value: `${executor.username} (${executor.id})` }
 			)
