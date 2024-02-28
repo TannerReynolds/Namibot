@@ -57,7 +57,7 @@ module.exports = {
 					.setAuthor({ name: name, iconURL: aviURL });
 
 				interaction.channel.send({ embeds: [highlightEmbed] });
-				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+				sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				sendReply(interaction, 'error', `${emojis.error}  Could not delete highlight...\n${e}`);

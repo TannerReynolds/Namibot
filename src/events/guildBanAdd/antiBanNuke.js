@@ -8,7 +8,7 @@ async function antiBanNuke(ban, user) {
 	log.debug('begin');
 	if (!ban.guild) return;
 	if (user.id === ban.client.user.id) return;
-	let targetMember = ban.guild.members.fetch(user.id);
+	let targetMember = await ban.guild.members.fetch(user.id);
 
 	if (!targetMember) return;
 

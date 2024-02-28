@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { guilds, colors, emojis } = require('../../../config.js');
 const log = require('../../../utils/log.js');
 const { sendReply } = require('../../../utils/sendReply.js');
@@ -58,6 +58,8 @@ async function reportSubmission(interaction, args) {
 	if (DMd === false) connectionMade = false;
 	if (DMd === true && mailStatus === '0') connectionMade = false;
 
+	const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId(`modMailClose_${interaction.user.id}`).setLabel('Close Mod Mail').setStyle(ButtonStyle.Primary));
+
 	let mailEmbed = new EmbedBuilder()
 		.setTitle(`Message Report From ${interaction.user.username} (${interaction.user.id})`)
 		.setColor(colors.main)
@@ -76,7 +78,7 @@ async function reportSubmission(interaction, args) {
 		.create({
 			name: `Message Report From ${interaction.user.username}`,
 			reason: `Message Report From ${interaction.user.username} (${interaction.user.id})`,
-			message: { embeds: [mailEmbed], content: `Creator: <@${interaction.user.id}> | Member Reported: <@${message.author.id}>` },
+			message: { embeds: [mailEmbed], content: `Creator: <@${interaction.user.id}> | Member Reported: <@${message.author.id}>`, components: [row] },
 		})
 		.then(forumPost => {
 			let wipeDate = new Date();
@@ -92,7 +94,7 @@ async function reportSubmission(interaction, args) {
 				})
 				.then(() => {
 					if (DMd) {
-						return sendReply(interaction, 'main', `${emojis.success}  Report Sent! See your DMs for more information!`);
+						return sendReply(interaction, 'success', `${emojis.success}  Report Sent! See your DMs for more information!`);
 					} else {
 						return sendReply(
 							interaction,

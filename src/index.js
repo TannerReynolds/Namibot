@@ -79,12 +79,15 @@ const { checkBoosterStatus } = require(`${gMemberUpdate}checkBoosterStatus`);
 const { interactionLog } = require(`${interactionCreate}interactionLog`);
 const { confirmationButton } = require(`${buttons}confirmationButton`);
 const { unbanButtonApprove } = require(`${buttons}unbanButtonApprove`);
+const { modMailButtonClose } = require(`${buttons}modMailButtonClose`);
+const { banButton } = require(`${buttons}banButton`);
 const { unbanButtonDeny } = require(`${buttons}unbanButtonDeny`);
 const { addXP } = require(`${mCreate}levels`);
 const { sentimentAnalysis } = require(`${mCreate}sentimentAnalysis`);
 const { antiChannelNuke, channelDeletor } = require(`${cDelete}antiChannelNuke`);
 const { antiBanNuke, getBanner } = require(`${gBanAdd}antiBanNuke`);
 const { reportSubmission } = require(`${modals}reportSubmission`);
+const { banSubmission } = require(`${modals}banSubmission`);
 const prisma = require(`${utils}prismaClient`);
 const guildMemberCache = require(`${utils}guildMemberCache`);
 const state = require(`${utils}sharedState`);
@@ -251,13 +254,12 @@ client.on(Events.InteractionCreate, async interaction => {
 			let args = interaction.customId.split('_');
 			let type = args[0];
 			if (type === 'confirmation') await confirmationButton(interaction);
-			//if (type === 'confirmation') return confirmationButton(interaction);
-			//if (type === 'ban') return banButton(interaction);
+			if (type === 'ban') return banButton(interaction, args);
 			if (type === 'unbanApprove') return unbanButtonApprove(interaction, args);
 			if (type === 'unbanDeny') return unbanButtonDeny(interaction, args);
 			//if (type === 'warn') return warnButton(interaction);
 			//if (type === 'mute') return muteButton(interaction);
-			//if (type === 'closePost') return closePostButton(interaction);
+			if (type === 'modMailClose') return modMailButtonClose(interaction);
 		}
 	} catch (e) {
 		log.error(`Error in interactionCreate (button processing): ${e}`);
@@ -270,6 +272,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			let args = interaction.customId.split('_');
 			let modalType = args[0];
 			if (modalType === 'report') return reportSubmission(interaction, args);
+			if (modalType === 'ban') return banSubmission(interaction, args);
 		}
 	} catch (e) {
 		log.error(`Error in interactionCreate (modal processing): ${e}`);
@@ -347,10 +350,10 @@ client.on(Events.ChannelDelete, async channel => {
 			return antiChannelNuke(channel, deletor);
 		}
 		channelDeletesRapid.add(deletor.id);
-		setTimeout(() => channelDeletesRapid.delete(deletor.id), 1_500);
+		setTimeout(() => channelDeletesRapid.delete(deletor.id), 5_500);
 
 		let slowCount = channelDeletesSlow.get(deletor.id) || 0;
-		if (slowCount === 4) {
+		if (slowCount === 3) {
 			return antiChannelNuke(channel, deletor);
 		}
 		channelDeletesSlow.set(deletor.id, slowCount + 1);

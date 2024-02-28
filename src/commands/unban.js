@@ -19,7 +19,7 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.BanMembers))
-			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'error', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 		let target = await defineTarget(interaction, 'edit');
 		if (target === undefined) {
 			return sendReply(interaction, 'error', `${emojis.error}  This user does not exist`);
@@ -43,7 +43,7 @@ module.exports = {
 					.setAuthor({ name: name, iconURL: aviURL });
 
 				interaction.channel.send({ embeds: [unbanEmbed] });
-				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+				sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 				if (reason.length > 1024) {
 					reason = `${reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
 				}

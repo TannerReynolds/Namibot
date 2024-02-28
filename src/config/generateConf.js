@@ -18,16 +18,15 @@ async function createConfig() {
 		try {
 			const files = await fs.readdir(guildsPath);
 			for (const file of files) {
-				if (!file.endsWith('.toml')) continue; // Skip non-TOML files
-				if (file.includes('blank.toml')) continue; // Skip non-TOML files
+				if (!file.endsWith('.toml')) continue;
+				if (file.includes('blank.toml')) continue;
 
 				const filePath = path.join(guildsPath, file);
 				const content = await fs.readFile(filePath, 'utf8');
-				const parsedContent = toml.parse(content); // Parse the TOML content
+				const parsedContent = toml.parse(content);
 
-				// Assume the file name (without extension) represents the guild ID
 				const guildID = parsedContent.guildID;
-				guildObjects[guildID] = parsedContent; // Assign parsed content to guild ID
+				guildObjects[guildID] = parsedContent;
 			}
 		} catch (error) {
 			console.error('Error creating guild objects:', error);
@@ -45,10 +44,12 @@ async function createConfig() {
 			config.guilds = guildObjects;
 			console.log(guildObjects);
 
+			/*
 			let passedSnowflakeCheck = await verifySnowflakes(config);
 			if (!passedSnowflakeCheck) {
 				return console.error('Snowflake check failed. Please check your config and try again.');
 			}
+			*/
 
 			// Save the final configuration as JSON
 			const jsonConfig = JSON.stringify(config, null, 4);

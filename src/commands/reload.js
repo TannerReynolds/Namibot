@@ -11,7 +11,7 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (interaction.user.id !== botOwnerID) {
-			return sendReply(interaction, 'main', `${emojis.error}  Only the bot owner can run this command!`);
+			return sendReply(interaction, 'error', `${emojis.error}  Only the bot owner can run this command!`);
 		}
 		const commandsPath = path.join(__dirname);
 		const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -28,11 +28,11 @@ module.exports = {
 				log.verbose(`Reloaded Command: ${newCommand.data.name}`);
 			} catch (error) {
 				log.error(`There was an error reloading the command ${filePath}:`, error);
-				sendReply(interaction, 'main', `${emojis.error}  There was an error reloading the command ${filePath}. See console for error.`);
+				sendReply(interaction, 'error', `${emojis.error}  There was an error reloading the command ${filePath}. See console for error.`);
 				continue;
 			}
 		}
 
-		sendReply(interaction, 'main', `${emojis.success}  Successfully reloaded all commands!`);
+		sendReply(interaction, 'success', `${emojis.success}  Successfully reloaded all commands!`);
 	},
 };

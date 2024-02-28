@@ -15,7 +15,7 @@ module.exports = {
 		const dangerRoles = findDangerRoles(roles);
 
 		if (!dangerRoles || dangerRoles.length === 0) {
-			return sendReply(interaction, 'main', `${emojis.success}  You're safe! This server has no danger roles!`);
+			return sendReply(interaction, 'success', `${emojis.success}  You're safe! This server has no danger roles!`);
 		} else {
 			let responseEmbed = new EmbedBuilder().setTimestamp().setColor(colors.main).setTitle(`${emojis.success}  Found Danger Roles!`);
 			let dangerResponse = dangerRoles.map(r => `<@&${r.id}>`);

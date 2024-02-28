@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const prisma = require('../utils/prismaClient');
 const { guilds, colors, emojis } = require('../config');
 const log = require('../utils/log');
@@ -39,6 +39,8 @@ module.exports = {
 
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 
+		const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId(`modMailClose_${interaction.user.id}`).setLabel('Close Mod Mail').setStyle(ButtonStyle.Primary));
+
 		let mailEmbed = new EmbedBuilder()
 			.setTitle(`Mod Mail From ${interaction.user.username} (${interaction.user.id})`)
 			.setColor(colors.main)
@@ -49,7 +51,7 @@ module.exports = {
 			.create({
 				name: `Mod Mail From ${interaction.user.username}`,
 				reason: `Mod Mail From ${interaction.user.username} (${interaction.user.id})`,
-				message: { embeds: [mailEmbed], content: `<@${interaction.user.id}>` },
+				message: { embeds: [mailEmbed], content: `<@${interaction.user.id}>`, components: [row] },
 			})
 			.then(forumPost => {
 				let wipeDate = new Date();

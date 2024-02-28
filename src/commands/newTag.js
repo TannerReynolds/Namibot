@@ -18,13 +18,13 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'error', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
 		let tagName = interaction.options.getString('tag-name') ? interaction.options.getString('tag-name').toLowerCase() : false;
 		let content = interaction.options.getString('content') ? interaction.options.getString('content') : false;
 		let attachment = (await interaction.options.getAttachment('attachment')) ? interaction.options.getAttachment('attachment') : false;
 
-		if (!content && !attachment) return sendReply(interaction, 'main', `${emojis.error}  You need to provide either content or an attachment for the tag`);
+		if (!content && !attachment) return sendReply(interaction, 'error', `${emojis.error}  You need to provide either content or an attachment for the tag`);
 
 		if (content) content = content.replace(/\{\{newline\}\}/g, String.fromCharCode(10));
 
@@ -36,7 +36,7 @@ module.exports = {
 		});
 
 		if (existingTag) {
-			return sendReply(interaction, 'main', `${emojis.error}  A tag with that name already exists`);
+			return sendReply(interaction, 'error', `${emojis.error}  A tag with that name already exists`);
 		}
 
 		let tagEmbed = new EmbedBuilder().setTitle(`New Tag Added`).setColor(colors.main).setTimestamp();
@@ -90,7 +90,7 @@ module.exports = {
 			})
 			.then(() => {
 				interaction.channel.send({ embeds: [tagEmbed] });
-				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+				sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				log.error(e);

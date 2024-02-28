@@ -50,7 +50,7 @@ module.exports = {
 					{ name: 'Result', value: `\`ERROR\` \`\`\`xl\n${err.toString().length > 1000 ? `${err.toString().substring(0, 1000)}...` : err.toString().substring(0, 1000)}\n\`\`\`` }
 				);
 			interaction.channel.send({ embeds: [responseEmbed] });
-			sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+			sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 		}
 	},
 };

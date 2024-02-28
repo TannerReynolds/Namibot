@@ -7,7 +7,7 @@ const { getModChannels } = require('../../utils/getModChannels');
 async function antiChannelNuke(channel, user) {
 	log.debug('begin');
 	if (!channel.guild) return;
-	let targetMember = channel.guild.members.fetch(user.id);
+	let targetMember = await channel.guild.members.fetch(user.id);
 
 	if (!targetMember) return;
 

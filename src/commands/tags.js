@@ -29,7 +29,7 @@ module.exports = {
 			});
 
 			if (formattedtags.length === 0) {
-				return sendReply(interaction, 'main', `${emojis.error}  This server has no tags.`);
+				return sendReply(interaction, 'error', `${emojis.error}  This server has no tags.`);
 			}
 
 			const tagsPerPage = 10;

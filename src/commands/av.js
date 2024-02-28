@@ -43,7 +43,7 @@ module.exports = {
 		await interaction.channel.send({
 			embeds: [avEmbed],
 		});
-		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+		sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 		log.debug('end');
 	},
 };

@@ -1,5 +1,5 @@
 const { isStaff } = require('../../utils/isStaff');
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const prisma = require('../../utils/prismaClient');
 const { guilds, colors } = require('../../config');
 const { getModChannels } = require('../../utils/getModChannels');
@@ -36,9 +36,11 @@ async function antiAds(message) {
 			.send('You have been warned for sending a Discord invite link. Please do not send them before clearing it with staff. If you wish to partner with us, please DM the owners of the server')
 			.catch(() => {});
 
-		message.member.timeout(60_000 * 10, 'Invite Link Sent').catch(e => {
+		message.member.timeout(60_000 * 10_080, 'Invite Link Sent').catch(e => {
 			log.error(`Couldn't time out member: ${e}`);
 		});
+
+		const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId(`ban_${message.author.id}`).setLabel('Ban User').setStyle(ButtonStyle.Danger));
 
 		let logEmbed = new EmbedBuilder()
 			.setColor(colors.main)
@@ -55,6 +57,7 @@ async function antiAds(message) {
 			.main.send({
 				embeds: [logEmbed],
 				content: `<@${message.author.id}> :: https://${sentAd}`,
+				components: [row],
 			})
 			.catch(e => {
 				log.error(`Couldn't log warning: ${e}`);

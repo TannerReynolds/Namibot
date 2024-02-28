@@ -26,20 +26,20 @@ module.exports = {
 		try {
 			exec(command, (error, stdout, stderr) => {
 				if (error) {
-					throw (`Could not run command: ${error}`)
+					throw `Could not run command: ${error}`;
 				}
-				if(typeof stdout !== 'string') {
+				if (typeof stdout !== 'string') {
 					stdout = require('util').inspect(stdout);
 					let responseEmbed = new EmbedBuilder()
-				.setTimestamp()
-				.setColor(colors.main)
-				.setAuthor({ name: name, iconURL: aviURL })
-				.addFields(
-					{ name: 'Executed Command', value: `\`\`\`js\n${command}\n\`\`\`` },
-					{ name: 'Result', value: `\`\`\`xl\n${stdout.length > 1000 ? `${stdout.substring(0, 1000)}...` : stdout.substring(0, 1000)}\n\`\`\`` }
-				);
+						.setTimestamp()
+						.setColor(colors.main)
+						.setAuthor({ name: name, iconURL: aviURL })
+						.addFields(
+							{ name: 'Executed Command', value: `\`\`\`js\n${command}\n\`\`\`` },
+							{ name: 'Result', value: `\`\`\`xl\n${stdout.length > 1000 ? `${stdout.substring(0, 1000)}...` : stdout.substring(0, 1000)}\n\`\`\`` }
+						);
 
-			interaction.editReply({ embeds: [responseEmbed] });
+					interaction.editReply({ embeds: [responseEmbed] });
 				}
 			});
 		} catch (err) {
@@ -53,7 +53,7 @@ module.exports = {
 				);
 			interaction.channel.send({ embeds: [responseEmbed] });
 
-			sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+			sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 		}
 	},
 };

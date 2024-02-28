@@ -43,11 +43,11 @@ async function confirmationButton(interaction) {
 		.add(confirmation.roleID)
 		.then(() => {
 			log.debug('end');
-			return sendReply(interaction, 'main', `${emojis.success}  Role added!`);
+			return sendReply(interaction, 'success', `${emojis.success}  Role added!`);
 		})
 		.catch(e => {
 			log.error(`Error adding role: ${e}`);
-			return sendReply(interaction, 'main', `${emojis.error}  Failed to add role: ${e}`);
+			return sendReply(interaction, 'error', `${emojis.error}  Failed to add role: ${e}`);
 		});
 }
 

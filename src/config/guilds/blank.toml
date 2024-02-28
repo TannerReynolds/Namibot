@@ -1,5 +1,5 @@
 name = "Server name"
-invite = "https://discord.gg/cars"
+invite = "invite url"
 guildID = "SERVER_ID_GOES_HERE"
 mainLogChannelID = "583434851852746776"
 secondaryLogChannelID = "655047046557859851"

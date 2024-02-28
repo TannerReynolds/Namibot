@@ -5,13 +5,23 @@ const { parseNewDate, durationToString, isValidDuration } = require('./parseDura
  * @param {Interaction} interaction - The interaction object.
  * @returns {Promise<Date>} The defined duration.
  */
-async function defineDuration(interaction) {
+async function defineDuration(interaction, manualDuration) {
 	let duration;
-	if (!interaction.options.getString('duration')) {
+	let usedDuration = false;
+	try {
+		usedDuration = interaction.options.getString('duration');
+	} catch (e) {
+		try {
+			usedDuration = manualDuration;
+		} catch (e) {
+			// do nothing
+		}
+	}
+	if (!usedDuration) {
 		duration = new Date(2100, 0, 1);
 		return duration;
 	} else {
-		let rawDuration = interaction.options.getString('duration');
+		let rawDuration = usedDuration;
 		if (await isValidDuration(rawDuration)) {
 			duration = await parseNewDate(rawDuration);
 			return duration;
@@ -26,12 +36,22 @@ async function defineDuration(interaction) {
  * @param {Interaction} interaction - The interaction object.
  * @returns {Promise<string>} The duration string.
  */
-async function defineDurationString(interaction) {
+async function defineDurationString(interaction, manualDuration) {
 	let durationString = 'eternity';
-	if (!interaction.options.getString('duration')) {
+	let usedDuration = false;
+	try {
+		usedDuration = interaction.options.getString('duration');
+	} catch (e) {
+		try {
+			usedDuration = manualDuration;
+		} catch (e) {
+			// do nothing
+		}
+	}
+	if (!usedDuration) {
 		return durationString;
 	} else {
-		let rawDuration = interaction.options.getString('duration');
+		let rawDuration = usedDuration;
 		if (isJP(rawDuration)) durationString = `${rawDuration} (eternity)`;
 		if (await isValidDuration(rawDuration)) {
 			durationString = await durationToString(rawDuration);

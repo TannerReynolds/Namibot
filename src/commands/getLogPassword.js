@@ -11,7 +11,7 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'error', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
 		interaction.user.send(`\`${getLogPassword()}\``).catch(e => {
 			return sendReply(interaction, 'error', `${emojis.error}  I was not able to send you a DM`);

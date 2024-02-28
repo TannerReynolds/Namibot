@@ -13,6 +13,7 @@ async function editLog(message, oldMessage) {
 	log.debug('begin');
 	if (!message.guild) return;
 	if (message.author.bot) return;
+	if (message.content === oldMessage.content) return;
 	try {
 		let newContent = 'N/A';
 		let oldContent = 'N/A';

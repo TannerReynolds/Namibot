@@ -60,7 +60,7 @@ module.exports = {
 				interaction.channel.send({ embeds: [msgEmbed] }).catch(e => {
 					interaction.channel.send(`${emojis.error}  Message failed to send:\n${e}`);
 				});
-				return sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+				return sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				return log.error(`Could not create highlight: ${e}`);

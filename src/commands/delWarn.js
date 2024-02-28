@@ -16,7 +16,7 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		sendReply(interaction, 'main', `${emojis.loading}  Loading Interaction...`);
 		if (!isStaffCommand(this.data.name, interaction, interaction.member, PermissionFlagsBits.ManageMessages))
-			return sendReply(interaction, 'main', `${emojis.error}  You dont have the necessary permissions to complete this action`);
+			return sendReply(interaction, 'error', `${emojis.error}  You dont have the necessary permissions to complete this action`);
 
 		if (!interaction.options.getString('warning-id')) {
 			return sendReply(interaction, 'error', `${emojis.error}  No warning ID provided!`);
@@ -44,7 +44,7 @@ module.exports = {
 					.setAuthor({ name: name, iconURL: aviURL });
 
 				interaction.channel.send({ embeds: [warnEmbed] });
-				sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+				sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 			})
 			.catch(e => {
 				sendReply(interaction, 'error', `${emojis.error}  Could not delete warning...\n${e}`);

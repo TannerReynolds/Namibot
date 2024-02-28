@@ -23,6 +23,6 @@ module.exports = {
 		let responseEmbed = new EmbedBuilder().setTimestamp().setColor(colors.main).setAuthor({ name: name, iconURL: aviURL }).setTitle(`${emojis.success}  Set Debug Mode To ${boolean}`);
 
 		await interaction.channel.send({ embeds: [responseEmbed] });
-		sendReply(interaction, 'main', `${emojis.success}  Interaction Complete`);
+		sendReply(interaction, 'success', `${emojis.success}  Interaction Complete`);
 	},
 };

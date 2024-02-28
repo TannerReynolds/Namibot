@@ -30,7 +30,7 @@ module.exports = {
 			});
 
 			if (!highlights || highlights === undefined) {
-				return sendReply(interaction, 'main', `${emojis.error}  This user has no highlights.`);
+				return sendReply(interaction, 'error', `${emojis.error}  This user has no highlights.`);
 			}
 
 			const formattedHighlights = highlights.map(h => {
@@ -38,7 +38,7 @@ module.exports = {
 			});
 
 			if (formattedHighlights.length === 0) {
-				return sendReply(interaction, 'main', `${emojis.error}  This user has no highlights.`);
+				return sendReply(interaction, 'error', `${emojis.error}  This user has no highlights.`);
 			}
 
 			const highlightsPerPage = 10;

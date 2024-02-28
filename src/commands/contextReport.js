@@ -1,5 +1,5 @@
 const { ContextMenuCommandBuilder, ApplicationCommandType, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
-const { guilds } = require('../config');
+const { guilds, emojis } = require('../config');
 const log = require('../utils/log.js');
 const prisma = require('../utils/prismaClient');
 const { randomToken } = require('../utils/randomToken');
@@ -10,13 +10,10 @@ module.exports = {
 		//await interaction.deferReply({ ephemeral: true });
 		log.debug('begin');
 		if (!guilds[interaction.guild.id].features.modMail) {
-			//return sendReply(interaction, 'error', `${emojis.error}  This server does not have mod mail enabled`);
+			return interaction.reply(`${emojis.error}  This server does not have mod mail enabled`);
 		}
 
 		let targetMessage = interaction.targetMessage || false;
-		if (targetMessage === undefined || !targetMessage) {
-			//return sendReply(interaction, 'error', `${emojis.error}  This message does not exist`);
-		}
 
 		let message = targetMessage;
 
@@ -37,7 +34,6 @@ module.exports = {
 		const firstActionRow = new ActionRowBuilder().addComponents(textInput);
 		modal.addComponents(firstActionRow);
 
-		//sendReply(interaction, 'success', 'Showing report menu');
 		await interaction.showModal(modal);
 		log.debug('end');
 	},
