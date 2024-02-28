@@ -66,16 +66,6 @@ module.exports = {
 		let aviURL = interaction.user.avatarURL({ extension: 'png', forceStatic: false, size: 1024 }) || interaction.user.defaultAvatarURL;
 		let name = interaction.user.username;
 
-		interaction.guild.bans
-			.create(target, {
-				deleteMessageSeconds: 604800,
-				reason: `${reason} | Duration: ${durationString} | Mod: ${interaction.user.username} (${interaction.user.id})`,
-			})
-			.catch(e => {
-				log.error(`Error on banning user: ${target} | ${e}`);
-				return sendReply(interaction, 'error', `${emojis.error}  Error banning member: ${e}`);
-			});
-
 		try {
 			interaction.guild.bans
 				.create(target, {

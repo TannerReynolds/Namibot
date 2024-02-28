@@ -81,7 +81,7 @@ async function darkerHex(hex, amount) {
 
 let rightCode = '';
 
-// https://codepen.io/guanqi/pen/mdbXQOJ
+// thanks https://codepen.io/guanqi/pen/mdbXQOJ
 async function getImgValiCode() {
 	let showNum = [];
 	let canvasWinth = 150;
