@@ -25,7 +25,7 @@ async function checkForInlineURLs(client, content, message, oldMessage) {
       if (message.content === oldMessage.content) return log.debug("end");
     }
     let matches = await regexMatch(content, inLineRegex, flag)
-    if (matches.length > 0) {
+    if (matches) {
       let URLs = await regexMatch(content, urlRegex, flag)
       message.reply(
         `Inline/hidden URL detected. URLs found in message: ${URLs.join(", ")}`,
