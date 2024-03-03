@@ -57,7 +57,7 @@ module.exports = {
 		let message = (await interaction.options.getString('message')) || false;
 		let btnText = (await interaction.options.getString('button_text')) || 'Confirm';
 
-		const confirmBtn = new ButtonBuilder().setCustomId('confirmation').setLabel(btnText).setStyle(ButtonStyle.Primary);
+		const confirmBtn = new ButtonBuilder().setCustomId('confirmation_').setLabel(btnText).setStyle(ButtonStyle.Primary);
 		const row = new ActionRowBuilder().addComponents(confirmBtn);
 
 		let confirmID;

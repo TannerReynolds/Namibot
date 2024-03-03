@@ -275,7 +275,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isButton()) {
       let args = interaction.customId.split("_");
       let type = args[0];
-      if (type === "confirmation") await confirmationButton(interaction);
+      if (type === "confirmation") return confirmationButton(interaction);
       if (type === "ban") return banButton(interaction, args);
       if (type === "unbanApprove") return unbanButtonApprove(interaction, args);
       if (type === "unbanDeny") return unbanButtonDeny(interaction, args);
