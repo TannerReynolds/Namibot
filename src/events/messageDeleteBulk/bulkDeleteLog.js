@@ -1,9 +1,9 @@
-const ejs = require('ejs');
-const fs = require('fs-extra');
-const { getModChannels } = require('../../utils/getModChannels');
-const log = require('../../utils/log');
-const { EmbedBuilder, MessageAttachment } = require('discord.js');
-const { colors, server } = require('../../config');
+const ejs = require("ejs");
+const fs = require("fs-extra");
+const { getModChannels } = require("../../utils/getModChannels");
+const log = require("../../utils/log");
+const { EmbedBuilder, MessageAttachment } = require("discord.js");
+const { colors, server } = require("../../config");
 
 /**
  * Writes a log file and sends an embed message when bulk messages are deleted.
@@ -13,23 +13,24 @@ const { colors, server } = require('../../config');
  * @returns {Promise<void>}
  */
 async function bulkDeleteLog(messages, channel, client) {
-	log.debug('begin');
-	let fileName = `bdl${randomToken(8)}`;
-	const stream = fs.createWriteStream(`./server/public/${fileName}.html`);
-	stream.once('open', () => {
-		ejs.renderFile(
-			`./server/views/bulkDelete.ejs`,
-			{
-				messages: messages,
-				client: client,
-			},
-			{},
-			(_renderErr, str) => {
-				stream.write(str);
-			}
-		);
-		stream.end();
-		let deleteEmbed = false;
+  log.debug("begin");
+  let fileName = `bdl${randomToken(8)}`;
+  const stream = fs.createWriteStream(`./server/public/${fileName}.html`);
+  stream.once("open", () => {
+    ejs.renderFile(
+      `./server/views/bulkDelete.ejs`,
+      {
+        messages: messages.reverse(),
+        client: client,
+      },
+      {},
+      (_renderErr, str) => {
+        stream.write(str);
+      },
+    );
+    stream.end();
+    let deleteEmbed = false;
+    /*
 		if (server.enabled) {
 			deleteEmbed = new EmbedBuilder()
 				.setTitle(`Bulk Messages Deleted`)
@@ -40,21 +41,25 @@ async function bulkDeleteLog(messages, channel, client) {
 				embeds: [deleteEmbed],
 			});
 		} else {
-			let attach = new MessageAttachment(`./server/public/${fileName}.html`);
-			deleteEmbed = new EmbedBuilder().setTitle(`Bulk Messages Deleted`).setColor(colors.main).setTimestamp();
-			getModChannels(client, channel.guild.id)
-				.secondary.send({
-					embeds: [deleteEmbed],
-					files: [attach],
-				})
-				.then(() => {
-					fs.unlink(`./server/public/${fileName}.html`, err => {
-						if (err) throw err;
-					});
-				});
-		}
-	});
-	log.debug('end');
+		*/
+    let attach = new MessageAttachment(`./server/public/${fileName}.html`);
+    deleteEmbed = new EmbedBuilder()
+      .setTitle(`Bulk Messages Deleted`)
+      .setColor(colors.main)
+      .setTimestamp();
+    getModChannels(client, channel.guild.id)
+      .secondary.send({
+        embeds: [deleteEmbed],
+        files: [attach],
+      })
+      .then(() => {
+        fs.unlink(`./server/public/${fileName}.html`, (err) => {
+          if (err) throw err;
+        });
+      });
+    //	}
+  });
+  log.debug("end");
 }
 
 module.exports = { bulkDeleteLog };
@@ -66,16 +71,17 @@ module.exports = { bulkDeleteLog };
  * @returns {string} - The randomly generated token.
  */
 function randomToken(number, symbols) {
-	number = parseInt(number, 10);
-	let text = '';
-	let possible;
-	if (symbols !== true) {
-		possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	} else {
-		possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()-_=+[]{}|;:/?><,.';
-	}
-	for (let i = 0; i < number; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return text;
+  number = parseInt(number, 10);
+  let text = "";
+  let possible;
+  if (symbols !== true) {
+    possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  } else {
+    possible =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()-_=+[]{}|;:/?><,.";
+  }
+  for (let i = 0; i < number; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
 }

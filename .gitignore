@@ -22,3 +22,5 @@ ferns appeals.toml
 learn japanese.toml
 namiware.toml
 debugLogs/
+*.swp
+.DS_STORE
