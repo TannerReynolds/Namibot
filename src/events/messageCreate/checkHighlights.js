@@ -22,7 +22,12 @@ async function checkHighlights(message) {
 		for (const h of highlights) {
 			let regPhrase = new RegExp(`\\b${h.phrase}\\b`);
 			if (regPhrase.test(message.content.toLowerCase()) && message.author.id !== h.userID) {
-				const isCooldown = await state.getHLCoolDown();
+				let isCooldown;
+				try {
+					isCooldown = await state.getHLCoolDown();
+				} catch (e) {
+					continue;
+				}
 				if (!isCooldown.has(h.userID)) {
 					let recipient;
 					try {
@@ -31,7 +36,12 @@ async function checkHighlights(message) {
 						continue;
 					}
 
-					let permissions = message.channel.permissionsFor(recipient);
+					let permissions;
+					try {
+						permissions = message.channel.permissionsFor(recipient);
+					} catch (e) {
+						continue;
+					}
 
 					if (!permissions.has(PermissionFlagsBits.ViewChannel)) {
 						continue;
