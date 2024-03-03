@@ -343,9 +343,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
   try {
     command = interaction.client.commands.get(interaction.commandName);
   }
-  catch (e => {
+  catch (e) {
     interaction.reply("This command does not exist")
-  })
+  }
 
 if (interaction.guild) {
   if (guilds[interaction.guild.id].commands[interaction.commandName]) {

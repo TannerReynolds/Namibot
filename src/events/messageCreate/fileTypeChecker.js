@@ -100,5 +100,6 @@ async function fileTypeChecker(message) {
       return null;
     }
   }
+}
 
   module.exports = { fileTypeChecker };

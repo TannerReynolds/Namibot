@@ -21,7 +21,7 @@ async function checkAccountAge(member) {
       .send(
         `Your account is newer than ${daysReq} days. Please do not attempt to rejoin this server until your account reaches ${daysReq} days old, or you may be considered a bot by our automated system and be banned.`
       )
-      .catch(() {
+      .catch(() => {
         // do nothing
       });
     member

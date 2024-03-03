@@ -50,7 +50,7 @@ async function detectURL(string) {
 }
 
 async function extractDomain(url) {
-  const domainReg = "(?:https?://)?(?:www.)?([a-zA-Z0-9-.]+)(?:[/]|$)";
+  const domainReg = "(?:https?:\\/\\/)?(?:www\\.)?([a-zA-Z0-9\\-\\.]+)(?:[\\/]|$)";
   try {
     const matches = await regexMatch(url, domainReg, "g");
     return matches;

@@ -1,6 +1,8 @@
 const log = require("../../utils/log");
 const { guilds } = require("../../config");
 const { regexMatch } = require("../../utils/regex");
+// const fetch = require("node-fetch");
+// Eventally code in a way to send a request to the GIF url and check the content type
 
 /**
  * Detects if a message contains a GIF and takes appropriate action.
@@ -23,7 +25,7 @@ async function gifDetector(message) {
     let urls = (await detectURL(message.content)) || false;
 
     if (urls) {
-      if (urls[0].includes(".gif")) {
+      if (urls[0].includes(".gif") || urls[0].includes(".gifv") || urls[0].includes("-gif-")) {
         hasGif = true;
       }
     }
@@ -37,6 +39,14 @@ async function gifDetector(message) {
     if (!hasGif && message.embeds.length > 0) {
       hasGif = message.embeds.some((embed) => {
         if (embed.url && embed.url.includes(".gif")) {
+          return true;
+        }
+
+         if (embed.url && embed.url.includes("-gif-")) {
+          return true;
+        }
+
+         if (embed.url && embed.url.includes(".gifv")) {
           return true;
         }
 

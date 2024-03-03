@@ -2,7 +2,7 @@ const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSe
 const { colors, emojis } = require('../config');
 const prisma = require('../utils/prismaClient');
 const { sendReply } = require('../utils/sendReply');
-//const { matchRegex } = require('../utils/processRegex');
+//const { regexMatch } = require('../utils/processRegex');
 
 module.exports = {
 	data: new SlashCommandBuilder().setDMPermission(false).setName('colorme').setDescription('Select a color for yourself!'),
@@ -75,7 +75,7 @@ module.exports = {
 
 function extractSnowflake(str) {
 	const regex = /(?<=:)(\d+)(?=>)/;
-	//const match = matchRegex(regex, str);
+	//const match = regexMatch(regex, str);
 	const match = str.match(regex);
 	return match ? match[0] : null;
 }

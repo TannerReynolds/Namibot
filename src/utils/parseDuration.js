@@ -4,13 +4,13 @@ const { regexMatch } = require("./regex");
 //const log = require('./log');
 
 const regexes = {
-  years: "(d+y)",
-  months: "(d+mo)",
-  weeks: "(d+w)",
-  days: "(d+d)",
-  hours: "(d+h)",
-  minutes: "(d+mi)",
-  seconds: "(d+s)",
+  years: "(\\d+y)",
+  months: "(\\d+mo)",
+  weeks: "(\\d+w)",
+  days: "(\\d+d)",
+  hours: "(\\d+h)",
+  minutes: "(\\d+mi)",
+  seconds: "(\\d+s)",
 };
 const flag = "i";
 
@@ -27,7 +27,7 @@ async function parseNewDate(duration) {
   const parsedValues = {};
 
   for (const key in regexes) {
-    const match = await matchRegex(duration, regexes[key], flag);
+    const match = await regexMatch(duration, regexes[key], flag);
     if (match) {
       parsedValues[key] = parseInt(match[0]);
     }
@@ -69,7 +69,7 @@ async function durationToString(rawDuration) {
   const parsedValues = [];
 
   for (const key in regexes) {
-    const match = await matchRegex(duration, regexes[key], flag);
+    const match = await regexMatch(duration, regexes[key], flag);
     if (match) {
       const value = parseInt(match[0]);
       const word = value === 1 ? durationNames[key][0] : durationNames[key][1];
@@ -93,7 +93,7 @@ async function isValidDuration(duration) {
   if (isJP(duration)) duration = await toENTime(duration);
   duration = await mToMi(duration);
   for (const key in regexes) {
-    const match = await matchRegex(duration, regexes[key], flag);
+    const match = await regexMatch(duration, regexes[key], flag);
     if (match) {
       return true;
     }
@@ -113,7 +113,7 @@ async function durationToSec(durationStr) {
   const parsedValues = {};
 
   for (const key in regexes) {
-    const match = await matchRegex(durationStr, regexes[key], flag);
+    const match = await regexMatch(durationStr, regexes[key], flag);
     if (match) {
       parsedValues[key] = parseInt(match[1]);
     }
