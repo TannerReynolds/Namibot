@@ -1,12 +1,12 @@
 {
-  "name": "discord-moderation-bot",
+  "name": "namibot",
   "description": "A self hostable moderation bot for Discord",
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
     "deploy": "cd src && node globalDeploy.js",
     "dev": "cd src && node --no-deprecation index.js --dev",
-    "production": "cd src && pm2 start appMonitor.js --max-memory-restart 300M --name botmonitor && pm2 start index.js --name modbot --max-memory-restart 1000M",
+    "production": "cd src && pm2 start appMonitor.js --max-memory-restart 300M --name botmonitor && pm2 start index.js --name modbot --max-memory-restart 2000M",
     "stop": "cd src && pm2 delete botmonitor && pm2 delete modbot",
     "restart": "cd src && pm2 restart botmonitor && pm2 restart modbot",
     "validate": "cd src && node verifyInstall.js",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TannerReynolds/Discord-Moderation-Bot.git"
+    "url": "git+https://github.com/TannerReynolds/Namibot.git"
   },
   "keywords": [
     "discord",
@@ -31,9 +31,9 @@
   "author": "TannerReynolds",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/TannerReynolds/Discord-Moderation-Bot/issues"
+    "url": "https://github.com/TannerReynolds/Namibot/issues"
   },
-  "homepage": "https://github.com/TannerReynolds/Discord-Moderation-Bot#readme",
+  "homepage": "https://github.com/TannerReynolds/Namibot#readme",
   "version": "0.7.0",
   "dependencies": {
     "@iarna/toml": "^2.2.5",
