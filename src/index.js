@@ -101,6 +101,8 @@ const { antiChannelNuke, channelDeletor } = require(
 const { antiBanNuke, getBanner } = require(`${gBanAdd}antiBanNuke`);
 const { reportSubmission } = require(`${modals}reportSubmission`);
 const { banSubmission } = require(`${modals}banSubmission`);
+const { unshortenMessageURLs } = require(`${mCreate}unshortenMessageURLs`);
+const { blockedDomains } = require(`${mCreate}blockedDomains`);
 const prisma = require(`${utils}prismaClient`);
 const guildMemberCache = require(`${utils}guildMemberCache`);
 const state = require(`${utils}sharedState`);
@@ -342,49 +344,48 @@ client.on(Events.InteractionCreate, async (interaction) => {
   let command;
   try {
     command = interaction.client.commands.get(interaction.commandName);
-  }
-  catch (e) {
-    interaction.reply("This command does not exist")
+  } catch (e) {
+    interaction.reply("This command does not exist");
   }
 
-if (interaction.guild) {
-  if (guilds[interaction.guild.id].commands[interaction.commandName]) {
-    if (
-      !guilds[interaction.guild.id].commands[interaction.commandName].enabled
-    ) {
-      return interaction.reply({
-        content: "This command is disabled in this server",
-        ephemeral: true,
-      });
+  if (interaction.guild) {
+    if (guilds[interaction.guild.id].commands[interaction.commandName]) {
+      if (
+        !guilds[interaction.guild.id].commands[interaction.commandName].enabled
+      ) {
+        return interaction.reply({
+          content: "This command is disabled in this server",
+          ephemeral: true,
+        });
+      }
     }
   }
-}
 
-if (!command) {
-  log.error(`No command matching ${interaction.commandName} was found.`);
-  return;
-}
-
-try {
-  await command.execute(interaction);
-  if (interaction.guild) {
-    if (guilds[interaction.guild.id].logs.interactionCreate)
-      interactionLog(interaction);
+  if (!command) {
+    log.error(`No command matching ${interaction.commandName} was found.`);
+    return;
   }
-} catch (error) {
-  log.error(error);
-  await interaction
-    .editReply({
-      content: `There was an error while executing this command: ${error}`,
-      ephemeral: true,
-    })
-    .catch((e) => {
-      interaction.reply({
-        content: `There was an error while executing this command: ${e}`,
+
+  try {
+    await command.execute(interaction);
+    if (interaction.guild) {
+      if (guilds[interaction.guild.id].logs.interactionCreate)
+        interactionLog(interaction);
+    }
+  } catch (error) {
+    log.error(error);
+    await interaction
+      .editReply({
+        content: `There was an error while executing this command: ${error}`,
         ephemeral: true,
+      })
+      .catch((e) => {
+        interaction.reply({
+          content: `There was an error while executing this command: ${e}`,
+          ephemeral: true,
+        });
       });
-    });
-}
+  }
 });
 
 //////////////////////////////////////
@@ -626,6 +627,12 @@ client.on(Events.MessageCreate, async (message) => {
 
   await checkHighlights(message);
 
+  if (guilds[guildID].features.blockedDomains.enabled)
+    await blockedDomains(message);
+
+  if (guilds[guildID].features.urlUnShortener.enabled)
+    await unshortenMessageURLs(message);
+
   if (guilds[guildID].features.sentimentAnalysis.enabled)
     await sentimentAnalysis(message);
 });
@@ -746,6 +753,7 @@ process.on("uncaughtException", async (err) => {
   log.debug(`Err Stack: ${err.stack}`);
   await syncMemberCache();
   await log.writeDebugLogs();
+  process.exit(0);
 });
 
 process.on("SIGINT", async () => {

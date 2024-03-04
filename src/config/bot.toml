@@ -15,7 +15,8 @@ token = "."
 # The ID of your bot, you can get this from your bot's application page. It will be called "Application ID"
 clientId = "1104630573772841070"
 
-
+# Maximum CPU threads the bot should use for it's worker thread pool
+cpuThreads = 4
 guildId = "1190156169961029774"
 botOwnerID = "478044823882825748"
 appealServer = "https:#discord.gg/wJhppSMHpG"
@@ -42,3 +43,8 @@ loading = "<a:loading:1206460809623113758>"
 enabled = true
 PORT = 1746
 url = "https://learn.tokyo.jp/fern"
+
+# IMPORTANT: Once you're done setting this file up, ensure you also do your guild configs, located in the 'guilds' folder.
+# Copy the "blank.toml" file and paste it. Rename it to the name of your guild, then fill out the information inside.
+# Do this for every single guild you want the bot to be in. Each guild should have it's own toml file by the end.
+# When done, open the root folder where "package.json" is located and run the command "npm run generateConf"

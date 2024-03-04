@@ -2,7 +2,7 @@ const ejs = require("ejs");
 const fs = require("fs-extra");
 const { getModChannels } = require("../../utils/getModChannels");
 const log = require("../../utils/log");
-const { EmbedBuilder, MessageAttachment } = require("discord.js");
+const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
 const { colors, server } = require("../../config");
 
 /**
@@ -42,7 +42,7 @@ async function bulkDeleteLog(messages, channel, client) {
 			});
 		} else {
 		*/
-    let attach = new MessageAttachment(`./server/public/${fileName}.html`);
+    let attach = new AttachmentBuilder(`./server/public/${fileName}.html`);
     deleteEmbed = new EmbedBuilder()
       .setTitle(`Bulk Messages Deleted`)
       .setColor(colors.main)
