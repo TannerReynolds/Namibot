@@ -9,79 +9,82 @@ staffRoleID = "499564155884535808"
 voiceModRoleID = "1199444014785634325"
 muteRoleID = "819300268628770837"
 
-  [logs]
-  messageDelete = true
-  messageUpdate = true
-  messageDeleteBulk = true
-  guildBanAdd = true
-  guildBanRemove = true
-  interactionCreate = true
+[logs]
+messageDelete = true
+messageUpdate = true
+messageDeleteBulk = true
+guildBanAdd = true
+guildBanRemove = true
+interactionCreate = true
 
-  [features]
-  bannedWordFilter = true
-  fileTypeChecker = true
-  hiddenLinkDetection = true
-  antiSpam = true
-  modMail = true
+[features]
+bannedWordFilter = true
+fileTypeChecker = true
+hiddenLinkDetection = true
+antiSpam = true
+modMail = true
 
-    [features.checkAccountAge]
-    enabled = true
-    days = 7
+[features.blockedDomains]
+enabled = true
 
-    [features.antiAds]
-    enabled = true
-    allowedInvites = [
-  "https://discord.gg/cars",
-  "https://discord.gg/learnjapanese"
+[features.urlUnShortener]
+enabled = true
+
+[features.checkAccountAge]
+enabled = true
+days = 7
+
+[features.antiAds]
+enabled = true
+allowedInvites = ["https://discord.gg/cars", "https://discord.gg/learnjapanese"]
+
+[features.gifDetector]
+enabled = true
+allowedChannels = [
+    "438653183464701963",
+    "438652906116481025",
+    "1197694320346665140",
 ]
 
-    [features.gifDetector]
-    enabled = true
-    allowedChannels = [
-  "438653183464701963",
-  "438652906116481025",
-  "1197694320346665140"
-]
+[features.autoRole]
+enabled = true
+roles = ["573167869433610251"]
 
-    [features.autoRole]
-    enabled = true
-    roles = [ "573167869433610251" ]
+[features.levels]
+enabled = true
+levelUpMessage = false
+generateLevelImage = true
 
-    [features.levels]
-    enabled = true
-    levelUpMessage = false
-    generateLevelImage = true
+[features.levels.levelRoles]
+1 = "1203186738898665533"
+10 = "1203186765289234523"
+20 = "1203186804828930108"
+30 = "1203186840639905832"
+40 = "1203186865398747166"
+50 = "1203186889637629983"
 
-      [features.levels.levelRoles]
-      1 = "1203186738898665533"
-      10 = "1203186765289234523"
-      20 = "1203186804828930108"
-      30 = "1203186840639905832"
-      40 = "1203186865398747166"
-      50 = "1203186889637629983"
+[features.nitroRoles]
+enabled = true
 
-    [features.nitroRoles]
-    enabled = true
+[[features.nitroRoles.roles]]
+emoji = ""
+id = ""
 
-      [[features.nitroRoles.roles]]
-      emoji = ""
-      id = ""
+[features.selfRoles]
+enabled = false
 
-    [features.selfRoles]
-    enabled = false
+[[features.selfRoles.roles]]
+emoji = ""
+id = ""
 
-      [[features.selfRoles.roles]]
-      emoji = ""
-      id = ""
+[features.sentimentAnalysis]
+enabled = true
+dmUsers = false
+openAIToken = "."
+sensitivity = 0.95
 
-    [features.sentimentAnalysis]
-    enabled = true
-    dmUsers = false
-    openAIToken = "."
-    sensitivity = 0.95
-
-    [features.antiNuke]
-    enabled = false
+[features.antiNuke]
+enabled = false
 
 [commands.createconfirmation]
 enabled = true
@@ -99,6 +102,26 @@ staffRoleCanUse = true
 voiceModRoleCanUse = false
 
 [commands."Report Message"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands."Ban Member"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands."Kick Member"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands."Mute Member"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = true
+
+[commands."Warn Member"]
 enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false

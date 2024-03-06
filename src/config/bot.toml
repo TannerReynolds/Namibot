@@ -1,9 +1,9 @@
 # Overview of types of values:
-# String: Strings are encased in ''. Any text or snowflake (Discord ID) is a string and needs to be encased in '' or "".
-# Number: Numbers are not enclosed in ''. They are just numbers and are not interpreted by the bot the same way that strings are.
-# Array: Array is just a list of other types. Could be numbers, strings, or objects. each item is separated by a comma. Example: [ 'first ID', 'second ID' ]
+# String: Strings are encased in "". Any text or snowflake (Discord ID) is a string and needs to be encased "".
+# Number: Numbers are not enclosed in "". They are just numbers and are not interpreted by the bot the same way that strings are.
+# Array: Array is just a list of other types. Could be numbers, strings, or objects. each item is separated by a comma. Example: [ "first ID", "second ID" ]
 # Object: Objects are, in this case, structures with a key and value pair. Key is the first item, value is the second item. There can also be arrays of objects.
-# Boolean: Booleans are just true or false. Do NOT encase them with '' or "". They are meant to just be true or false by themselves.
+# Boolean: Booleans are just true or false. Do NOT encase them with "". They are meant to just be true or false by themselves.
 # This guide can help you create a bot and invite it to your server: https:#discordjs.guide/preparations/setting-up-a-bot-application.html
 # This site can help you create an invite link for your bot: https:#discordapi.com/permissions.html
 # This bot was coded to only work on servers that are configured here. Do not make your bot public, it will only create errors and break things.

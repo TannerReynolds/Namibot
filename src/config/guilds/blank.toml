@@ -106,6 +106,26 @@ enabled = true
 staffRoleCanUse = true
 voiceModRoleCanUse = false
 
+[commands."Ban Member"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands."Kick Member"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
+[commands."Mute Member"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = true
+
+[commands."Warn Member"]
+enabled = true
+staffRoleCanUse = true
+voiceModRoleCanUse = false
+
 [commands.reload]
 enabled = true
 staffRoleCanUse = true

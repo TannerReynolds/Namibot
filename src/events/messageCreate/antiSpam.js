@@ -1,5 +1,10 @@
 const state = require("../../utils/sharedState");
-const { EmbedBuilder } = require("discord.js");
+const {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require("discord.js");
 const { colors } = require("../../config");
 const { getModChannels } = require("../../utils/getModChannels");
 const log = require("../../utils/log");
@@ -77,7 +82,24 @@ async function antiSpam(message) {
         .catch((e) => {
           log.error(`Error creating warning log: ${e}`);
         });
-
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`ban_${message.author.id}`)
+          .setLabel("Ban User")
+          .setStyle(ButtonStyle.Danger),
+        new ButtonBuilder()
+          .setCustomId(`kick_${message.author.id}`)
+          .setLabel("Kick User")
+          .setStyle(ButtonStyle.Danger),
+        new ButtonBuilder()
+          .setCustomId(`mute_${message.author.id}`)
+          .setLabel("Mute User")
+          .setStyle(ButtonStyle.Danger),
+        new ButtonBuilder()
+          .setCustomId(`warn_${message.author.id}`)
+          .setLabel("Warn User")
+          .setStyle(ButtonStyle.Danger),
+      );
       let logEmbed = new EmbedBuilder()
         .setColor(colors.main)
         .setTitle("Member Timed Out Automatically")
@@ -99,6 +121,7 @@ async function antiSpam(message) {
       getModChannels(message.client, message.guild.id)
         .main.send({
           embeds: [logEmbed],
+          components: [row],
           content: `<@${message.author.id}>`,
         })
         .catch((e) => {

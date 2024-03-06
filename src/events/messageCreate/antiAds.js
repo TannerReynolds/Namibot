@@ -60,6 +60,18 @@ async function antiAds(message) {
         .setCustomId(`ban_${message.author.id}`)
         .setLabel("Ban User")
         .setStyle(ButtonStyle.Danger),
+      new ButtonBuilder()
+        .setCustomId(`kick_${message.author.id}`)
+        .setLabel("Kick User")
+        .setStyle(ButtonStyle.Danger),
+      new ButtonBuilder()
+        .setCustomId(`mute_${message.author.id}`)
+        .setLabel("Mute User")
+        .setStyle(ButtonStyle.Danger),
+      new ButtonBuilder()
+        .setCustomId(`warn_${message.author.id}`)
+        .setLabel("Warn User")
+        .setStyle(ButtonStyle.Danger),
     );
 
     let logEmbed = new EmbedBuilder()

@@ -92,6 +92,9 @@ const { confirmationButton } = require(`${buttons}confirmationButton`);
 const { unbanButtonApprove } = require(`${buttons}unbanButtonApprove`);
 const { modMailButtonClose } = require(`${buttons}modMailButtonClose`);
 const { banButton } = require(`${buttons}banButton`);
+const { kickButton } = require(`${buttons}kickButton`);
+const { muteButton } = require(`${buttons}muteButton`);
+const { warnButton } = require(`${buttons}warnButton`);
 const { unbanButtonDeny } = require(`${buttons}unbanButtonDeny`);
 const { addXP } = require(`${mCreate}levels`);
 const { sentimentAnalysis } = require(`${mCreate}sentimentAnalysis`);
@@ -101,6 +104,9 @@ const { antiChannelNuke, channelDeletor } = require(
 const { antiBanNuke, getBanner } = require(`${gBanAdd}antiBanNuke`);
 const { reportSubmission } = require(`${modals}reportSubmission`);
 const { banSubmission } = require(`${modals}banSubmission`);
+const { kickSubmission } = require(`${modals}kickSubmission`);
+const { muteSubmission } = require(`${modals}muteSubmission`);
+const { warnSubmission } = require(`${modals}warnSubmission`);
 const { unshortenMessageURLs } = require(`${mCreate}unshortenMessageURLs`);
 const { blockedDomains } = require(`${mCreate}blockedDomains`);
 const prisma = require(`${utils}prismaClient`);
@@ -281,8 +287,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
       if (type === "ban") return banButton(interaction, args);
       if (type === "unbanApprove") return unbanButtonApprove(interaction, args);
       if (type === "unbanDeny") return unbanButtonDeny(interaction, args);
-      //if (type === 'warn') return warnButton(interaction);
-      //if (type === 'mute') return muteButton(interaction);
+      if (type === "warn") return warnButton(interaction);
+      if (type === "kick") return kickButton(interaction);
+      if (type === "mute") return muteButton(interaction);
       if (type === "modMailClose") return modMailButtonClose(interaction);
     }
   } catch (e) {
@@ -297,6 +304,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
       let modalType = args[0];
       if (modalType === "report") return reportSubmission(interaction, args);
       if (modalType === "ban") return banSubmission(interaction, args);
+      if (modalType === "kick") return kickSubmission(interaction, args);
+      if (modalType === "warn") return warnSubmission(interaction, args);
+      if (modalType === "mute") return muteSubmission(interaction, args);
     }
   } catch (e) {
     log.error(`Error in interactionCreate (modal processing): ${e}`);
