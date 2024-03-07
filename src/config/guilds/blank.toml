@@ -1,91 +1,145 @@
+# Name of your server
 name = "Server name"
-invite = "invite url"
-guildID = "SERVER_ID_GOES_HERE"
-mainLogChannelID = "583434851852746776"
-secondaryLogChannelID = "655047046557859851"
-botCommandsChannelID = "438652906116481025"
-mailChannelID = "1202038197698449450"
-staffRoleID = "499564155884535808"
-voiceModRoleID = "1199444014785634325"
-muteRoleID = "819300268628770837"
 
+# Full invite link to your server. Example: https://discord.gg/cars
+invite = "invite url"
+
+# Your guild ID here. Should be a snowflake
+guildID = "ID_HERE"
+mainLogChannelID = "ID_HERE"
+# If you only have/want one log channel, use the same ID as your mainLogChannel.
+# It's recommended to have two log channels. Main is used for punitive actions
+# while the secondary log channel is used for smaller things like
+# sentiment analysis and messasge edits/deletes.
+secondaryLogChannelID = "ID_HERE"
+# This is the channel that non staff members will be forced to use to execute specific bot commands.
+botCommandsChannelID = "ID_HERE"
+# This is the forum channel ID (Has to be a forum channel) that you will use to get modmails, reports, and ban appeals.
+mailChannelID = "ID_HERE"
+# Role ID of staff members. Allows them to bypass permissions for commands that you configure
+staffRoleID = "ID_HERE"
+# Role ID of your voice moderators. If you dont have voice moderators, then leave as-is
+voiceModRoleID = "ID_HERE"
+# Role ID of your muted role. The role that is used to stop people from talking in your text and/or voice channels.
+muteRoleID = "ID_HERE"
+
+# Individually enable or disable types of logs on your server
 [logs]
 messageDelete = true
 messageUpdate = true
+# messageDeleteBulk happens when a member is banned and all their messages get deleted at once
+# Or when you use the /purge command to mass delete messages.
 messageDeleteBulk = true
 guildBanAdd = true
 guildBanRemove = true
+# Every time a command is ran
 interactionCreate = true
 
 [features]
+# In development. Will act as a secondary measure for better banned word detection than
+# Discord's automoderator can provide.
 bannedWordFilter = true
+# Delete messages being sent when they include files that are potentially dangerous.
+# This includes things like .exe files, bats, js scripts, etc.
 fileTypeChecker = true
+# Detect and notify members when a message is sent in chat that contains an inline URL.
+# Inline URLs can be sent like this [steamcommunity.com/gift/asdasdasda](https://myscamsite.pw)
 hiddenLinkDetection = true
+# Stop and automatically punish people that perform various spammy actions. Sending too many messages
+# too quickly, having too many newlines, or having too many mentions will trigger the anti spam.
 antiSpam = true
+# Enable modmail. This is required to accept modmail, reports, and ban appeals.
 modMail = true
 
+# Check links in messages to see if any malicious websites, NSFW websites, or URL shorteners exist in the message.
 [features.blockedDomains]
 enabled = true
 
+# Unshorten all URLs automatically. Will notify members when a shortened URL is sent.
+# If a blocked Domain is found inside the array of unshortened URLs
+# Message author will be timed out for a week and mods will be notified.
 [features.urlUnShortener]
 enabled = true
 
+# Check how old the account is, then kick the member from the server
+# if they dont meet the minimum age requirement.
 [features.checkAccountAge]
 enabled = true
 days = 7
 
 [features.antiAds]
 enabled = true
-allowedInvites = ["https://discord.gg/cars", "https://discord.gg/learnjapanese"]
+# Full inivte links go here in an array. Example:
+# allowedInvites = ["https://discord.gg/cars", "https://discord.gg/learnjapanese"]
+# OR
+# allowedInvites = ["https://discord.gg/cars"]
+allowedInvites = ["LINK_HERE", "LINK_HERE"]
 
 [features.gifDetector]
 enabled = true
-allowedChannels = [
-    "438653183464701963",
-    "438652906116481025",
-    "1197694320346665140",
-]
+# Array of channel IDs where Gifs are allowed to be sent
+allowedChannels = ["ID_HERE", "ID_HERE", "ID_HERE"]
 
 [features.autoRole]
 enabled = true
-roles = ["573167869433610251"]
+# Array of Role IDs here
+roles = ["ID_HERE"]
 
 [features.levels]
 enabled = true
-levelUpMessage = false
+# Type in the message you want to send when people level up
+# Inserting {{level}} will replace that text with the users actual level
+# Replace this message with false (Ex: levelUpMessage = false)
+# in order to keep levels and level roles enabled, but with no level up message
+# being sent in chat.
+# Message is sent in the channel they sent a message in, as a reply to that message
+levelUpMessage = "Congrats, you just reached level {{level}}!"
 generateLevelImage = true
 
-[features.levels.levelRoles]
-1 = "1203186738898665533"
-10 = "1203186765289234523"
-20 = "1203186804828930108"
-30 = "1203186840639905832"
-40 = "1203186865398747166"
-50 = "1203186889637629983"
+[features.levels.roles]
+# Key is a number that represents the level.
+# Key = "ROLE_ID"
+# You don't have to use these levels specifically. Any number you add will be used for the level roles
+1 = "ID_HERE"
+10 = "ID_HERE"
+20 = "ID_HERE"
+30 = "ID_HERE"
+40 = "ID_HERE"
+50 = "ID_HERE"
 
 [features.nitroRoles]
 enabled = true
 
-[[features.nitroRoles.roles]]
-emoji = ""
-id = ""
-
-[features.selfRoles]
-enabled = false
-
-[[features.selfRoles.roles]]
-emoji = ""
-id = ""
-
+# OpenAI Moderation Endpoint to find messages sent that
+# may have harmful intent or contain misconduct.
+# Example: It will flag messages and send them to your
+# secondary log channel when somebody says something overtly sexual
+# or when it thinks that a person is being too insulting or harrassing another member.
 [features.sentimentAnalysis]
 enabled = true
+# DM users when they hit the flag. Recommended to keep it off unless
+# you have a strict rule for not being mean to people or being overly sexual
 dmUsers = false
+# Get this from platform.openai.com. The API is 100% free.
 openAIToken = "."
+# Higher = Less sensitive
+# Lower = More sensitive
 sensitivity = 0.95
 
+# Keeps track of staff banning members and deleting channels.
+# When the bot sees that they're banning people too quickly
+# or deleting channels too quickly, it will kick the staff member
 [features.antiNuke]
-enabled = false
+enabled = true
 
+# Each command has 3 options. You can disable commands from here to stop people from using them
+# You can also determine if whether or not the staff role allows people to bypass permissions.
+# You may do the same for your voice moderator role.
+# Commands that require being the bot's owner cannot be used by staff or voice mods
+# even if CanUse is set to true.
+#
+# Creating your custom commands means that they need to be added here as [commands.YOUR_COMMAND_NAME]
+#
 [commands.createconfirmation]
 enabled = true
 staffRoleCanUse = true

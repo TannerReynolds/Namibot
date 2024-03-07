@@ -5,7 +5,7 @@ const { sendReply } = require("../../../utils/sendReply.js");
 const prisma = require("../../../utils/prismaClient.js");
 const { hasHigherPerms } = require("../../../utils/isStaff");
 const { getModChannels } = require("../../../utils/getModChannels");
-const c = require("../../../config");
+const c = require("../../../config.json");
 
 async function warnSubmission(interaction, args) {
   await interaction.deferReply({ ephemeral: true });
@@ -67,7 +67,12 @@ async function warnSubmission(interaction, args) {
       .setTimestamp()
       .setAuthor({ name: name, iconURL: aviURL });
 
-    await interaction.channel.send({ embeds: [warnEmbed] });
+    let cur = interaction.channel.id;
+    let mainCh = guilds[interaction.guild.id].mainLogChannelID;
+    let secCh = guilds[interaction.guild.id].secondaryChannelID;
+    if (cur !== mainCh || cur !== secCh) {
+      await interaction.channel.send({ embeds: [warnEmbed] });
+    }
     sendReply(
       interaction,
       "success",

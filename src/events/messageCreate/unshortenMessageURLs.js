@@ -7,7 +7,7 @@ const {
   ActionRowBuilder,
 } = require("discord.js");
 const { regexMatch } = require("../../utils/regex");
-const { colors, guilds, cpuThreads } = require("../../config");
+const { colors, guilds, cpuThreads } = require("../../config.json");
 const { getModChannels } = require("../../utils/getModChannels");
 const prisma = require("../../utils/prismaClient");
 const path = require("path");

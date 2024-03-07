@@ -11,8 +11,8 @@ const {
   defineDurationString,
 } = require("../utils/defineDuration");
 const { getModChannels } = require("../utils/getModChannels");
-const { colors, emojis } = require("../config");
-const c = require("../config");
+const { colors, emojis } = require("../config.json");
+const c = require("../config.json");
 const log = require("../utils/log");
 const { sendReply } = require("../utils/sendReply");
 

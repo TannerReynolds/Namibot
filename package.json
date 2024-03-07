@@ -3,10 +3,10 @@
   "description": "A self hostable moderation bot for Discord",
   "main": "src/index.js",
   "scripts": {
-    "test": "cd src && node --no-deprecation index.js",
+    "test": "npx prisma generate && npx prisma migrate dev --name modBot && cd src && node globalDeploy.js && node --no-deprecation index.js",
     "deploy": "cd src && node globalDeploy.js",
     "dev": "cd src && node --no-deprecation index.js --dev",
-    "production": "cd src && pm2 start appMonitor.js --max-memory-restart 300M --name botmonitor && pm2 start index.js --name modbot",
+    "production": "npx prisma generate && npx prisma migrate dev --name modBot && cd src && node globalDeploy.js && pm2 start appMonitor.js --max-memory-restart 300M --name botmonitor && pm2 start index.js --name modbot",
     "stop": "cd src && pm2 stop botmonitor && pm2 stop modbot && pm2 delete botmonitor && pm2 delete modbot",
     "restart": "cd src && pm2 restart botmonitor && pm2 restart modbot",
     "validate": "cd src && node verifyInstall.js",

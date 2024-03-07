@@ -7,7 +7,7 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const prisma = require("../../utils/prismaClient");
-const { guilds, colors, cpuThreads } = require("../../config");
+const { guilds, colors, cpuThreads } = require("../../config.json");
 const { getModChannels } = require("../../utils/getModChannels");
 const log = require("../../utils/log");
 const path = require("path");

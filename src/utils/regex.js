@@ -1,8 +1,11 @@
 const path = require("path");
 const Piscina = require("piscina");
-const { cpuThreads } = require("../config");
+const { cpuThreads } = require("../config.json");
 
-const workerPath = path.resolve(__dirname, "./workerThreads/regexMatchWorker.js");
+const workerPath = path.resolve(
+  __dirname,
+  "./workerThreads/regexMatchWorker.js",
+);
 const piscina = new Piscina({
   filename: workerPath,
   maxThreads: cpuThreads,

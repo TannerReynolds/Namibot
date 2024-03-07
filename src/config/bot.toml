@@ -13,25 +13,34 @@
 token = "."
 
 # The ID of your bot, you can get this from your bot's application page. It will be called "Application ID"
-clientId = "1104630573772841070"
+clientId = "ID_HERE"
 
 # Maximum CPU threads the bot should use for it's worker thread pool
 cpuThreads = 4
-guildId = "1190156169961029774"
-botOwnerID = "478044823882825748"
-appealServer = "https:#discord.gg/wJhppSMHpG"
+# Main guild of the bot
+guildId = "ID_HERE"
+# Your user ID
+botOwnerID = "ID_HERE"
+# The server to direct banned users to so that they can appeal their bans. The reason for this
+# is that users cannot run the /appeal command in the bot's DMs unless they share
+# at least one server with the bot. I recommend having a server where there are no text channels open to them
+# just so they can DM the bot with /appeal
+appealServer = "LINK_HERE"
 
 [status]
+# Type
 type = 3
 content = "over everyone"
 
 [colors]
+# Must be hex color codes prefixed with a #
 success = "#66de98"
 error = "#FF6961"
 main = "#6C4678"
 warning = "#f5f562"
 
 [emojis]
+# Emojis for various embeds and reactions
 sent = "<:sent:1203188998097604608>"
 yes = "<:check:1203191199251300402>"
 no = "<:x_:1203191562084032594>"
@@ -39,6 +48,10 @@ success = "<:check:1203191199251300402>"
 error = "<:x_:1203191562084032594>"
 loading = "<a:loading:1206460809623113758>"
 
+# url is currently not necessary, but if you plan on running this bot you should have this enabled.
+# Enabling this feature will allow the bot process monitor to keep watch over your bot and recieve heartbeats from it.
+# This means that if your bot ever stops responding, the monitor can restart your bot and you will experience no more
+# than 10-15 seconds of downtime at most.
 [server]
 enabled = true
 PORT = 1746
@@ -48,3 +61,10 @@ url = "https://learn.tokyo.jp/fern"
 # Copy the "blank.toml" file and paste it. Rename it to the name of your guild, then fill out the information inside.
 # Do this for every single guild you want the bot to be in. Each guild should have it's own toml file by the end.
 # When done, open the root folder where "package.json" is located and run the command "npm run generateConf"
+#
+# Do not start the processes yourself. Please use the commands premade for you in package.json
+# Run "npm run setup" to install and check for dependencies.
+# Test out the bot to make sure it works by running "npm run test". This will also deploy
+# the commands, and create a migration for your database based on the schema.
+# Once you've confirmed everything works as intended, run the bot in production mode
+# by running the command "npm run production"

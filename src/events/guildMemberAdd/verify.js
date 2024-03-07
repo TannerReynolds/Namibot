@@ -1,5 +1,5 @@
 const { createCanvas } = require("canvas");
-const { colors, emojis, guilds } = require("../../config");
+const { colors, emojis, guilds } = require("../../config.json");
 let rightCode = "";
 
 async function verifyMessage(member) {

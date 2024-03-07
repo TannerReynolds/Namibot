@@ -9,7 +9,7 @@ const {
   defineDurationString,
 } = require("../../../utils/defineDuration");
 const { getModChannels } = require("../../../utils/getModChannels");
-const c = require("../../../config");
+const c = require("../../../config.json");
 
 async function muteSubmission(interaction, args) {
   await interaction.deferReply({ ephemeral: true });
@@ -84,7 +84,13 @@ async function muteSubmission(interaction, args) {
       .setTimestamp()
       .setAuthor({ name: name, iconURL: aviURL });
 
-    await interaction.channel.send({ embeds: [muteEmbed] });
+    let cur = interaction.channel.id;
+    let mainCh = guilds[interaction.guild.id].mainLogChannelID;
+    let secCh = guilds[interaction.guild.id].secondaryChannelID;
+    if (cur !== mainCh || cur !== secCh) {
+      await interaction.channel.send({ embeds: [muteEmbed] });
+    }
+
     sendReply(
       interaction,
       "success",

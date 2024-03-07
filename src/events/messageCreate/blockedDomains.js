@@ -9,7 +9,7 @@ const {
 } = require("discord.js");
 const path = require("path");
 const Piscina = require("piscina");
-const { cpuThreads, colors } = require("../../config");
+const { cpuThreads, colors } = require("../../config.json");
 const { getModChannels } = require("../../utils/getModChannels");
 const prisma = require("../../utils/prismaClient");
 

@@ -55,7 +55,7 @@ enabled = true
 levelUpMessage = false
 generateLevelImage = true
 
-[features.levels.levelRoles]
+[features.levels.roles]
 1 = "1203186738898665533"
 10 = "1203186765289234523"
 20 = "1203186804828930108"
