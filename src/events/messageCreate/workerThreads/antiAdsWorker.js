@@ -6,7 +6,7 @@ module.exports = ({ guilds, content, guildID }) => {
       /discord\.gg\/[a-zA-Z0-9]+|discord\.com\/invite\/[a-zA-Z0-9]+/gim;
     let sentInvite = content.match(regex);
     if (!sentInvite) {
-      return parentPort.postMessage(false);
+      return false;
     }
 
     let currentInvite = guilds[guildID].invite.match(regex)[0];
