@@ -4,7 +4,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require("discord.js");
-const { guilds, colors, emojis } = require("../../../config.js");
+const { guilds, colors, emojis } = require("../../../config.json");
 const log = require("../../../utils/log.js");
 const { sendReply } = require("../../../utils/sendReply.js");
 const prisma = require("../../../utils/prismaClient.js");

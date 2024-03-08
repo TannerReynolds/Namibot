@@ -24,3 +24,4 @@ namiware.toml
 debugLogs/
 *.swp
 .DS_STORE
+botdev.toml

@@ -60,7 +60,7 @@ async function verifyInstall() {
 
 	let config = false;
 	try {
-		config = require('./config.js');
+		config = require('./config.json');
 	} catch (e) {
 		failures.push('Could not find the config.js file. Please rename example.config.js to config.js and then ensure all information is correctly entered.');
 	}

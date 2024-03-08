@@ -52,7 +52,7 @@ const utils = "./utils/";
 const serverDir = "./server/";
 
 // Configuration file
-const { token, colors, guilds, server, status } = require("./config.js");
+const { token, colors, guilds, server, status } = require("./config.json");
 
 // Importing various utility functions and event handlers
 const { checkAndUnbanUsers } = require(`${minute}checkBans`);

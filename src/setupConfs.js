@@ -18,7 +18,7 @@ function copyAndReplaceConfigFiles() {
 
     const configFiles = [
         { src: '../example.env', dest: '../.env' },
-        { src: './example.config.js', dest: './config.js' },
+        { src: './example.config.json', dest: './config.json' },
     ];
 
     configFiles.forEach(({ src, dest }) => {

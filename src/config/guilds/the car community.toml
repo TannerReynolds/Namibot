@@ -56,12 +56,7 @@ levelUpMessage = false
 generateLevelImage = true
 
 [features.levels.roles]
-1 = "1203186738898665533"
-10 = "1203186765289234523"
-20 = "1203186804828930108"
-30 = "1203186840639905832"
-40 = "1203186865398747166"
-50 = "1203186889637629983"
+
 
 [features.nitroRoles]
 enabled = true

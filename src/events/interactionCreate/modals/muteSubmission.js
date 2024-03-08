@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require("discord.js");
-const { colors, emojis, guilds } = require("../../../config.js");
+const { colors, emojis, guilds } = require("../../../config.json");
 const log = require("../../../utils/log.js");
 const { sendReply } = require("../../../utils/sendReply.js");
 const prisma = require("../../../utils/prismaClient.js");
