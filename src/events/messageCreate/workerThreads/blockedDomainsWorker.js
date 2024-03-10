@@ -8,6 +8,7 @@ module.exports = (domain) => {
 
     function runCheck() {
       if (lst.length === 0) return false;
+      if (lst.length === 1 && domain !== lst[0]) return false;
       let point = lst[Math.floor(lst.length / 2)];
 
       if (domain === point) {

@@ -31,6 +31,7 @@ async function checkHighlights(message) {
         } catch (e) {
           continue;
         }
+        if (isCooldown === null) continue;
         if (!isCooldown.has(h.userID)) {
           let recipient;
           try {
@@ -46,6 +47,7 @@ async function checkHighlights(message) {
             continue;
           }
 
+          if (permissions === null) continue;
           if (!permissions.has(PermissionFlagsBits.ViewChannel)) {
             continue;
           }

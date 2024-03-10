@@ -21,7 +21,9 @@ async function bulkDeleteLog(messages, channel, client) {
     },
     {},
     (_renderErr, str) => {
-      let attach = new AttachmentBuilder(str, { name: "bulkDelete.html" });
+      let attach = new AttachmentBuilder(Buffer.from(str, "utf-8"), {
+        name: "bulkDelete.html",
+      });
       let deleteEmbed = new EmbedBuilder()
         .setTitle(`Bulk Messages Deleted`)
         .setColor(colors.main)
