@@ -30,22 +30,36 @@ async function unshortenMessageURLs(message) {
     return log.debug("end");
   }
 
-  let urls = await detectURL(message.content);
-  if (!urls || urls.length === 0) {
+  let messageURLs = await detectURL(message.content);
+  if (!messageURLs || messageURLs.length === 0) {
     return log.debug("end");
   }
 
   let bdEnabled = guilds[message.guild.id].features.blockedDomains.enabled;
-  for (let url of urls) {
+  for (let url of messageURLs) {
     unshortenURL(url).then(async (urls) => {
       if (urls.length === 0) {
         return log.debug("end");
       }
+      let thisSite = await extractDomain(url);
+      let thisSiteHostname = thisSite[1].split(".")[1];
+      let baseSite = await extractDomain(urls[0]);
+      let baseSiteHostname = baseSite[1].split(".")[1];
+      let isSameSite = urls.filter(() => {
+        if (thisSiteHostname !== baseSiteHostname) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      if (isSameSite.length < 1) return;
+
       let isBlocked = false;
       if (bdEnabled) {
         let domain = await extractDomain(urls[0]);
         isBlocked = await checkDomainWithWorker(domain[1]);
       }
+
       let aviURL =
         message.author.avatarURL({
           extension: "png",
@@ -147,7 +161,7 @@ async function detectURL(string) {
 }
 
 async function extractDomain(url) {
-  const domainReg = "(?:https?:\\/\\/)?(?:www\\.)?([^\\/\\?#]+)(?:[\\/\\?#]|$)";
+  const domainReg = "(?:https?:\\/\\/)?([^\\/\\?#]+)(?:[\\/\\?#]|$)";
   try {
     const matches = await regexMatch(url, domainReg, "i");
     return matches;

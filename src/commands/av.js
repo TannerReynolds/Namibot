@@ -1,8 +1,8 @@
+const { EmbedBuilder, PermissionFlagsBits } = require("discord.js");
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
-  PermissionFlagsBits,
-} = require("discord.js");
+  AppIntegrationType,
+} = require("../utils/ExtSlashCmdBuilder");
 const { defineTarget } = require("../utils/defineTarget");
 const { guilds, colors, emojis } = require("../config.json");
 const { isStaffCommand } = require("../utils/isStaff");
@@ -14,6 +14,10 @@ module.exports = {
     .setName("av")
     .setDMPermission(false)
     .setDescription("Get a member's Avatar")
+    .setIntegrationTypes(
+      AppIntegrationType.GuildInstall,
+      AppIntegrationType.UserInstall,
+    )
     .addStringOption((option) =>
       option
         .setName("user")
