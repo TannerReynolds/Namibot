@@ -3,7 +3,6 @@ const {
   SlashCommandBuilder,
   AppIntegrationType,
 } = require("../utils/ExtSlashCmdBuilder");
-const { defineTarget } = require("../utils/defineTarget");
 const { colors, emojis } = require("../config.json");
 const log = require("../utils/log");
 const { sendReply } = require("../utils/sendReply");
@@ -17,7 +16,7 @@ module.exports = {
       AppIntegrationType.GuildInstall,
       AppIntegrationType.UserInstall,
     )
-    .addStringOption((option) =>
+    .addUserOption((option) =>
       option
         .setName("user")
         .setDescription("The user to get the AV from")
@@ -28,12 +27,7 @@ module.exports = {
     await interaction.deferReply();
     sendReply(interaction, "main", `${emojis.loading}  Loading Interaction...`);
 
-    let target = await defineTarget(interaction, "edit");
-    if (target === undefined) {
-      return sendReply(interaction, "error", "This user does not exist");
-    }
-
-    let targetUser = await interaction.client.users.cache.get(target);
+    let targetUser = interaction.options.getUser("user");
 
     if (!targetUser) {
       return interaction.editReply("Bot cannot access this user's data");
@@ -64,14 +58,9 @@ module.exports = {
       .setImage(pfpURL)
       .setAuthor({ name: name, iconURL: aviURL });
 
-    await interaction.channel.send({
+    await interaction.editReply({
       embeds: [avEmbed],
     });
-    sendReply(
-      interaction,
-      "success",
-      `${emojis.success}  Interaction Complete`,
-    );
     log.debug("end");
   },
 };
