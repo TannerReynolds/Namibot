@@ -56,9 +56,9 @@ async function unbanButtonDeny(interaction, args) {
     );
 
   let unbanEmbed = new EmbedBuilder()
-    .setTitle(`Member Ban Appeal Approved`)
+    .setTitle(`Member Ban Appeal Denied`)
     .setColor(colors.success)
-    .setDescription(`${emojis.success}  Successfully approved ban appeal.`)
+    .setDescription(`${emojis.success}  Successfully denied ban appeal.`)
     .setTimestamp()
     .setAuthor({ name: name, iconURL: aviURL });
 

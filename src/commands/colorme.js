@@ -17,6 +17,7 @@ module.exports = {
     .setName("colorme")
     .setDescription("Select a color for yourself!"),
   async execute(interaction) {
+    await interaction.deferReply({ ephemeral: true });
     let authorRoles = interaction.member.roles.cache;
     let boosterRole = interaction.guild.roles.premiumSubscriberRole.id || null;
 
@@ -25,7 +26,6 @@ module.exports = {
       interaction.user.id !== "478044823882825748"
     ) {
       return sendReply(
-        interaction,
         interaction,
         "error",
         `${emojis.error}  You are not a nitro booster`,
@@ -62,7 +62,7 @@ module.exports = {
 
     let row = new ActionRowBuilder().addComponents(dropdown);
 
-    let response = await interaction.reply({
+    let response = await interaction.editReply({
       components: [row],
     });
 

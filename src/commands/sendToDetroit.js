@@ -2,6 +2,7 @@ const {
   SlashCommandBuilder,
   EmbedBuilder,
   PermissionFlagsBits,
+  AttachmentBuilder,
 } = require("discord.js");
 const { isStaffCommand, hasHigherPerms } = require("../utils/isStaff");
 const prisma = require("../utils/prismaClient");
@@ -15,31 +16,35 @@ const { colors, emojis } = require("../config.json");
 const c = require("../config.json");
 const log = require("../utils/log");
 const { sendReply } = require("../utils/sendReply");
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+const axios = require('axios');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("ban")
+    .setName("taketodetroit")
     .setDescription(
-      "Ban a user from the server using either a mention or an id",
+      "Send a user to detroit for a certain amount of time",
     )
     .setDMPermission(false)
     .addStringOption((option) =>
       option
         .setName("user")
-        .setDescription("The user to ban.")
+        .setDescription("The user to send.")
         .setRequired(true),
     )
     .addStringOption((option) =>
       option
         .setName("reason")
-        .setDescription("The reason for banning this user")
+        .setDescription("The reason for sending this user")
         .setRequired(true),
     )
     .addStringOption((option) =>
       option
         .setName("duration")
         .setDescription(
-          'The amount of time to ban this user for ("forever" for permanent)',
+          'The amount of time to send this user for ("forever" for permanent)',
         )
         .setRequired(true),
     ),
@@ -120,6 +125,7 @@ module.exports = {
     const unixTimestamp = Math.floor(date.getTime() / 1000);
 
     try {
+      
       interaction.guild.bans
         .create(target, {
           deleteMessageSeconds: 604800,
@@ -133,22 +139,77 @@ module.exports = {
             `${emojis.error}  Error banning member: ${e}`,
           );
         });
+        
+
+      // VIDEO CREATION ////////////////////////////////////
+      let victimPfpName = `pfp${target}.png`;
+      let victimPfp = targetMember.user.avatarURL({
+        extension: "png",
+        forceStatic: false,
+        size: 1024,
+      }) || interaction.user.defaultAvatarURL;
+      const imgDir = path.resolve(__dirname, '../img');
+      const victimPfpPath = path.join(imgDir, victimPfpName);
+      let victimPfpBuffer = await downloadImage(victimPfp);
+      await saveBuffer(victimPfpBuffer, victimPfpPath);
+
+      let modPfpName = `pfp${interaction.user.id}.png`;
+      let modPfp = interaction.user.avatarURL({
+        extension: "png",
+        forceStatic: false,
+        size: 1024,
+      }) || interaction.user.defaultAvatarURL;
+      const modPfpPath = path.join(imgDir, modPfpName);
+      let modPfpBuffer = await downloadImage(modPfp);
+      await saveBuffer(modPfpBuffer, modPfpPath);
+
+
+      let outputFile = `${target}detroit.mp4`
+      let ffmpegCommand = `ffmpeg -i detroit.mp4 -loop 1 -i img/${modPfpName} -loop 1 -i img/${victimPfpName} -filter_complex "[1:v]scale=147:147[img1];[2:v]scale=188:188[img2_scaled];[img2_scaled]split=4[img2_1][img2_2][img2_3][img2_4];[0:v][img1]overlay=x=189:y=121:enable='between(t,0,3.79)'[step1];[step1][img2_1]overlay=x=161:y=108:enable='between(t,3.79,5.26)'[step2];[step2][img2_2]overlay=x=175:y=74:enable='between(t,5.26,5.50)'[step3];[step3][img2_3]overlay=x=239:y=67:enable='between(t,5.50,6.21)'[step4];[step4][img2_4]overlay=x=279:y=44:enable='between(t,6.21,6.68)'[final]" -map "[final]" -map 0:a? -c:v libx264 -c:a copy -shortest -pix_fmt yuv420p ${outputFile}`
+
+
+      function runFFmpegAndSend() {
+        exec(ffmpegCommand, async (err, stdout, stderr) => {
+          if (err) {
+            console.error('❌ FFmpeg error:', err.message);
+            console.error(stderr);
+            return sendReply(interaction, "error", `${emojis.error} FFmpeg error: ${err.message}`);
+          }
+        
+          await sleep(250); // <-- short wait before accessing output
+        
+          if (!fs.existsSync(outputFile)) {
+            return sendReply(interaction, "error", `${emojis.error} Output file not found.`);
+          }
+        
+          const attachment = new AttachmentBuilder(outputFile, { name: 'detroit.mp4' });
+
+
+      // END VIDEO CREATION ///////////////////////////////
 
       let banEmbed = new EmbedBuilder()
-        .setTitle(`User Banned`)
+        .setTitle(`User Sent To Detroit`)
         .setColor(colors.main)
         .setDescription(
-          `${emojis.success}  Successfully banned <@${target}> for ${durationString}. Reason: ${reason}`,
+          `${emojis.success}  Successfully sent <@${target}> to detroit for ${durationString}. Reason: ${reason}`,
         )
         .setTimestamp()
         .setAuthor({ name: name, iconURL: aviURL });
 
-      await interaction.channel.send({ embeds: [banEmbed] });
+      await interaction.channel.send({ embeds: [banEmbed], files: [attachment] });
       sendReply(
         interaction,
         "success",
         `${emojis.success}  Interaction Complete`,
       );
+
+      fs.unlinkSync(outputFile);
+      fs.unlinkSync(victimPfpPath);
+      fs.unlinkSync(modPfpPath);
+        });
+      }
+
+      runFFmpegAndSend();
 
       if (reason.length > 1024) {
         reason = `${reason.substring(0, 950)}...\`[REMAINDER OF MESSAGE TOO LONG TO DISPLAY]\``;
@@ -243,3 +304,23 @@ module.exports = {
     log.debug("end");
   },
 };
+
+
+async function downloadImage(url) {
+  try {
+      const response = await axios.get(url, {
+          responseType: 'arraybuffer'
+      });
+      return Buffer.from(response.data, 'binary');
+  } catch (error) {
+      console.error('Error downloading image:', error);
+  }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function saveBuffer(buf, filePath) {
+  fs.writeFileSync(filePath, buf);
+}

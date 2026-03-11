@@ -203,7 +203,7 @@ async function giveRole(guildId, userId, message, level) {
       const delRole = async () => {
         for (let i = 0; i < levelsArr.length; i++) {
           if (message.member.roles.cache.has(levelsArr[i])) {
-            await message.member.roles.remove(levelsArr[i]);
+            //await message.member.roles.remove(levelsArr[i]); //re enable once i see how fast people progress
           }
         }
       };

@@ -3,6 +3,8 @@ node_modules
 package-lock.json
 src/config.js
 src/config.json
+run.bat
+src/debugLogs/*.log
 prisma/migrations/
 Thumbs.db
 blockedDomains.json
@@ -21,6 +23,7 @@ ejs.md
 ferns appeals.toml
 learn japanese.toml
 namiware.toml
+*.log
 
 *.swp
 .DS_STORE

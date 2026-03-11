@@ -671,12 +671,12 @@ async function messageEvents(isStaffBool, message, guildMember, oldMessage) {
 
     //Ignoring staff
     if (!isStaffBool) {
-      if (guilds[guildID].features.gifDetector.enabled)
+      if (guilds[guildID].features.gifDetector.enabled && !message.member.roles.cache.has("978043268111691778") && !message.member.roles.cache.has("1369537085966520360") && !message.member.roles.cache.has("1397763377048195113") && !message.member.roles.cache.has("619588868248698880"))
         await gifDetector(message);
     }
     if (!oldMessage) oldMessage = false;
     //Not ignoring staff
-    if (guilds[guildID].features.hiddenLinkDetection)
+    if (guilds[guildID].features.hiddenLinkDetection && !message.member.roles.cache.has("1397763377048195113"))
       await checkForInlineURLs(client, content, message, oldMessage);
   } catch (e) {
     log.error(`Error in messageEvents function: ${e}`);

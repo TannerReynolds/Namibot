@@ -60,6 +60,7 @@ model Member {
     level            Int    @default(1)
     negativeMessages Int    @default(0)
     totalMessages    Int    @default(0)
+    customRole      String?
     Guild            Guild  @relation(fields: [guildId], references: [id])
     guildId          String
 

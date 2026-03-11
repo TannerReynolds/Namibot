@@ -185,37 +185,37 @@ module.exports = {
     let f1Name = interaction.options.getString("field1-name") || false;
     let f1Content = interaction.options.getString("field1-content") || false;
     if (f1Name && f1Content)
-      craftedEmbed.addFields({ name: f1Name, value: f1Content });
+      craftedEmbed.addFields({ name: f1Name, value: f1Content.replace(/\{\{newline\}\}/g, String.fromCharCode(10)) });
 
     let f2Name = interaction.options.getString("field2-name") || false;
     let f2Content = interaction.options.getString("field2-content") || false;
     if (f2Name && f2Content)
-      craftedEmbed.addFields({ name: f2Name, value: f2Content });
+      craftedEmbed.addFields({ name: f2Name, value: f2Content.replace(/\{\{newline\}\}/g, String.fromCharCode(10)) });
 
     let f3Name = interaction.options.getString("field3-name") || false;
     let f3Content = interaction.options.getString("field3-content") || false;
     if (f3Name && f3Content)
-      craftedEmbed.addFields({ name: f3Name, value: f3Content });
+      craftedEmbed.addFields({ name: f3Name, value: f3Content.replace(/\{\{newline\}\}/g, String.fromCharCode(10)) });
 
     let f4Name = interaction.options.getString("field4-name") || false;
     let f4Content = interaction.options.getString("field4-content") || false;
     if (f4Name && f4Content)
-      craftedEmbed.addFields({ name: f4Name, value: f4Content });
+      craftedEmbed.addFields({ name: f4Name, value: f4Content.replace(/\{\{newline\}\}/g, String.fromCharCode(10)) });
 
     let f5Name = interaction.options.getString("field5-name") || false;
     let f5Content = interaction.options.getString("field5-content") || false;
     if (f5Name && f5Content)
-      craftedEmbed.addFields({ name: f5Name, value: f5Content });
+      craftedEmbed.addFields({ name: f5Name, value: f5Content.replace(/\{\{newline\}\}/g, String.fromCharCode(10)) });
 
     let f6Name = interaction.options.getString("field6-name") || false;
     let f6Content = interaction.options.getString("field6-content") || false;
     if (f6Name && f6Content)
-      craftedEmbed.addFields({ name: f6Name, value: f6Content });
+      craftedEmbed.addFields({ name: f6Name, value: f6Content.replace(/\{\{newline\}\}/g, String.fromCharCode(10)) });
 
     let f7Name = interaction.options.getString("field7-name") || false;
     let f7Content = interaction.options.getString("field7-content") || false;
     if (f7Name && f7Content)
-      craftedEmbed.addFields({ name: f7Name, value: f7Content });
+      craftedEmbed.addFields({ name: f7Name, value: f7Content.replace(/\{\{newline\}\}/g, String.fromCharCode(10)) });
 
     if (
       !title &&

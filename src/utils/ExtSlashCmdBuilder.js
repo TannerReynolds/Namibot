@@ -1,21 +1,16 @@
 const { SlashCommandBuilder: DJSSlashCommandBuilder } = require("discord.js");
 
 const AppIntegrationType = Object.freeze({
-  // App is installable to servers
   GuildInstall: 0,
 
-  // App is installable to users
   UserInstall: 1,
 });
 
 const InteractionContextType = Object.freeze({
-  // Interaction can be used within servers
   Guild: 0,
 
-  // Interaction can be used within DMs with the app's bot user
   BotDM: 1,
 
-  // Interaction can be used within Group DMs and DMs other than the app's bot user
   PrivateChannel: 2,
 });
 
