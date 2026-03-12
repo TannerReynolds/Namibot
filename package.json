@@ -54,7 +54,8 @@
     "node-fetch": "^3.3.2",
     "piscina": "^4.4.0",
     "sharp": "^0.33.2",
-    "toml": "^3.0.0"
+    "toml": "^3.0.0",
+    "unofficial-jisho-api": "^2.3.4"
   },
   "devDependencies": {
     "body-parser": "^1.20.2",

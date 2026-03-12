@@ -3,15 +3,19 @@ const {
   SlashCommandBuilder,
   AppIntegrationType,
 } = require("../utils/ExtSlashCmdBuilder");
+const axios = require("axios");
 const { botOwnerID, colors, emojis } = require("../config");
 const log = require("../utils/log");
 const { sendReply } = require("../utils/sendReply");
-const fetch = require("node-fetch");
 
 async function urlToBase64(url) {
-  const res = await fetch(url);
-  const buffer = await res.buffer();
-  const mime = res.headers.get("content-type");
+  const response = await axios.get(url, {
+    responseType: "arraybuffer",
+  });
+
+  const mime = response.headers["content-type"] || "image/png";
+  const buffer = Buffer.from(response.data);
+
   return `data:${mime};base64,${buffer.toString("base64")}`;
 }
 
@@ -19,25 +23,24 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("change")
     .setDescription("Change the bot account profile")
+    .setDMPermission(false)
     .setIntegrationTypes(AppIntegrationType.UserInstall)
-    .addStringOption((o) =>
-      o.setName("username").setDescription("New username"),
+    .addStringOption((option) =>
+      option.setName("username").setDescription("New username"),
     )
-    .addStringOption((o) =>
-      o.setName("avatar-url").setDescription("URL to avatar"),
+    .addStringOption((option) =>
+      option.setName("avatar-url").setDescription("URL to a new avatar image"),
     )
-    .addStringOption((o) =>
-      o.setName("banner-url").setDescription("URL to banner"),
+    .addStringOption((option) =>
+      option.setName("banner-url").setDescription("URL to a new banner image"),
     )
-    .addStringOption((o) =>
-      o.setName("bio").setDescription("New bot bio"),
+    .addStringOption((option) =>
+      option.setName("bio").setDescription("New bot bio"),
     ),
 
   async execute(interaction) {
     log.debug("begin");
-
     await interaction.deferReply({ ephemeral: true });
-
     await sendReply(
       interaction,
       "main",
@@ -67,49 +70,64 @@ module.exports = {
 
     const payload = {};
 
-    if (username) payload.username = username;
-
-    if (avatarURL) {
-      payload.avatar = await urlToBase64(avatarURL);
-    }
-
-    if (bannerURL) {
-      payload.banner = await urlToBase64(bannerURL);
-    }
-
-    if (bio) payload.bio = bio;
-
     try {
-      await fetch("https://discord.com/api/v10/users/@me", {
-        method: "PATCH",
+      if (username) {
+        payload.username = username;
+      }
+
+      if (avatarURL) {
+        payload.avatar = await urlToBase64(avatarURL);
+      }
+
+      if (bannerURL) {
+        payload.banner = await urlToBase64(bannerURL);
+      }
+
+      if (bio) {
+        payload.bio = bio;
+      }
+
+      await axios.patch("https://discord.com/api/v10/users/@me", payload, {
         headers: {
           Authorization: `Bot ${interaction.client.token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
       });
 
-      const avi =
+      const requesterAvatar =
         interaction.user.avatarURL({
           extension: "png",
           forceStatic: false,
           size: 1024,
         }) || interaction.user.defaultAvatarURL;
 
-      const embed = new EmbedBuilder()
-        .setColor(colors.success)
-        .setTitle("Bot Account Updated")
-        .setDescription(
-          `${emojis.success}  Successfully updated the bot account`,
-        )
-        .setAuthor({ name: interaction.user.username, iconURL: avi })
-        .setTimestamp();
+      const updatedFields = [];
 
-      await interaction.editReply({ embeds: [embed] });
+      if (username) updatedFields.push(`Username: \`${username}\``);
+      if (avatarURL) updatedFields.push("Avatar updated");
+      if (bannerURL) updatedFields.push("Banner updated");
+      if (bio) updatedFields.push("Bio updated");
+
+      const changeEmbed = new EmbedBuilder()
+        .setTitle("Bot Account Updated")
+        .setColor(colors.success)
+        .setDescription(
+          `${emojis.success}  Successfully updated the bot account\n\n${updatedFields.join("\n")}`,
+        )
+        .setTimestamp()
+        .setAuthor({
+          name: interaction.user.username,
+          iconURL: requesterAvatar,
+        });
+
+      await interaction.editReply({
+        content: "",
+        embeds: [changeEmbed],
+      });
 
       log.debug("end");
-    } catch (err) {
-      log.error(err);
+    } catch (error) {
+      log.error(error?.response?.data || error);
       return sendReply(
         interaction,
         "error",

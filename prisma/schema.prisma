@@ -181,11 +181,19 @@ model Tag {
     content        String?
     Guild          Guild?   @relation(fields: [guildId], references: [id])
     guildId        String?
+    User           User?    @relation(fields: [userId], references: [id])
+    userId         String?
     attachmentName String?
     attachmentData Bytes?
     createdAt      DateTime @default(now())
 
     @@unique([name, guildId])
+    @@unique([name, userId])
+}
+
+model User {
+    id   String @id
+    tags Tag[]
 }
 
 enum LogType {
