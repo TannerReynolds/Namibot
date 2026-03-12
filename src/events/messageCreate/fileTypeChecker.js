@@ -59,7 +59,7 @@ async function fileTypeChecker(message) {
 
         if (bannedFileTypes.some((type) => extension.endsWith(type))) {
           hasFile = true;
-          return true;
+          //return true;
         }
         return false;
       });
